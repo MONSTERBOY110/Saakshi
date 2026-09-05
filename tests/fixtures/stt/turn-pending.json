@@ -1,0 +1,47 @@
+{
+  "turn_order": 1,
+  "turn_is_formatted": true,
+  "end_of_turn": true,
+  "transcript": "My name is Rahul.",
+  "end_of_turn_confidence": 1,
+  "words": [
+    {
+      "start": 2240,
+      "end": 2290,
+      "text": "My",
+      "confidence": 0.995338,
+      "speaker": "PENDING",
+      "word_is_final": true
+    },
+    {
+      "start": 2358,
+      "end": 2560,
+      "text": "name",
+      "confidence": 0.999994,
+      "speaker": "PENDING",
+      "word_is_final": true
+    },
+    {
+      "start": 2628,
+      "end": 2729,
+      "text": "is",
+      "confidence": 0.999989,
+      "speaker": "PENDING",
+      "word_is_final": true
+    },
+    {
+      "start": 2779,
+      "end": 3151,
+      "text": "Rahul.",
+      "confidence": 0.998931,
+      "speaker": "PENDING",
+      "word_is_final": true
+    }
+  ],
+  "utterance": "My name is Rahul.",
+  "language_code": "en",
+  "language_confidence": 0.52757,
+  "speaker_label": "PENDING",
+  "speaker_confidence": 0,
+  "type": "Turn"
+}

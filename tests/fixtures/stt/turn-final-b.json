@@ -1,0 +1,60 @@
+{
+  "turn_order": 3,
+  "turn_is_formatted": true,
+  "end_of_turn": true,
+  "transcript": "My name is Mrs. Sharma.",
+  "end_of_turn_confidence": 1,
+  "words": [
+    {
+      "start": 7136,
+      "end": 7186,
+      "text": "My",
+      "confidence": 0.996708,
+      "speaker": "B",
+      "speaker_confidence": 1,
+      "word_is_final": true
+    },
+    {
+      "start": 7270,
+      "end": 7455,
+      "text": "name",
+      "confidence": 0.999982,
+      "speaker": "B",
+      "speaker_confidence": 1,
+      "word_is_final": true
+    },
+    {
+      "start": 7590,
+      "end": 7624,
+      "text": "is",
+      "confidence": 0.99997,
+      "speaker": "B",
+      "speaker_confidence": 1,
+      "word_is_final": true
+    },
+    {
+      "start": 7741,
+      "end": 8027,
+      "text": "Mrs.",
+      "confidence": 0.999116,
+      "speaker": "B",
+      "speaker_confidence": 1,
+      "word_is_final": true
+    },
+    {
+      "start": 8095,
+      "end": 8448,
+      "text": "Sharma.",
+      "confidence": 0.999519,
+      "speaker": "B",
+      "speaker_confidence": 1,
+      "word_is_final": true
+    }
+  ],
+  "utterance": "My name is Mrs. Sharma.",
+  "language_code": "et",
+  "language_confidence": 0.256657,
+  "speaker_label": "B",
+  "speaker_confidence": 1,
+  "type": "Turn"
+}

@@ -1,0 +1,47 @@
+{
+  "turn_order": 0,
+  "turn_is_formatted": true,
+  "end_of_turn": true,
+  "transcript": "Good morning, Mrs. Sharma.",
+  "end_of_turn_confidence": 1,
+  "words": [
+    {
+      "start": 0,
+      "end": 149,
+      "text": "Good",
+      "confidence": 0.998618,
+      "speaker": "A",
+      "word_is_final": true
+    },
+    {
+      "start": 199,
+      "end": 481,
+      "text": "morning,",
+      "confidence": 0.999882,
+      "speaker": "A",
+      "word_is_final": true
+    },
+    {
+      "start": 597,
+      "end": 879,
+      "text": "Mrs.",
+      "confidence": 0.998111,
+      "speaker": "A",
+      "word_is_final": true
+    },
+    {
+      "start": 929,
+      "end": 1277,
+      "text": "Sharma.",
+      "confidence": 0.979158,
+      "speaker": "A",
+      "word_is_final": true
+    }
+  ],
+  "utterance": "Good morning, Mrs. Sharma.",
+  "language_code": "en",
+  "language_confidence": 0.571967,
+  "speaker_label": "A",
+  "speaker_confidence": 0,
+  "type": "Turn"
+}

@@ -1,0 +1,521 @@
+{
+  "type": "SpeakerRevision",
+  "revisions": [
+    {
+      "turn_order": 1,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 2240,
+          "end": 2290,
+          "text": "My",
+          "confidence": 0.887326,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 2358,
+          "end": 2560,
+          "text": "name",
+          "confidence": 0.987456,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 2628,
+          "end": 2729,
+          "text": "is",
+          "confidence": 0.828947,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 2779,
+          "end": 3151,
+          "text": "Rahul.",
+          "confidence": 0.605174,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 2,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 5555,
+          "end": 6060,
+          "text": "Namaste.",
+          "confidence": 0.616571,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 3,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 7136,
+          "end": 7186,
+          "text": "My",
+          "confidence": 0.982472,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 7270,
+          "end": 7455,
+          "text": "name",
+          "confidence": 0.992243,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 7590,
+          "end": 7624,
+          "text": "is",
+          "confidence": 0.761184,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 7741,
+          "end": 8027,
+          "text": "Mrs.",
+          "confidence": 0.787281,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 8095,
+          "end": 8448,
+          "text": "Sharma.",
+          "confidence": 0.708986,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 7,
+      "speaker_label": "B",
+      "words": [
+        {
+          "start": 27968,
+          "end": 28082,
+          "text": "There",
+          "confidence": 0.851295,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 28131,
+          "end": 28229,
+          "text": "is",
+          "confidence": 0.613872,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 28295,
+          "end": 28311,
+          "text": "a",
+          "confidence": 0.035799,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 28311,
+          "end": 28817,
+          "text": "5-year",
+          "confidence": 0.651456,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 29013,
+          "end": 29373,
+          "text": "lock-in.",
+          "confidence": 0.804449,
+          "speaker": "B",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 8,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 31799,
+          "end": 31898,
+          "text": "Is",
+          "confidence": 0.993983,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 31963,
+          "end": 32045,
+          "text": "my",
+          "confidence": 0.501354,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 32127,
+          "end": 32455,
+          "text": "paisa",
+          "confidence": 0.803546,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 32537,
+          "end": 32799,
+          "text": "cab",
+          "confidence": 0.927431,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 32930,
+          "end": 33143,
+          "text": "nikal",
+          "confidence": 0.587548,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 33208,
+          "end": 33618,
+          "text": "sakhti",
+          "confidence": 0.58746,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 33683,
+          "end": 33946,
+          "text": "hoon?",
+          "confidence": 0.973489,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 14,
+      "speaker_label": "B",
+      "words": [
+        {
+          "start": 60161,
+          "end": 60194,
+          "text": "The",
+          "confidence": 0.970807,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 60244,
+          "end": 60608,
+          "text": "surrender",
+          "confidence": 0.888314,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 60741,
+          "end": 61089,
+          "text": "value",
+          "confidence": 0.81862,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 61155,
+          "end": 61520,
+          "text": "applies",
+          "confidence": 0.918436,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 61719,
+          "end": 61934,
+          "text": "after",
+          "confidence": 0.944008,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 61984,
+          "end": 62083,
+          "text": "the",
+          "confidence": 0.894389,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 62133,
+          "end": 62514,
+          "text": "lock-in.",
+          "confidence": 0.682967,
+          "speaker": "B",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 15,
+      "speaker_label": "B",
+      "words": [
+        {
+          "start": 64897,
+          "end": 65377,
+          "text": "Saakshi,",
+          "confidence": 0.687806,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 65974,
+          "end": 66372,
+          "text": "verify.",
+          "confidence": 0.666771,
+          "speaker": "B",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 16,
+      "speaker_label": "B",
+      "words": [
+        {
+          "start": 68738,
+          "end": 68787,
+          "text": "You",
+          "confidence": 0.95275,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 68982,
+          "end": 69243,
+          "text": "also",
+          "confidence": 0.686537,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 69308,
+          "end": 69422,
+          "text": "have",
+          "confidence": 0.983878,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 69488,
+          "end": 69504,
+          "text": "a",
+          "confidence": 0.094851,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 69569,
+          "end": 70058,
+          "text": "30-day",
+          "confidence": 0.585501,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 70140,
+          "end": 70303,
+          "text": "free",
+          "confidence": 0.713205,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 70384,
+          "end": 70547,
+          "text": "look",
+          "confidence": 0.990607,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 70629,
+          "end": 70987,
+          "text": "period",
+          "confidence": 0.44768,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 71036,
+          "end": 71118,
+          "text": "to",
+          "confidence": 0.29784,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 71183,
+          "end": 71493,
+          "text": "return",
+          "confidence": 0.872927,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 71525,
+          "end": 71623,
+          "text": "the",
+          "confidence": 0.489173,
+          "speaker": "B",
+          "word_is_final": true
+        },
+        {
+          "start": 71688,
+          "end": 72112,
+          "text": "policy.",
+          "confidence": 0.717544,
+          "speaker": "B",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 17,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 73569,
+          "end": 74345,
+          "text": "पांच",
+          "confidence": 0.000689,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 74458,
+          "end": 75073,
+          "text": "साल,",
+          "confidence": 0.133544,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 75672,
+          "end": 75866,
+          "text": "five",
+          "confidence": 0.978346,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 75995,
+          "end": 76206,
+          "text": "years,",
+          "confidence": 0.874685,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 76513,
+          "end": 76626,
+          "text": "उसके",
+          "confidence": 0.000572,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 76739,
+          "end": 77257,
+          "text": "बाद",
+          "confidence": 0.113922,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 77273,
+          "end": 77581,
+          "text": "निकल",
+          "confidence": 0.306354,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 77629,
+          "end": 77969,
+          "text": "सकती",
+          "confidence": 0.527456,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 78115,
+          "end": 78794,
+          "text": "हूँ।",
+          "confidence": 0.162185,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    },
+    {
+      "turn_order": 21,
+      "speaker_label": "A",
+      "words": [
+        {
+          "start": 88640,
+          "end": 88689,
+          "text": "My",
+          "confidence": 0.984922,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 88771,
+          "end": 88953,
+          "text": "name",
+          "confidence": 0.992244,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 89085,
+          "end": 89118,
+          "text": "is",
+          "confidence": 0.839338,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 89233,
+          "end": 89514,
+          "text": "Mrs.",
+          "confidence": 0.759478,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 89580,
+          "end": 89926,
+          "text": "Sharma.",
+          "confidence": 0.704805,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "type": "session.update",
+  "session": {
+    "system_prompt": "You are Saakshi, a calm compliance witness sitting in on a sales conversation. Speak only when told to. Never use markdown or exclamation marks. Keep every reply under 25 words.",
+    "greeting": "I am Saakshi. I will listen quietly and make sure everything important is covered. Please say your name.",
+    "input": {
+      "format": {
+        "encoding": "audio/pcm"
+      },
+      "keyterms": [
+        "Saakshi",
+        "Rahul",
+        "Sharma",
+        "ULIP",
+        "lock-in",
+        "free look",
+        "surrender value",
+        "fund value",
+        "premium allocation charge"
+      ],
+      "voice_focus": "far-field",
+      "turn_detection": {
+        "vad_threshold": 0.5,
+        "min_silence": 1400,
+        "max_silence": 4000,
+        "interrupt_response": true
+      },
+      "language_codes": ["en", "hi"]
+    },
+    "output": {
+      "voice": "anna",
+      "format": {
+        "encoding": "audio/pcm"
+      },
+      "volume": 100
+    },
+    "tools": []
+  }
+}

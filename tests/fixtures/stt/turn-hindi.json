@@ -1,0 +1,96 @@
+{
+  "turn_order": 17,
+  "turn_is_formatted": true,
+  "end_of_turn": true,
+  "transcript": "पांच साल, five years, उसके बाद निकल सकती हूँ।",
+  "end_of_turn_confidence": 1,
+  "words": [
+    {
+      "start": 73569,
+      "end": 74345,
+      "text": "पांच",
+      "confidence": 0.653966,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 74458,
+      "end": 75073,
+      "text": "साल,",
+      "confidence": 0.980509,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 75672,
+      "end": 75866,
+      "text": "five",
+      "confidence": 0.873925,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 75995,
+      "end": 76206,
+      "text": "years,",
+      "confidence": 0.893,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 76513,
+      "end": 76626,
+      "text": "उसके",
+      "confidence": 0.985327,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 76739,
+      "end": 77257,
+      "text": "बाद",
+      "confidence": 0.999803,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 77273,
+      "end": 77581,
+      "text": "निकल",
+      "confidence": 0.996037,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 77629,
+      "end": 77969,
+      "text": "सकती",
+      "confidence": 0.971686,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    },
+    {
+      "start": 78115,
+      "end": 78794,
+      "text": "हूँ।",
+      "confidence": 0.929929,
+      "speaker": "B",
+      "speaker_confidence": 0.929406,
+      "word_is_final": true
+    }
+  ],
+  "utterance": "पांच साल, five years, उसके बाद निकल सकती हूँ।",
+  "language_code": "hi",
+  "language_confidence": 0.911907,
+  "speaker_label": "B",
+  "speaker_confidence": 0.929406,
+  "type": "Turn"
+}

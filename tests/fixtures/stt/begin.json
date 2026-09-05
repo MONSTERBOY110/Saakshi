@@ -1,0 +1,15 @@
+{
+  "type": "Begin",
+  "id": "2d644e6b-285b-415d-b6d6-2be759eb2b6f",
+  "expires_at": 1788634427,
+  "configuration": {
+    "model": "universal-3-5-pro",
+    "mode": "balanced",
+    "api_version": "2025-05-12",
+    "speaker_labels": true,
+    "redact_pii": false,
+    "filter_profanity": false,
+    "domain": null,
+    "voice_focus": "far-field"
+  }
+}

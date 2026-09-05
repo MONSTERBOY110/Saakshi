@@ -1,0 +1,7 @@
+{
+  "type": "Heartbeat",
+  "total_audio_received_ms": 3648,
+  "total_duration_ms": 5070,
+  "realtime_factor": 0.7195,
+  "max_speech_probability": 0.999998
+}

@@ -1,0 +1,10 @@
+*.md
+.next
+.remember
+components/ui
+coverage
+node_modules
+out
+playwright-report
+pnpm-lock.yaml
+test-results
