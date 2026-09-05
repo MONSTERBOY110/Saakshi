@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js / build
+.next/
+out/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# env and secrets
+.env
+.env.*
+!.env.example
+
+# tests / tooling
+coverage/
+playwright-report/
+test-results/
+.playwright-mcp/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# local scratch
+scratch/
+*.log
