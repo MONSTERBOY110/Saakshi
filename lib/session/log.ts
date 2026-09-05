@@ -1,10 +1,10 @@
-// Event log shared by the spike page and the fixture exporter. Audio never enters the log:
+// Debug event log shown in the drawer and exported as fixtures. Audio never enters the log:
 // reply.audio payloads are reduced to their length and a short head before storage.
 export type LogSource = "stt" | "agent" | "client";
 
 export type LogEvent = {
   id: number;
-  /** performance.now() based, ms since session start. */
+  /** ms since session start. */
   t: number;
   source: LogSource;
   type: string;
@@ -18,11 +18,11 @@ export const AUDIO_HEAD_CHARS = 32;
 export function stripAudio(payload: unknown): unknown {
   if (!payload || typeof payload !== "object") return payload;
   const p = payload as Record<string, unknown>;
-  if (p.type === "reply.audio" && typeof p.data === "string") {
+  if (typeof p.data === "string" && (p.type === "reply.audio" || p.type === "reply_audio")) {
     const { data, ...rest } = p;
     return { ...rest, data_len: data.length, data_head: data.slice(0, AUDIO_HEAD_CHARS) };
   }
-  if (p.type === "input.audio" && typeof p.audio === "string") {
+  if (typeof p.audio === "string" && p.type === "input.audio") {
     const { audio, ...rest } = p;
     return { ...rest, audio_len: audio.length };
   }
@@ -36,7 +36,7 @@ export function appendEvent(events: LogEvent[], event: LogEvent): LogEvent[] {
   return next;
 }
 
-export function formatClock(ms: number): string {
+export function formatClockMs(ms: number): string {
   const total = Math.max(0, Math.floor(ms));
   const m = Math.floor(total / 60_000);
   const s = Math.floor((total % 60_000) / 1000);

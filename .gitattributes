@@ -1,0 +1,5 @@
+# Normalise line endings to LF everywhere; Prettier writes LF and the index is LF.
+* text=auto eol=lf
+*.wav binary
+*.png binary
+*.ico binary

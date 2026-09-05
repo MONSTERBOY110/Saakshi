@@ -1,3 +1,6 @@
-// Phase 2: session state machine (SETUP → CALIBRATE → OBSERVE → INTERVENE → NUDGE → TEACHBACK → CERTIFY → DONE).
-export type Phase =
-  "SETUP" | "CALIBRATE" | "OBSERVE" | "INTERVENE" | "NUDGE" | "TEACHBACK" | "CERTIFY" | "DONE";
+// Session domain: phases, roles, transcript, board and setup vocabulary. Pure modules.
+export * from "./machine";
+export * from "./roles";
+export * from "./transcript";
+export * from "./board";
+export * from "./keyterms";

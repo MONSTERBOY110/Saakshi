@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { formatClock, type LogEvent, type LogSource } from "@/lib/spike/log";
+import { formatClockMs, type LogEvent, type LogSource } from "@/lib/session/log";
 
 type Props = { events: LogEvent[]; onExport: () => void };
 
@@ -87,7 +87,7 @@ function EventRow({ event }: { event: LogEvent }) {
     <li>
       <details className="rounded-md border px-2 py-1 text-xs">
         <summary className="flex cursor-pointer items-center gap-2 font-mono">
-          <span className="text-muted-foreground shrink-0">{formatClock(event.t)}</span>
+          <span className="text-muted-foreground shrink-0">{formatClockMs(event.t)}</span>
           <Badge variant={badgeVariant(event.source)}>{event.source}</Badge>
           <span className="shrink-0 font-semibold">{event.type}</span>
           <span className="text-muted-foreground truncate">{preview(event.payload)}</span>

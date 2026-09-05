@@ -17,6 +17,8 @@ outgoing `input.audio` keeps only `audio_len`. No audio is stored anywhere in th
 `tests/unit/fixtures.test.ts` loads every file through the Zod schemas in `lib/aai/types.ts`, so a
 schema that drifts from the wire fails the unit suite.
 
+`golden-turns.json` bundles the 23 finalized `Turn` payloads, the `Begin` and the `SpeakerRevision` of one WAV session; `tests/unit/golden.test.ts` runs the whole Phase 1 pipeline over it.
+
 ## Not captured yet
 
 `agent/tool-call.json`, `agent/session-error.json`, `agent/out-reply-create.json` and

@@ -1,0 +1,2118 @@
+{
+  "recorded_at": "2026-09-05T19:54:03.504Z",
+  "source": "tests/fixtures/golden-draft.wav through tests/e2e/dual-session.live.spec.ts (Chromium fake mic), Streaming STT universal-3-5-pro with speaker_labels",
+  "begin": {
+    "type": "Begin",
+    "id": "c4a1e836-4604-477a-be7e-2d6fde32e7c9",
+    "expires_at": 1788641412,
+    "configuration": {
+      "model": "universal-3-5-pro",
+      "mode": "balanced",
+      "api_version": "2025-05-12",
+      "speaker_labels": true,
+      "redact_pii": false,
+      "filter_profanity": false,
+      "domain": null,
+      "voice_focus": "far-field"
+    }
+  },
+  "turns": [
+    {
+      "turn_order": 0,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Rahul.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 34,
+          "end": 409,
+          "text": "Rahul.",
+          "confidence": 0.939096,
+          "speaker": "PENDING",
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Rahul.",
+      "language_code": "et",
+      "language_confidence": 0.702141,
+      "speaker_label": "PENDING",
+      "speaker_confidence": 0,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 1,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Namaste.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 2847,
+          "end": 3383,
+          "text": "Namaste.",
+          "confidence": 0.987008,
+          "speaker": "PENDING",
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Namaste.",
+      "language_code": "et",
+      "language_confidence": 0.606475,
+      "speaker_label": "PENDING",
+      "speaker_confidence": 0,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 2,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "My name is Mrs. Sharma.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 4384,
+          "end": 4434,
+          "text": "My",
+          "confidence": 0.998347,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 4518,
+          "end": 4703,
+          "text": "name",
+          "confidence": 0.999983,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 4838,
+          "end": 4872,
+          "text": "is",
+          "confidence": 0.999986,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 4989,
+          "end": 5292,
+          "text": "Mrs.",
+          "confidence": 0.997053,
+          "speaker": "A",
+          "word_is_final": true
+        },
+        {
+          "start": 5343,
+          "end": 5696,
+          "text": "Sharma.",
+          "confidence": 0.999136,
+          "speaker": "A",
+          "word_is_final": true
+        }
+      ],
+      "utterance": "My name is Mrs. Sharma.",
+      "language_code": "et",
+      "language_confidence": 0.256657,
+      "speaker_label": "A",
+      "speaker_confidence": 0,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 3,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "This is a unit-linked insurance plan.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 8085,
+          "end": 8199,
+          "text": "This",
+          "confidence": 0.999494,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        },
+        {
+          "start": 8330,
+          "end": 8362,
+          "text": "is",
+          "confidence": 0.999985,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        },
+        {
+          "start": 8477,
+          "end": 8493,
+          "text": "a",
+          "confidence": 0.99993,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        },
+        {
+          "start": 8558,
+          "end": 9081,
+          "text": "unit-linked",
+          "confidence": 0.969403,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        },
+        {
+          "start": 9147,
+          "end": 9637,
+          "text": "insurance",
+          "confidence": 0.999965,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        },
+        {
+          "start": 9719,
+          "end": 9980,
+          "text": "plan.",
+          "confidence": 0.995044,
+          "speaker": "B",
+          "speaker_confidence": 1,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "This is a unit-linked insurance plan.",
+      "language_code": "en",
+      "language_confidence": 0.783359,
+      "speaker_label": "B",
+      "speaker_confidence": 1,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 4,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 11008,
+          "end": 11040,
+          "text": "You",
+          "confidence": 0.995506,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 11105,
+          "end": 11266,
+          "text": "pay",
+          "confidence": 0.999984,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 11346,
+          "end": 11363,
+          "text": "a",
+          "confidence": 0.999985,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 11427,
+          "end": 11846,
+          "text": "premium",
+          "confidence": 0.999984,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 11910,
+          "end": 11991,
+          "text": "of",
+          "confidence": 0.999988,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 11991,
+          "end": 13312,
+          "text": "₹50,000",
+          "confidence": 0.993078,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 13424,
+          "end": 13602,
+          "text": "every",
+          "confidence": 0.999856,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 13746,
+          "end": 13795,
+          "text": "year",
+          "confidence": 0.999996,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 13908,
+          "end": 14036,
+          "text": "for",
+          "confidence": 0.999919,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 14085,
+          "end": 14278,
+          "text": "10",
+          "confidence": 0.999969,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 14391,
+          "end": 14681,
+          "text": "years,",
+          "confidence": 0.999825,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 15277,
+          "end": 15357,
+          "text": "and",
+          "confidence": 0.999992,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 15373,
+          "end": 15406,
+          "text": "the",
+          "confidence": 0.999996,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 15518,
+          "end": 15889,
+          "text": "policy",
+          "confidence": 0.999992,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 16002,
+          "end": 16227,
+          "text": "term",
+          "confidence": 0.99998,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 16275,
+          "end": 16372,
+          "text": "is",
+          "confidence": 0.999991,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 16485,
+          "end": 16775,
+          "text": "15",
+          "confidence": 0.999984,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        },
+        {
+          "start": 16904,
+          "end": 17177,
+          "text": "years.",
+          "confidence": 0.999851,
+          "speaker": "B",
+          "speaker_confidence": 0.964242,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "language_code": "en",
+      "language_confidence": 0.861144,
+      "speaker_label": "B",
+      "speaker_confidence": 0.964242,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 5,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "The money goes into market-linked funds, so the fund value depends on the market.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 19644,
+          "end": 19692,
+          "text": "The",
+          "confidence": 0.99929,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 19741,
+          "end": 19984,
+          "text": "money",
+          "confidence": 0.999992,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 20065,
+          "end": 20260,
+          "text": "goes",
+          "confidence": 0.999996,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 20389,
+          "end": 20584,
+          "text": "into",
+          "confidence": 0.999995,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 20632,
+          "end": 21297,
+          "text": "market-linked",
+          "confidence": 0.999886,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 21345,
+          "end": 21637,
+          "text": "funds,",
+          "confidence": 0.999936,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 22188,
+          "end": 22414,
+          "text": "so",
+          "confidence": 0.999985,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 22479,
+          "end": 22528,
+          "text": "the",
+          "confidence": 0.999983,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 22577,
+          "end": 22836,
+          "text": "fund",
+          "confidence": 0.999979,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 22901,
+          "end": 23241,
+          "text": "value",
+          "confidence": 0.999995,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 23306,
+          "end": 23646,
+          "text": "depends",
+          "confidence": 0.999993,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 23776,
+          "end": 23824,
+          "text": "on",
+          "confidence": 0.999995,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 23873,
+          "end": 23905,
+          "text": "the",
+          "confidence": 0.999995,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        },
+        {
+          "start": 23954,
+          "end": 24310,
+          "text": "market.",
+          "confidence": 0.999372,
+          "speaker": "B",
+          "speaker_confidence": 0.969338,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "The money goes into market-linked funds, so the fund value depends on the market.",
+      "language_code": "en",
+      "language_confidence": 0.84081,
+      "speaker_label": "B",
+      "speaker_confidence": 0.969338,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 6,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "There is a 5-year lock-in.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 25217,
+          "end": 25335,
+          "text": "There",
+          "confidence": 0.996216,
+          "speaker": "B",
+          "speaker_confidence": 0.969121,
+          "word_is_final": true
+        },
+        {
+          "start": 25402,
+          "end": 25503,
+          "text": "is",
+          "confidence": 0.999757,
+          "speaker": "B",
+          "speaker_confidence": 0.969121,
+          "word_is_final": true
+        },
+        {
+          "start": 25571,
+          "end": 25587,
+          "text": "a",
+          "confidence": 0.999959,
+          "speaker": "B",
+          "speaker_confidence": 0.969121,
+          "word_is_final": true
+        },
+        {
+          "start": 25638,
+          "end": 26160,
+          "text": "5-year",
+          "confidence": 0.999106,
+          "speaker": "B",
+          "speaker_confidence": 0.969121,
+          "word_is_final": true
+        },
+        {
+          "start": 26294,
+          "end": 26681,
+          "text": "lock-in.",
+          "confidence": 0.999525,
+          "speaker": "B",
+          "speaker_confidence": 0.969121,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "There is a 5-year lock-in.",
+      "language_code": "en",
+      "language_confidence": 0.630861,
+      "speaker_label": "B",
+      "speaker_confidence": 0.969121,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 7,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Is my paisa cab nikal sakhti hoon?",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 29064,
+          "end": 29146,
+          "text": "Is",
+          "confidence": 0.976091,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 29211,
+          "end": 29309,
+          "text": "my",
+          "confidence": 0.621854,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 29375,
+          "end": 29785,
+          "text": "paisa",
+          "confidence": 0.86955,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 29785,
+          "end": 30129,
+          "text": "cab",
+          "confidence": 0.541471,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 30194,
+          "end": 30456,
+          "text": "nikal",
+          "confidence": 0.845548,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 30456,
+          "end": 30866,
+          "text": "sakhti",
+          "confidence": 0.660121,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        },
+        {
+          "start": 30997,
+          "end": 31194,
+          "text": "hoon?",
+          "confidence": 0.928698,
+          "speaker": "A",
+          "speaker_confidence": 0.950343,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Is my paisa cab nikal sakhti hoon?",
+      "language_code": "en",
+      "language_confidence": 0.343206,
+      "speaker_label": "A",
+      "speaker_confidence": 0.950343,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 8,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Anytime, madam, and the returns are guaranteed, 12%.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 33618,
+          "end": 34057,
+          "text": "Anytime,",
+          "confidence": 0.99939,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 34594,
+          "end": 34904,
+          "text": "madam,",
+          "confidence": 0.974939,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 35490,
+          "end": 35555,
+          "text": "and",
+          "confidence": 0.999975,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 35587,
+          "end": 35620,
+          "text": "the",
+          "confidence": 0.999973,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 35669,
+          "end": 36092,
+          "text": "returns",
+          "confidence": 0.999976,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 36222,
+          "end": 36255,
+          "text": "are",
+          "confidence": 0.999984,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 36320,
+          "end": 36906,
+          "text": "guaranteed,",
+          "confidence": 0.734322,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        },
+        {
+          "start": 37443,
+          "end": 37801,
+          "text": "12%.",
+          "confidence": 0.982265,
+          "speaker": "B",
+          "speaker_confidence": 0.969827,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Anytime, madam, and the returns are guaranteed, 12%.",
+      "language_code": "en",
+      "language_confidence": 0.791282,
+      "speaker_label": "B",
+      "speaker_confidence": 0.969827,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 9,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Sorry, let me correct that.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 40536,
+          "end": 40880,
+          "text": "Sorry,",
+          "confidence": 0.999709,
+          "speaker": "B",
+          "speaker_confidence": 0.970249,
+          "word_is_final": true
+        },
+        {
+          "start": 41504,
+          "end": 41685,
+          "text": "let",
+          "confidence": 0.999935,
+          "speaker": "B",
+          "speaker_confidence": 0.970249,
+          "word_is_final": true
+        },
+        {
+          "start": 41734,
+          "end": 41767,
+          "text": "me",
+          "confidence": 0.999996,
+          "speaker": "B",
+          "speaker_confidence": 0.970249,
+          "word_is_final": true
+        },
+        {
+          "start": 41898,
+          "end": 42177,
+          "text": "correct",
+          "confidence": 0.999997,
+          "speaker": "B",
+          "speaker_confidence": 0.970249,
+          "word_is_final": true
+        },
+        {
+          "start": 42243,
+          "end": 42424,
+          "text": "that.",
+          "confidence": 0.996634,
+          "speaker": "B",
+          "speaker_confidence": 0.970249,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Sorry, let me correct that.",
+      "language_code": "en",
+      "language_confidence": 0.936837,
+      "speaker_label": "B",
+      "speaker_confidence": 0.970249,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 10,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Returns are not guaranteed.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 43392,
+          "end": 43817,
+          "text": "Returns",
+          "confidence": 0.994031,
+          "speaker": "B",
+          "speaker_confidence": 0.961203,
+          "word_is_final": true
+        },
+        {
+          "start": 43882,
+          "end": 43964,
+          "text": "are",
+          "confidence": 0.999987,
+          "speaker": "B",
+          "speaker_confidence": 0.961203,
+          "word_is_final": true
+        },
+        {
+          "start": 43980,
+          "end": 44225,
+          "text": "not",
+          "confidence": 0.999934,
+          "speaker": "B",
+          "speaker_confidence": 0.961203,
+          "word_is_final": true
+        },
+        {
+          "start": 44274,
+          "end": 44878,
+          "text": "guaranteed.",
+          "confidence": 0.992383,
+          "speaker": "B",
+          "speaker_confidence": 0.961203,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Returns are not guaranteed.",
+      "language_code": "en",
+      "language_confidence": 0.940042,
+      "speaker_label": "B",
+      "speaker_confidence": 0.961203,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 11,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "There are charges, including premium allocation and fund management charges.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 45825,
+          "end": 45939,
+          "text": "There",
+          "confidence": 0.995459,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 46004,
+          "end": 46036,
+          "text": "are",
+          "confidence": 0.999985,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 46085,
+          "end": 46523,
+          "text": "charges,",
+          "confidence": 0.992483,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 47124,
+          "end": 47562,
+          "text": "including",
+          "confidence": 0.999994,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 47627,
+          "end": 48050,
+          "text": "premium",
+          "confidence": 0.999476,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 48180,
+          "end": 48715,
+          "text": "allocation",
+          "confidence": 0.999982,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 48845,
+          "end": 48910,
+          "text": "and",
+          "confidence": 0.990574,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 48992,
+          "end": 49186,
+          "text": "fund",
+          "confidence": 0.999961,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 49251,
+          "end": 49738,
+          "text": "management",
+          "confidence": 0.999856,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        },
+        {
+          "start": 49803,
+          "end": 50177,
+          "text": "charges.",
+          "confidence": 0.999347,
+          "speaker": "B",
+          "speaker_confidence": 0.971364,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "There are charges, including premium allocation and fund management charges.",
+      "language_code": "en",
+      "language_confidence": 0.992127,
+      "speaker_label": "B",
+      "speaker_confidence": 0.971364,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 12,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "The benefit illustration shows values at 4% and 8%.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 52621,
+          "end": 52654,
+          "text": "The",
+          "confidence": 0.999485,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 52768,
+          "end": 53124,
+          "text": "benefit",
+          "confidence": 0.998833,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 53189,
+          "end": 53855,
+          "text": "illustration",
+          "confidence": 0.999989,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 53920,
+          "end": 54195,
+          "text": "shows",
+          "confidence": 0.999988,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 54309,
+          "end": 54682,
+          "text": "values",
+          "confidence": 0.999878,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 54812,
+          "end": 54844,
+          "text": "at",
+          "confidence": 0.999988,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 54974,
+          "end": 55088,
+          "text": "4%",
+          "confidence": 0.999968,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 55688,
+          "end": 55769,
+          "text": "and",
+          "confidence": 0.999919,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        },
+        {
+          "start": 55850,
+          "end": 56029,
+          "text": "8%.",
+          "confidence": 0.996918,
+          "speaker": "B",
+          "speaker_confidence": 0.966636,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "The benefit illustration shows values at 4% and 8%.",
+      "language_code": "en",
+      "language_confidence": 0.895657,
+      "speaker_label": "B",
+      "speaker_confidence": 0.966636,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 13,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "The surrender value applies after the lock-in.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 57408,
+          "end": 57441,
+          "text": "The",
+          "confidence": 0.990192,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 57491,
+          "end": 57853,
+          "text": "surrender",
+          "confidence": 0.999712,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 57985,
+          "end": 58331,
+          "text": "value",
+          "confidence": 0.999989,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 58414,
+          "end": 58760,
+          "text": "applies",
+          "confidence": 0.99997,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 58958,
+          "end": 59172,
+          "text": "after",
+          "confidence": 0.999959,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 59238,
+          "end": 59320,
+          "text": "the",
+          "confidence": 0.999961,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 59386,
+          "end": 59815,
+          "text": "lock-in.",
+          "confidence": 0.998668,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "The surrender value applies after the lock-in.",
+      "language_code": "en",
+      "language_confidence": 0.671369,
+      "speaker_label": "B",
+      "speaker_confidence": 0.969532,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 14,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Saakshi, verify.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 62200,
+          "end": 62626,
+          "text": "Saakshi,",
+          "confidence": 0.953701,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        },
+        {
+          "start": 63249,
+          "end": 63609,
+          "text": "verify.",
+          "confidence": 0.984177,
+          "speaker": "B",
+          "speaker_confidence": 0.969532,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Saakshi, verify.",
+      "language_code": "en",
+      "language_confidence": 0.845415,
+      "speaker_label": "B",
+      "speaker_confidence": 0.969532,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 15,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "You also have a 30-day free look period to return the policy.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 65989,
+          "end": 66087,
+          "text": "You",
+          "confidence": 0.997151,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 66235,
+          "end": 66496,
+          "text": "also",
+          "confidence": 0.999982,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 66562,
+          "end": 66676,
+          "text": "have",
+          "confidence": 0.999993,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 66758,
+          "end": 66774,
+          "text": "a",
+          "confidence": 0.999994,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 66889,
+          "end": 67314,
+          "text": "30-day",
+          "confidence": 0.999232,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 67461,
+          "end": 67559,
+          "text": "free",
+          "confidence": 0.99988,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 67707,
+          "end": 67805,
+          "text": "look",
+          "confidence": 0.998294,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 67886,
+          "end": 68246,
+          "text": "period",
+          "confidence": 0.999946,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 68295,
+          "end": 68393,
+          "text": "to",
+          "confidence": 0.999942,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 68443,
+          "end": 68802,
+          "text": "return",
+          "confidence": 0.999959,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 68851,
+          "end": 68884,
+          "text": "the",
+          "confidence": 0.999978,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        },
+        {
+          "start": 68950,
+          "end": 69375,
+          "text": "policy.",
+          "confidence": 0.999227,
+          "speaker": "B",
+          "speaker_confidence": 0.973652,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "You also have a 30-day free look period to return the policy.",
+      "language_code": "en",
+      "language_confidence": 0.88025,
+      "speaker_label": "B",
+      "speaker_confidence": 0.973652,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 16,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "पांच साल, five years, उसके बाद निकल सकती हूँ।",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 70849,
+          "end": 71633,
+          "text": "पांच",
+          "confidence": 0.71177,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 71747,
+          "end": 72399,
+          "text": "साल,",
+          "confidence": 0.981125,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 72905,
+          "end": 73166,
+          "text": "five",
+          "confidence": 0.909819,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 73231,
+          "end": 73509,
+          "text": "years,",
+          "confidence": 0.899877,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 74112,
+          "end": 74178,
+          "text": "उसके",
+          "confidence": 0.982132,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 74178,
+          "end": 74569,
+          "text": "बाद",
+          "confidence": 0.999821,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 74586,
+          "end": 74896,
+          "text": "निकल",
+          "confidence": 0.996764,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 74928,
+          "end": 75271,
+          "text": "सकती",
+          "confidence": 0.96199,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        },
+        {
+          "start": 75418,
+          "end": 76119,
+          "text": "हूँ।",
+          "confidence": 0.930615,
+          "speaker": "A",
+          "speaker_confidence": 0.933669,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "पांच साल, five years, उसके बाद निकल सकती हूँ।",
+      "language_code": "hi",
+      "language_confidence": 0.911907,
+      "speaker_label": "A",
+      "speaker_confidence": 0.933669,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 17,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Good morning, Mrs. Sharma.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 78793,
+          "end": 78924,
+          "text": "Good",
+          "confidence": 0.997639,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 79039,
+          "end": 79285,
+          "text": "morning,",
+          "confidence": 0.999839,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 79383,
+          "end": 79662,
+          "text": "Mrs.",
+          "confidence": 0.995115,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 79712,
+          "end": 80040,
+          "text": "Sharma.",
+          "confidence": 0.991563,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Good morning, Mrs. Sharma.",
+      "language_code": "en",
+      "language_confidence": 0.718325,
+      "speaker_label": "B",
+      "speaker_confidence": 0.954372,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 18,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "My name is Rahul.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 80992,
+          "end": 81042,
+          "text": "My",
+          "confidence": 0.998202,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 81109,
+          "end": 81310,
+          "text": "name",
+          "confidence": 0.999995,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 81427,
+          "end": 81478,
+          "text": "is",
+          "confidence": 0.999993,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        },
+        {
+          "start": 81595,
+          "end": 81897,
+          "text": "Rahul.",
+          "confidence": 0.999472,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "My name is Rahul.",
+      "language_code": "en",
+      "language_confidence": 0.52757,
+      "speaker_label": "B",
+      "speaker_confidence": 0.954372,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 19,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "Namaste.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 84330,
+          "end": 84855,
+          "text": "Namaste.",
+          "confidence": 0.985083,
+          "speaker": "B",
+          "speaker_confidence": 0.954372,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "Namaste.",
+      "language_code": "en",
+      "language_confidence": 0.464727,
+      "speaker_label": "B",
+      "speaker_confidence": 0.954372,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 20,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "My name is Mrs. Sharma.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 85888,
+          "end": 85938,
+          "text": "My",
+          "confidence": 0.993986,
+          "speaker": "A",
+          "speaker_confidence": 0.973533,
+          "word_is_final": true
+        },
+        {
+          "start": 86021,
+          "end": 86206,
+          "text": "name",
+          "confidence": 0.999985,
+          "speaker": "A",
+          "speaker_confidence": 0.973533,
+          "word_is_final": true
+        },
+        {
+          "start": 86339,
+          "end": 86373,
+          "text": "is",
+          "confidence": 0.999986,
+          "speaker": "A",
+          "speaker_confidence": 0.973533,
+          "word_is_final": true
+        },
+        {
+          "start": 86490,
+          "end": 86791,
+          "text": "Mrs.",
+          "confidence": 0.99435,
+          "speaker": "A",
+          "speaker_confidence": 0.973533,
+          "word_is_final": true
+        },
+        {
+          "start": 86842,
+          "end": 87193,
+          "text": "Sharma.",
+          "confidence": 0.999311,
+          "speaker": "A",
+          "speaker_confidence": 0.973533,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "My name is Mrs. Sharma.",
+      "language_code": "et",
+      "language_confidence": 0.256657,
+      "speaker_label": "A",
+      "speaker_confidence": 0.973533,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 21,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "This is a unit-linked insurance plan.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 89589,
+          "end": 89703,
+          "text": "This",
+          "confidence": 0.999212,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        },
+        {
+          "start": 89834,
+          "end": 89866,
+          "text": "is",
+          "confidence": 0.999985,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        },
+        {
+          "start": 89981,
+          "end": 89997,
+          "text": "a",
+          "confidence": 0.999946,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        },
+        {
+          "start": 90062,
+          "end": 90585,
+          "text": "unit-linked",
+          "confidence": 0.975663,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        },
+        {
+          "start": 90651,
+          "end": 91141,
+          "text": "insurance",
+          "confidence": 0.999961,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        },
+        {
+          "start": 91223,
+          "end": 91484,
+          "text": "plan.",
+          "confidence": 0.996057,
+          "speaker": "B",
+          "speaker_confidence": 0.962498,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "This is a unit-linked insurance plan.",
+      "language_code": "en",
+      "language_confidence": 0.783359,
+      "speaker_label": "B",
+      "speaker_confidence": 0.962498,
+      "type": "Turn"
+    },
+    {
+      "turn_order": 22,
+      "turn_is_formatted": true,
+      "end_of_turn": true,
+      "transcript": "You pay a premium of ₹50,000 every year for 10 years.",
+      "end_of_turn_confidence": 1,
+      "words": [
+        {
+          "start": 92513,
+          "end": 92546,
+          "text": "You",
+          "confidence": 0.99423,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 92611,
+          "end": 92774,
+          "text": "pay",
+          "confidence": 0.999966,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 92856,
+          "end": 92872,
+          "text": "a",
+          "confidence": 0.999986,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 92938,
+          "end": 93362,
+          "text": "premium",
+          "confidence": 0.999983,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 93427,
+          "end": 93525,
+          "text": "of",
+          "confidence": 0.999978,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 93525,
+          "end": 94846,
+          "text": "₹50,000",
+          "confidence": 0.994673,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 94960,
+          "end": 95140,
+          "text": "every",
+          "confidence": 0.99986,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 95287,
+          "end": 95336,
+          "text": "year",
+          "confidence": 0.999997,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 95466,
+          "end": 95597,
+          "text": "for",
+          "confidence": 0.999775,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 95695,
+          "end": 95825,
+          "text": "10",
+          "confidence": 0.99999,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        },
+        {
+          "start": 95939,
+          "end": 96233,
+          "text": "years.",
+          "confidence": 0.962369,
+          "speaker": "B",
+          "speaker_confidence": 0.977758,
+          "word_is_final": true
+        }
+      ],
+      "utterance": "You pay a premium of ₹50,000 every year for 10 years.",
+      "language_code": "en",
+      "language_confidence": 0.74511,
+      "speaker_label": "B",
+      "speaker_confidence": 0.977758,
+      "type": "Turn"
+    }
+  ],
+  "speaker_revision": {
+    "type": "SpeakerRevision",
+    "revisions": [
+      {
+        "turn_order": 0,
+        "speaker_label": "A",
+        "words": [
+          {
+            "start": 34,
+            "end": 409,
+            "text": "Rahul.",
+            "confidence": 0.440495,
+            "speaker": "A",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 1,
+        "speaker_label": "B",
+        "words": [
+          {
+            "start": 2847,
+            "end": 3383,
+            "text": "Namaste.",
+            "confidence": 0.563432,
+            "speaker": "B",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 2,
+        "speaker_label": "B",
+        "words": [
+          {
+            "start": 4384,
+            "end": 4434,
+            "text": "My",
+            "confidence": 0.982049,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 4518,
+            "end": 4703,
+            "text": "name",
+            "confidence": 0.995246,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 4838,
+            "end": 4872,
+            "text": "is",
+            "confidence": 0.712839,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 4989,
+            "end": 5292,
+            "text": "Mrs.",
+            "confidence": 0.642094,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 5343,
+            "end": 5696,
+            "text": "Sharma.",
+            "confidence": 0.701259,
+            "speaker": "B",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 6,
+        "speaker_label": "A",
+        "words": [
+          {
+            "start": 25217,
+            "end": 25335,
+            "text": "There",
+            "confidence": 0.843317,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 25402,
+            "end": 25503,
+            "text": "is",
+            "confidence": 0.668265,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 25571,
+            "end": 25587,
+            "text": "a",
+            "confidence": 0.040666,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 25638,
+            "end": 26160,
+            "text": "5-year",
+            "confidence": 0.728868,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 26294,
+            "end": 26681,
+            "text": "lock-in.",
+            "confidence": 0.801106,
+            "speaker": "A",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 7,
+        "speaker_label": "B",
+        "words": [
+          {
+            "start": 29064,
+            "end": 29146,
+            "text": "Is",
+            "confidence": 0.995053,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 29211,
+            "end": 29309,
+            "text": "my",
+            "confidence": 0.494004,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 29375,
+            "end": 29785,
+            "text": "paisa",
+            "confidence": 0.93124,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 29785,
+            "end": 30129,
+            "text": "cab",
+            "confidence": 0.784362,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 30194,
+            "end": 30456,
+            "text": "nikal",
+            "confidence": 0.72436,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 30456,
+            "end": 30866,
+            "text": "sakhti",
+            "confidence": 0.624039,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 30997,
+            "end": 31194,
+            "text": "hoon?",
+            "confidence": 0.949797,
+            "speaker": "B",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 13,
+        "speaker_label": "A",
+        "words": [
+          {
+            "start": 57408,
+            "end": 57441,
+            "text": "The",
+            "confidence": 0.899972,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 57491,
+            "end": 57853,
+            "text": "surrender",
+            "confidence": 0.902503,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 57985,
+            "end": 58331,
+            "text": "value",
+            "confidence": 0.83295,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 58414,
+            "end": 58760,
+            "text": "applies",
+            "confidence": 0.927458,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 58958,
+            "end": 59172,
+            "text": "after",
+            "confidence": 0.945208,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 59238,
+            "end": 59320,
+            "text": "the",
+            "confidence": 0.97999,
+            "speaker": "A",
+            "word_is_final": true
+          },
+          {
+            "start": 59386,
+            "end": 59815,
+            "text": "lock-in.",
+            "confidence": 0.714052,
+            "speaker": "A",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 16,
+        "speaker_label": "B",
+        "words": [
+          {
+            "start": 70849,
+            "end": 71633,
+            "text": "पांच",
+            "confidence": 0.000689,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 71747,
+            "end": 72399,
+            "text": "साल,",
+            "confidence": 0.148526,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 72905,
+            "end": 73166,
+            "text": "five",
+            "confidence": 0.964028,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 73231,
+            "end": 73509,
+            "text": "years,",
+            "confidence": 0.810429,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 74112,
+            "end": 74178,
+            "text": "उसके",
+            "confidence": 0.21775,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 74178,
+            "end": 74569,
+            "text": "बाद",
+            "confidence": 0.111593,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 74586,
+            "end": 74896,
+            "text": "निकल",
+            "confidence": 0.280239,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 74928,
+            "end": 75271,
+            "text": "सकती",
+            "confidence": 0.478588,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 75418,
+            "end": 76119,
+            "text": "हूँ।",
+            "confidence": 0.253942,
+            "speaker": "B",
+            "word_is_final": true
+          }
+        ]
+      },
+      {
+        "turn_order": 20,
+        "speaker_label": "B",
+        "words": [
+          {
+            "start": 85888,
+            "end": 85938,
+            "text": "My",
+            "confidence": 0.96569,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 86021,
+            "end": 86206,
+            "text": "name",
+            "confidence": 0.992241,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 86339,
+            "end": 86373,
+            "text": "is",
+            "confidence": 0.694434,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 86490,
+            "end": 86791,
+            "text": "Mrs.",
+            "confidence": 0.645172,
+            "speaker": "B",
+            "word_is_final": true
+          },
+          {
+            "start": 86842,
+            "end": 87193,
+            "text": "Sharma.",
+            "confidence": 0.7344,
+            "speaker": "B",
+            "word_is_final": true
+          }
+        ]
+      }
+    ]
+  }
+}

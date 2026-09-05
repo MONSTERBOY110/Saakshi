@@ -1,6 +1,416 @@
 {
   "id": "insurance-ulip-in",
-  "version": "0.0.1",
-  "title": "ULIP sale, India (placeholder; full pack lands in Phase 1)",
-  "jurisdiction": "IN"
+  "version": "1.0.0",
+  "title": "Unit linked insurance plan sale, India",
+  "jurisdiction": "IN",
+  "keyterms": [
+    "Saakshi",
+    "ULIP",
+    "unit-linked",
+    "lock-in",
+    "free look",
+    "free-look period",
+    "surrender value",
+    "fund value",
+    "premium allocation charge",
+    "fund management charge",
+    "mortality charge",
+    "benefit illustration",
+    "NAV",
+    "market-linked",
+    "IRDAI",
+    "paanch saal",
+    "tees din",
+    "guaranteed"
+  ],
+  "scenario_prompt": "Bank branch conversation in India. An insurance relationship manager explains a unit linked insurance plan, a ULIP, to a customer who speaks Hindi and English and switches between them mid-sentence. Topics: yearly premium and payment term, policy term, the five year lock-in, charges such as premium allocation and fund management, market linked funds and NAV, the benefit illustration at four and eight percent, surrender value, and the thirty day free look period.",
+  "checkpoints": [
+    {
+      "id": "premium_and_term",
+      "label": "Premium and payment term",
+      "required_speaker": "advisor",
+      "patterns": [
+        "premium",
+        "प्रीमियम",
+        "(pay|paying|dena|dene) .{0,40}(years|saal)",
+        "every year",
+        "हर साल"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Protection of Policyholders' Interests, Operations and Allied Matters of Insurers) Regulations, 2024",
+        "clause": "Customised benefit illustration at point of sale, including premium and payment term",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "State the yearly premium and for how many years it is paid."
+    },
+    {
+      "id": "policy_term",
+      "label": "Policy term",
+      "required_speaker": "advisor",
+      "patterns": [
+        "policy term",
+        "term of (the )?(policy|plan)",
+        "(\\d+|ten|fifteen|twenty|das|pandrah|bees) (year|years|saal) (policy|plan)",
+        "policy .{0,20}(\\d+|das|pandrah|bees) saal",
+        "पॉलिसी (की )?अवधि",
+        "policy (chalegi|rahegi) .{0,20}saal"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Protection of Policyholders' Interests, Operations and Allied Matters of Insurers) Regulations, 2024",
+        "clause": "Customised benefit illustration at point of sale, including policy term",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "State how many years the policy runs."
+    },
+    {
+      "id": "lock_in_5y",
+      "label": "Five-year lock-in",
+      "required_speaker": "advisor",
+      "patterns": [
+        "lock ?in",
+        "locked (in )?(for|till|until)",
+        "(five|5|paanch|panch|pach) (years?|saal) .{0,30}(lock|nikal|withdraw)",
+        "(lock|nikal|withdraw).{0,40}(five|5|paanch|panch|pach) (years?|saal)",
+        "पाँच साल",
+        "पांच साल",
+        "लॉक ?इन"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Unit Linked Insurance Products) Regulations, 2019",
+        "clause": "Five-year lock-in period for unit linked products",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Say that money cannot be withdrawn for five years.",
+      "teachback_topic": "lock_in"
+    },
+    {
+      "id": "charges",
+      "label": "Charges disclosed",
+      "required_speaker": "advisor",
+      "patterns": ["charges?", "allocation", "fund management", "mortality", "शुल्क", "चार्ज"],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "Master Circular on Life Insurance Products, June 2024",
+        "clause": "Disclosure of all charges applicable to the policy",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Name the charges: premium allocation, fund management, mortality, policy administration.",
+      "teachback_topic": "charges"
+    },
+    {
+      "id": "market_risk",
+      "label": "Market-linked risk",
+      "required_speaker": "advisor",
+      "patterns": [
+        "market ?linked",
+        "linked to (the )?market",
+        "depends? on (the )?market",
+        "market (risk|ke risk|par depend|pe depend)",
+        "(?<!\\S)nav(?!\\S)",
+        "बाज़ार",
+        "बाजार",
+        "(value|paisa|fund) .{0,20}(upar niche|up and down|ghat|gir)"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "Master Circular on Life Insurance Products, June 2024",
+        "clause": "Investment risk in the investment portfolio is borne by the policyholder",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Say that the fund value depends on the market and can fall.",
+      "teachback_topic": "market_risk"
+    },
+    {
+      "id": "benefit_illustration_4_8",
+      "label": "Benefit illustration at 4% and 8%",
+      "required_speaker": "advisor",
+      "patterns": [
+        "illustration",
+        "(4|four|chaar|char) ?(%|percent|per cent|pratishat).{0,40}(8|eight|aath) ?(%|percent|per cent|pratishat)",
+        "(8|eight|aath) ?(%|percent|per cent|pratishat).{0,40}(4|four|chaar|char) ?(%|percent|per cent|pratishat)",
+        "चार (प्रतिशत|percent).{0,40}आठ"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Protection of Policyholders' Interests, Operations and Allied Matters of Insurers) Regulations, 2024",
+        "clause": "Benefit illustration at assumed gross returns of 4% and 8%",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Show the illustration at four and eight percent assumed returns.",
+      "teachback_topic": "benefit_illustration"
+    },
+    {
+      "id": "surrender_value",
+      "label": "Surrender value",
+      "required_speaker": "advisor",
+      "patterns": [
+        "surrender",
+        "discontinu",
+        "सरेंडर",
+        "(band|bandh) (karne|karoge|kar doge) .{0,30}(paisa|value|milega)"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "Master Circular on Life Insurance Products, June 2024",
+        "clause": "Surrender and discontinuance terms and values",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Explain what the customer gets if the policy is surrendered or discontinued.",
+      "teachback_topic": "surrender_value"
+    },
+    {
+      "id": "free_look_30",
+      "label": "Thirty-day free look",
+      "required_speaker": "advisor",
+      "patterns": [
+        "free ?look",
+        "(thirty|30|tees|tis) ?(days?|din) .{0,40}(return|cancel|wapas|review)",
+        "(return|cancel|wapas|review).{0,40}(thirty|30|tees|tis) ?(days?|din)",
+        "तीस दिन",
+        "फ्री ?लुक"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Protection of Policyholders' Interests, Operations and Allied Matters of Insurers) Regulations, 2024",
+        "clause": "Free look period of 30 days from receipt of the policy document",
+        "url": "https://irdai.gov.in"
+      },
+      "hint": "Say the customer can return the policy within thirty days of receiving it.",
+      "teachback_topic": "free_look"
+    }
+  ],
+  "prohibited": [
+    {
+      "id": "guaranteed_returns",
+      "label": "Guaranteed or assured returns",
+      "severity": "critical",
+      "patterns": [
+        "(?<!not )(?<!no )(?<!never )(?<!nahi )guaranteed? (returns?|income|growth|profit|interest|munafa)",
+        "returns? (are|is|will be|hai|hain|hoga|honge|hoge) (fully |completely |totally |bilkul |100% )?(guaranteed|assured|pakka|fixed|fix|sure|certain)",
+        "(?<!koi )(?<!no )(?<!not )guarantee (hai|hoga|milega|deta|dete|karta|karte)(?! nahi)(?! nahin)",
+        "(?<!not )(?<!no )(?<!nahi )(?<!never )guaranteed (hai|hain|hoga|honge|hoge|h)(?! nahi)(?! nahin)",
+        "(assured|pakka|sure ?shot|fixed|certain) (returns?|income|profit|munafa|paisa|growth)",
+        "(\\d+|twelve|ten|fifteen|twenty|baarah|das|pandrah) ?(%|percent|per cent|pratishat) (guaranteed|assured|pakka|fix|fixed|sure|milega|confirm)",
+        "(?<!कोई )(?<!नहीं )गारंटी(ड)?(?! नहीं)"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Insurance Advertisements and Disclosure) Regulations, 2021",
+        "clause": "No statement that returns on a unit linked product are guaranteed or assured",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "Returns on a market-linked plan cannot be called guaranteed."
+    },
+    {
+      "id": "like_fd",
+      "label": "Compared to a fixed deposit",
+      "severity": "high",
+      "patterns": [
+        "(like|same as|similar to|equal to) (an? |the )?(fd|fixed deposit|bank deposit)",
+        "(fd|fixed deposit) (jaisa|jaise|jaisi|ki tarah|ke barabar)",
+        "(fd|fixed deposit) se (behtar|better|zyada|jyada|accha|achha)",
+        "better than (an? |the )?(fd|fixed deposit)",
+        "एफडी (जैसा|जैसे|की तरह|से बेहतर)"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Insurance Advertisements and Disclosure) Regulations, 2021",
+        "clause": "No comparison of a unit linked product with a bank deposit",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "This is not a fixed deposit; the value can go down."
+    },
+    {
+      "id": "no_charges",
+      "label": "Charges denied",
+      "severity": "high",
+      "patterns": [
+        "(?<!\\S)no (charges?|fees?|deductions?|hidden charges?)(?!\\S)",
+        "zero (charges?|fees?)",
+        "(koi|kuch|kisi) (bhi )?(charge|charges|fees|fee|katauti|deduction) nahi",
+        "(charge|charges) (nahi|nahin) (hai|hain|lagega|lagte|lagenge)",
+        "without any (charges?|fees?|deductions?)",
+        "कोई (शुल्क|चार्ज|फीस) नहीं"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "Master Circular on Life Insurance Products, June 2024",
+        "clause": "All charges must be disclosed; no representation that the product is charge free",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "This plan has charges; they are listed in the benefit illustration."
+    },
+    {
+      "id": "withdraw_anytime",
+      "label": "Withdraw anytime",
+      "severity": "critical",
+      "patterns": [
+        "withdraw (it |money |the money |paisa )?(anytime|any time|whenever|kabhi bhi|jab chaho|jab chahe)",
+        "(anytime|any time|kabhi bhi|jab chaho|jab chahe) (withdraw|nikal|nikaal|le sakte|le sakti)",
+        "(?<!\\S)no lock ?in(?!\\S)",
+        "(koi|kuch) (bhi )?lock ?in nahi",
+        "(nikal|nikaal|withdraw|paisa|money|kab).{0,60}(?<!\\S)(anytime|any time|whenever|kabhi bhi|jab chaho|jab chahe)(?!\\S)",
+        "कभी भी निकाल"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Unit Linked Insurance Products) Regulations, 2019",
+        "clause": "No withdrawal during the five-year lock-in period",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "There is a five-year lock-in on this plan; money cannot be withdrawn anytime."
+    },
+    {
+      "id": "tax_free_forever",
+      "label": "Unconditional tax-free claim",
+      "severity": "medium",
+      "patterns": [
+        "(completely|totally|fully|100 ?%|hundred percent|bilkul|poora|pura) tax ?free",
+        "tax free (forever|for life|always|hamesha)",
+        "never (pay )?(any )?tax",
+        "no tax (ever|at all|kabhi)",
+        "tax (kabhi )?(nahi|nahin) (lagega|lagta|lagti|dena)",
+        "कोई टैक्स नहीं"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Insurance Advertisements and Disclosure) Regulations, 2021",
+        "clause": "Tax benefits must be stated as subject to prevailing tax law",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "Tax treatment depends on current law and your situation."
+    },
+    {
+      "id": "pressure",
+      "label": "Pressure to sign now",
+      "severity": "medium",
+      "patterns": [
+        "only (for )?today",
+        "offer (ends|closes|expires|is only) (today|tonight|tomorrow|abhi)",
+        "sign (it |up |the form )?(now|today|abhi|right now)",
+        "abhi (sign|sahi|dastakhat) (kar|karo|kijiye|kar do|karna)",
+        "last (day|chance|date) (today|aaj)",
+        "(aaj|today) (hi|only) (sign|karna|kar)",
+        "आज ही (साइन|हस्ताक्षर)",
+        "सिर्फ आज"
+      ],
+      "citation": {
+        "authority": "IRDAI",
+        "instrument": "IRDAI (Protection of Policyholders' Interests, Operations and Allied Matters of Insurers) Regulations, 2024",
+        "clause": "Free look period; no undue pressure at point of sale",
+        "url": "https://irdai.gov.in"
+      },
+      "correction": "There is a thirty-day free-look period; there is no rush to sign."
+    }
+  ],
+  "teachback_topics": [
+    {
+      "id": "lock_in",
+      "label": "Lock-in",
+      "expected_points": ["money cannot be withdrawn for five years"],
+      "hint_hi": "Paanch saal tak paisa nahi nikal sakte."
+    },
+    {
+      "id": "charges",
+      "label": "Charges",
+      "expected_points": ["the plan has charges", "charges reduce the amount invested"],
+      "hint_hi": "Plan mein charges lagte hain, jaise allocation aur fund management."
+    },
+    {
+      "id": "market_risk",
+      "label": "Market risk",
+      "expected_points": [
+        "value depends on the market",
+        "value can go down",
+        "returns are not guaranteed"
+      ],
+      "hint_hi": "Paisa market par depend karta hai, kam bhi ho sakta hai."
+    },
+    {
+      "id": "free_look",
+      "label": "Free look",
+      "expected_points": ["can return the policy within thirty days"],
+      "hint_hi": "Tees din ke andar policy wapas kar sakte hain."
+    },
+    {
+      "id": "premium_term",
+      "label": "Premium and term",
+      "expected_points": ["how much is paid each year", "for how many years"],
+      "hint_hi": "Har saal kitna premium aur kitne saal tak."
+    },
+    {
+      "id": "surrender_value",
+      "label": "Surrender value",
+      "expected_points": ["surrendering early gives less than the fund value"],
+      "hint_hi": "Beech mein band karne par poora paisa nahi milta."
+    },
+    {
+      "id": "benefit_illustration",
+      "label": "Benefit illustration",
+      "expected_points": [
+        "illustration shows values at four and eight percent",
+        "these are assumptions, not promises"
+      ],
+      "hint_hi": "Chaar aur aath percent sirf anumaan hain, vaada nahi."
+    }
+  ],
+  "demo_script": [
+    {
+      "id": "d01",
+      "text_en": "Good morning Mrs. Sharma. My name is Rahul, I am your relationship manager at the branch.",
+      "text_display": "Good morning Mrs. Sharma. My name is Rahul, I am your relationship manager at the branch.",
+      "wait_for": "customer_turn"
+    },
+    {
+      "id": "d02",
+      "text_en": "This is a unit linked insurance plan. You pay a premium of fifty thousand rupees every year for ten years, and the policy term is fifteen years.",
+      "text_display": "This is a unit linked insurance plan. You pay a premium of fifty thousand rupees every year for ten years, and the policy term is fifteen years.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "d03",
+      "text_en": "The money goes into market linked funds, so the fund value depends on the market. There is a five year lock in.",
+      "text_display": "The money goes into market linked funds, so the fund value depends on the market. There is a five year lock in.",
+      "wait_for": "customer_turn"
+    },
+    {
+      "id": "d04",
+      "text_en": "Anytime, madam, and the returns are guaranteed, twelve percent.",
+      "text_display": "Anytime, madam, and the returns are guaranteed, twelve percent.",
+      "wait_for": "ms:9000"
+    },
+    {
+      "id": "d05",
+      "text_en": "Sorry, let me correct that. Returns are not guaranteed, and there is a five year lock in.",
+      "text_display": "Sorry, let me correct that. Returns are not guaranteed, and there is a five year lock in.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "d06",
+      "text_en": "There are charges, including premium allocation and fund management charges.",
+      "text_display": "There are charges, including premium allocation and fund management charges.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "d07",
+      "text_en": "The benefit illustration shows values at four percent and eight percent. The surrender value applies after the lock in.",
+      "text_display": "The benefit illustration shows values at four percent and eight percent. The surrender value applies after the lock in.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "d08",
+      "text_en": "Saakshi, verify.",
+      "text_display": "Saakshi, verify.",
+      "wait_for": "ms:6000"
+    },
+    {
+      "id": "d09",
+      "text_en": "You also have a thirty day free look period to return the policy.",
+      "text_display": "You also have a thirty day free look period to return the policy.",
+      "wait_for": "ms:800"
+    }
+  ]
 }

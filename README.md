@@ -2,6 +2,8 @@
 
 **Consent you can prove.**
 
+Live: https://saakshi-1.vercel.app (Chromium recommended; allow the microphone on `/session`).
+
 Saakshi is an AI witness that sits in on regulated sales conversations, knows who said what in English or Hinglish, speaks up within two seconds when a customer is about to be misled, runs a teach-back with the customer, and ends by issuing a hash-chained Consent Certificate that anyone can verify. It uses AssemblyAI Streaming STT (Universal-3.5 Pro, diarized) as its ears, the Voice Agent API as its mouth, and the LLM Gateway for structured analysis. Built for the lablab.ai x AssemblyAI Voice Agent Hackathon, September 2026.
 
 ## Architecture
@@ -53,9 +55,13 @@ pnpm test:e2e                # playwright with a fake mic
 pnpm lint && pnpm typecheck && pnpm build
 ```
 
+## Deployment
+
+See `docs/deployment.md` for the Vercel setup, environment variables, Upstash, and the post-deploy verification steps.
+
 ## Status
 
-Phase 0 (bootstrap and spikes), 2026-09-05. Both AssemblyAI sessions run from the browser: Streaming STT
+Phase 1 (Ears and the Checkpoint Board), 2026-09-06. The session room calibrates roles by name, shows a role-coloured diarized transcript with language tags, and ticks the ULIP disclosures and flags prohibited claims from a versioned protocol pack (`packs/insurance-ulip-in.json`). Both AssemblyAI sessions run from the browser: Streaming STT
 (Universal-3.5 Pro, diarized, English and Hindi) as the ears and the Voice Agent API as the mouth, with
 server-minted single-use tokens. Spike results and every verified payload shape are in
 `docs/decisions.md`; recorded fixtures are in `tests/fixtures/`.
@@ -66,6 +72,7 @@ Live checks against AssemblyAI (need `ASSEMBLYAI_API_KEY` in `.env`, cost a few 
 pnpm test:e2e:live                                   # both sockets with Chromium fake mic
 pnpm fixtures:wav                                    # two-voice WAV from the demo script (Windows voices)
 SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav SAAKSHI_LIVE_HOLD_MS=90000 pnpm exec playwright test tests/e2e/dual-session.live.spec.ts   # diarized turns, then pnpm fixtures:split
+SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav pnpm exec playwright test tests/e2e/golden.live.spec.ts   # golden path v1
 node scripts/spike-agent-context.mjs 300000          # Voice Agent context and idle spikes, headless
 ```
 

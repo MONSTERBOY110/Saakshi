@@ -18,11 +18,13 @@ test.describe("dual session (live AssemblyAI)", () => {
 
     try {
       await page.goto("/session");
+      // Warm the token routes: in dev they compile on first hit and can take 10 s or more.
+      await Promise.all([page.request.get("/api/token/stt"), page.request.get("/api/token/agent")]);
       await page.getByRole("button", { name: "Start", exact: true }).click();
 
-      await expect(page.getByTestId("mic-status")).toHaveText("24000 Hz", { timeout: 15_000 });
-      await expect(page.getByTestId("ears-status")).toHaveText("open", { timeout: 20_000 });
-      await expect(page.getByTestId("mouth-status")).toHaveText("ready", { timeout: 20_000 });
+      await expect(page.getByTestId("mic-status")).toHaveText("24000 Hz", { timeout: 30_000 });
+      await expect(page.getByTestId("ears-status")).toHaveText("open", { timeout: 45_000 });
+      await expect(page.getByTestId("mouth-status")).toHaveText("ready", { timeout: 45_000 });
 
       await page.getByRole("button", { name: /Debug drawer/ }).click();
       const filter = page.getByPlaceholder("filter by type, e.g. Turn");
@@ -56,7 +58,7 @@ test.describe("dual session (live AssemblyAI)", () => {
       await page.keyboard.press("Escape");
 
       await page.getByRole("button", { name: "Stop", exact: true }).click();
-      await expect(page.getByTestId("phase")).toHaveText("stopped", { timeout: 15_000 });
+      await expect(page.getByTestId("phase")).toHaveText("done", { timeout: 15_000 });
 
       await page.getByRole("button", { name: /Debug drawer/ }).click();
       for (const type of ["Termination", "session.ended"]) {

@@ -1,96 +1,63 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import { AgentBar } from "@/components/agent-bar";
+import { CalibrationBanner } from "@/components/calibration-banner";
+import { CheckpointBoard } from "@/components/checkpoint-board";
+import { DebugDrawer } from "@/components/debug-drawer";
+import { SetupForm } from "@/components/setup-form";
+import { TranscriptPanel } from "@/components/transcript-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { DebugDrawer } from "@/components/debug-drawer";
-import { SpikeControls } from "@/components/spike-controls";
-import { median } from "@/lib/spike/session-controller";
-import { useDualSession } from "@/lib/spike/use-dual-session";
+import { Input } from "@/components/ui/input";
+import { getRoomController } from "@/lib/session/controller";
+import { rolesBound } from "@/lib/session/roles";
+import { useRoomStore } from "@/lib/session/store";
 
-// Phase 0 spike room: one mic feeding both AssemblyAI sockets, with the controls for S1-S5 and S8.
 export default function SessionPage() {
-  const { state, controller } = useDualSession();
-  const live = state.phase === "live";
-  const busy = state.phase === "starting" || state.phase === "stopping";
-  const last = state.latenciesMs.at(-1);
-  const p50 = median(state.latenciesMs);
-  const hb = state.ears.heartbeat;
-  const drift = hb ? Math.round(((hb.audioMs - hb.wallMs) / Math.max(hb.wallMs, 1)) * 100) : null;
+  const state = useRoomStore();
+  const controller = getRoomController();
+  const [term, setTerm] = useState("");
+  const inSetup = state.phase === "SETUP";
+  const done = state.phase === "DONE";
+  const labelsSeen = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          state.transcript.turns
+            .filter((t) => t.final && !t.pending && t.speakerLabel)
+            .map((t) => t.speakerLabel as string),
+        ),
+      ),
+    [state.transcript.turns],
+  );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-5 px-6 py-8">
+    <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-4 px-6 py-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Session room</h1>
           <p className="text-muted-foreground text-sm">
-            Phase 0 spike: Ears and Mouth from one mic.
+            {state.setup.productName} sale, {state.setup.advisorName} with{" "}
+            {state.setup.customerName}
           </p>
         </div>
-        <Badge data-testid="phase" variant={state.phase === "error" ? "destructive" : "secondary"}>
-          {state.phase}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge data-testid="phase" variant={state.error ? "destructive" : "secondary"}>
+            {state.phase.toLowerCase()}
+          </Badge>
+          {!inSetup && !done && (
+            <Button variant="destructive" onClick={() => void controller.stop()}>
+              Stop
+            </Button>
+          )}
+          {done && (
+            <Button variant="outline" onClick={() => controller.reset()}>
+              New session
+            </Button>
+          )}
+        </div>
       </header>
-
-      <section className="grid gap-3 sm:grid-cols-3">
-        <Chip
-          testId="mic-status"
-          label="Mic"
-          value={state.micRate ? `${state.micRate} Hz` : "off"}
-        />
-        <Chip
-          testId="ears-status"
-          label="Ears (Streaming STT)"
-          value={state.ears.status}
-          detail={[
-            state.ears.sessionId ? `id ${state.ears.sessionId.slice(0, 8)}` : null,
-            hb
-              ? `${hb.audioMs} ms audio / ${hb.wallMs} ms wall (${drift}% drift, rtf ${hb.realtimeFactor.toFixed(2)})`
-              : null,
-            state.ears.closeCode ? `closed ${state.ears.closeCode}` : null,
-          ]}
-        />
-        <Chip
-          testId="mouth-status"
-          label="Mouth (Voice Agent)"
-          value={state.mouth.ready ? "ready" : state.mouth.status}
-          detail={[
-            state.mouth.sessionId ? `id ${state.mouth.sessionId.slice(0, 12)}` : null,
-            state.mouth.lastError ?? null,
-            state.mouth.closeCode ? `closed ${state.mouth.closeCode}` : null,
-          ]}
-          tone={state.mouth.lastError ? "error" : "normal"}
-        />
-      </section>
-
-      <section className="flex flex-wrap items-center gap-3">
-        <Button onClick={() => void controller.start()} disabled={live || busy}>
-          Start
-        </Button>
-        <Button
-          variant="destructive"
-          onClick={() => void controller.stop()}
-          disabled={!live && state.phase !== "error"}
-        >
-          Stop
-        </Button>
-        <label className="flex items-center gap-2 text-sm">
-          <Switch
-            checked={state.micToMouth}
-            onCheckedChange={(on) => controller.setMicToMouth(on)}
-          />
-          Mic to Mouth
-        </label>
-        <span className="text-muted-foreground font-mono text-xs">
-          frames ears {state.frames.ears} / mouth {state.frames.mouth} / dropped before ready{" "}
-          {state.frames.droppedBeforeReady}
-        </span>
-        <Badge variant="outline">
-          latency {last === undefined ? "n/a" : `${last} ms`}
-          {p50 !== null ? `, p50 ${p50} ms over ${state.latenciesMs.length}` : ""}
-        </Badge>
-      </section>
 
       {state.error && (
         <p
@@ -101,70 +68,65 @@ export default function SessionPage() {
         </p>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Agent captions</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2 text-sm">
-          <p className="min-h-6 italic" aria-live="polite">
-            {state.captions.live || <span className="text-muted-foreground">(silent)</span>}
-          </p>
-          <ul className="text-muted-foreground flex flex-col gap-1">
-            {state.captions.history.slice(-4).map((line, i) => (
-              <li key={i}>{line}</li>
-            ))}
-          </ul>
-          <p className="border-t pt-2">
-            <span className="text-muted-foreground">You (agent STT): </span>
-            {state.userTranscript || <span className="text-muted-foreground">nothing yet</span>}
-          </p>
-        </CardContent>
-      </Card>
-
-      <SpikeControls
-        disabled={!live}
-        verbatim={state.verbatim}
-        onReplyNow={(t) => controller.replyNow(t)}
-        onInjectFact={(t) => controller.injectFact(t)}
-        onForceEndpoint={() => controller.forceEndpoint()}
-        onUpdateKeyterms={(terms) => controller.updateKeyterms(terms)}
-        onVerbatimTrial={(n) => void controller.verbatimTrial(n)}
-      />
-
-      <div>
-        <DebugDrawer events={state.events} onExport={() => controller.exportFixtures()} />
-      </div>
+      {inSetup ? (
+        <SetupForm
+          setup={state.setup}
+          onChange={(patch) => state.setSetup(patch)}
+          onStart={() => void controller.start(state.setup)}
+          starting={false}
+        />
+      ) : (
+        <>
+          <CalibrationBanner
+            roles={state.roles}
+            setup={state.setup}
+            labelsSeen={labelsSeen}
+            calibrating={state.phase === "CALIBRATE" || !rolesBound(state.roles)}
+            onSwap={() => controller.swapRoles()}
+            onAssign={(role, label) => controller.assignRole(role, label)}
+          />
+          <div className="grid min-h-[50vh] gap-4 lg:grid-cols-5">
+            <div className="max-h-[60vh] lg:col-span-3">
+              <TranscriptPanel turns={state.transcript.turns} setup={state.setup} />
+            </div>
+            <div className="lg:col-span-2">
+              <CheckpointBoard board={state.board} setup={state.setup} />
+            </div>
+          </div>
+          <AgentBar
+            status={state.status}
+            captions={state.captions}
+            latenciesMs={state.latenciesMs}
+            gaps={state.gaps}
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <DebugDrawer events={state.events} onExport={() => controller.exportFixtures()} />
+            <form
+              className="flex items-center gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const terms = term
+                  .split(",")
+                  .map((t) => t.trim())
+                  .filter(Boolean);
+                if (terms.length) controller.addKeyterms(terms);
+                setTerm("");
+              }}
+            >
+              <Input
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                placeholder="Add a product term mid-session"
+                className="w-64"
+                aria-label="Add a product term"
+              />
+              <Button type="submit" variant="outline" size="sm" disabled={!term.trim() || done}>
+                Add term
+              </Button>
+            </form>
+          </div>
+        </>
+      )}
     </main>
-  );
-}
-
-function Chip({
-  label,
-  value,
-  detail = [],
-  tone = "normal",
-  testId,
-}: {
-  label: string;
-  value: string;
-  detail?: Array<string | null>;
-  tone?: "normal" | "error";
-  testId?: string;
-}) {
-  return (
-    <div className="rounded-lg border p-3">
-      <p className="text-muted-foreground text-xs uppercase">{label}</p>
-      <p
-        data-testid={testId}
-        className={tone === "error" ? "text-destructive font-medium" : "font-medium"}
-      >
-        {value}
-      </p>
-      {detail.filter(Boolean).map((d) => (
-        <p key={d} className="text-muted-foreground font-mono text-xs break-all">
-          {d}
-        </p>
-      ))}
-    </div>
   );
 }
