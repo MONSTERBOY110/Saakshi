@@ -4,6 +4,7 @@ import type { StoredTurn } from "./transcript";
 
 // Checkpoint Board state (P0-4): required disclosures tick once with their first evidence;
 // prohibited claims are recorded once per id and turn. Pure functions, serialisable state.
+// Runtime facts (acknowledged, corrected, latency, nudge) survive a rebuild through mergeSticky.
 
 export type Evidence = {
   turnOrder: number;
@@ -14,14 +15,17 @@ export type Evidence = {
   language: string;
 };
 
+export type CheckpointStatus = "pending" | "met" | "met_after_nudge";
+
 export type CheckpointState = {
   id: string;
   label: string;
   hint: string;
   citation: Citation;
-  status: "pending" | "met";
+  status: CheckpointStatus;
   evidence?: Evidence;
   windowed?: boolean;
+  source?: "rules" | "llm";
 };
 
 export type ProhibitedDefinition = {
@@ -32,12 +36,15 @@ export type ProhibitedDefinition = {
   correction: string;
 };
 
+export type ViolationStatus = "open" | "corrected" | "acknowledged";
+
 export type ViolationState = ProhibitedDefinition & {
   key: string;
   evidence: Evidence;
-  status: "open" | "corrected" | "acknowledged";
+  status: ViolationStatus;
   latencyMs?: number;
   windowed: boolean;
+  source: "rules" | "llm";
 };
 
 export type BeliefState = { key: string; id: string; label: string; evidence: Evidence };
@@ -48,6 +55,8 @@ export type BoardState = {
   checkpoints: CheckpointState[];
   violations: ViolationState[];
   beliefs: BeliefState[];
+  /** Turn order at which the nudge was spoken; disclosures after it are met_after_nudge. */
+  nudgedAtOrder?: number;
 };
 
 export function emptyBoard(pack: CompiledPack): BoardState {
@@ -97,11 +106,15 @@ export function applyEvaluation(
   for (const m of evaluation.checkpoints) {
     const ev = evidenceFor(m, turnFor);
     if (!ev) continue;
+    const status: CheckpointStatus =
+      next.nudgedAtOrder !== undefined && m.turnOrder > next.nudgedAtOrder
+        ? "met_after_nudge"
+        : "met";
     next = {
       ...next,
       checkpoints: next.checkpoints.map((c) =>
         c.id === m.id && c.status === "pending"
-          ? { ...c, status: "met", evidence: ev, windowed: m.windowed }
+          ? { ...c, status, evidence: ev, windowed: m.windowed, source: sourceOf(m) }
           : c,
       ),
     };
@@ -116,7 +129,7 @@ export function applyEvaluation(
       ...next,
       violations: [
         ...next.violations,
-        { ...def, key, evidence: ev, status: "open", windowed: m.windowed },
+        { ...def, key, evidence: ev, status: "open", windowed: m.windowed, source: sourceOf(m) },
       ],
     };
   }
@@ -134,11 +147,49 @@ export function applyEvaluation(
   return next;
 }
 
-/** Deterministic rebuild from every finalized turn, used after revisions and role swaps. */
-export function rebuildBoard(pack: CompiledPack, turns: StoredTurn[]): BoardState {
-  const finals = turns.filter((t) => t.final).sort((a, b) => a.order - b.order);
+/** An advisor turn at `turnOrder` corrected these claims: earlier open violations become corrected. */
+export function applyCorrections(board: BoardState, ids: string[], turnOrder: number): BoardState {
+  if (ids.length === 0) return board;
+  const set = new Set(ids);
+  return {
+    ...board,
+    violations: board.violations.map((v) =>
+      v.status === "open" && set.has(v.id) && v.evidence.turnOrder < turnOrder
+        ? { ...v, status: "corrected" }
+        : v,
+    ),
+  };
+}
+
+export function acknowledgeViolation(board: BoardState, key: string): BoardState {
+  return {
+    ...board,
+    violations: board.violations.map((v) =>
+      v.key === key && v.status === "open" ? { ...v, status: "acknowledged" } : v,
+    ),
+  };
+}
+
+export function setViolationLatency(board: BoardState, key: string, latencyMs: number): BoardState {
+  return {
+    ...board,
+    violations: board.violations.map((v) => (v.key === key ? { ...v, latencyMs } : v)),
+  };
+}
+
+export function markNudged(board: BoardState, turnOrder: number): BoardState {
+  return { ...board, nudgedAtOrder: turnOrder };
+}
+
+/** Deterministic rebuild from every finalized turn; runtime facts are carried over from `previous`. */
+export function rebuildBoard(
+  pack: CompiledPack,
+  turns: StoredTurn[],
+  previous?: BoardState,
+): BoardState {
+  const finals = turns.filter((t) => t.final && !t.echo).sort((a, b) => a.order - b.order);
   const byOrder = new Map(finals.map((t) => [t.order, t]));
-  let board = emptyBoard(pack);
+  let board: BoardState = { ...emptyBoard(pack), nudgedAtOrder: previous?.nudgedAtOrder };
   let prev: StoredTurn | undefined;
   for (const t of finals) {
     const evaluation = evaluateTurn(
@@ -147,17 +198,46 @@ export function rebuildBoard(pack: CompiledPack, turns: StoredTurn[]): BoardStat
       prev ? { order: prev.order, role: prev.role, text: prev.text } : undefined,
     );
     board = applyEvaluation(board, evaluation, (o) => byOrder.get(o));
+    board = applyCorrections(board, evaluation.corrections, t.order);
     prev = t;
   }
-  return board;
+  return previous ? mergeSticky(previous, board) : board;
+}
+
+/** Copy acknowledged status, latency and LLM-sourced findings from the previous board. */
+export function mergeSticky(previous: BoardState, next: BoardState): BoardState {
+  const prevViolations = new Map(previous.violations.map((v) => [v.key, v]));
+  const violations = next.violations.map((v) => {
+    const p = prevViolations.get(v.key);
+    if (!p) return v;
+    return {
+      ...v,
+      latencyMs: p.latencyMs ?? v.latencyMs,
+      status: p.status === "acknowledged" ? "acknowledged" : v.status,
+    };
+  });
+  // Analyzer findings are not reproducible from the rules; keep the ones the rebuild did not find.
+  for (const p of previous.violations) {
+    if (p.source === "llm" && !violations.some((v) => v.key === p.key)) violations.push(p);
+  }
+  const checkpoints = next.checkpoints.map((c) => {
+    if (c.status !== "pending") return c;
+    const p = previous.checkpoints.find((x) => x.id === c.id);
+    return p && p.source === "llm" && p.status !== "pending" ? p : c;
+  });
+  return { ...next, violations, checkpoints };
 }
 
 export function boardSummary(board: BoardState): { met: number; total: number; open: number } {
   return {
-    met: board.checkpoints.filter((c) => c.status === "met").length,
+    met: board.checkpoints.filter((c) => c.status !== "pending").length,
     total: board.checkpoints.length,
     open: board.violations.filter((v) => v.status === "open").length,
   };
+}
+
+function sourceOf(m: RuleMatch): "rules" | "llm" {
+  return m.pattern.startsWith("llm:") ? "llm" : "rules";
 }
 
 function evidenceFor(m: RuleMatch, turnFor: (order: number) => StoredTurn | undefined) {

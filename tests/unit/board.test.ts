@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getPack } from "@/lib/rules/load";
 import { applyEvaluation, boardSummary, emptyBoard, rebuildBoard } from "@/lib/session/board";
+import * as boardExtras from "@/lib/session/board";
 import type { StoredTurn } from "@/lib/session/transcript";
 import { evaluateTurn } from "@/lib/rules/engine";
 
@@ -114,7 +115,12 @@ describe("checkpoint board", () => {
 
   it("rebuilds the whole board from the golden script", () => {
     const b = rebuildBoard(pack, script);
-    expect(boardSummary(b)).toEqual({ met: 8, total: 8, open: 2 });
+    // Turn 11 ("Returns are not guaranteed.") corrects the guaranteed-returns flag during the rebuild.
+    expect(boardSummary(b)).toEqual({ met: 8, total: 8, open: 1 });
+    expect(b.violations.map((v) => `${v.id}:${v.status}`).sort()).toEqual([
+      "guaranteed_returns:corrected",
+      "withdraw_anytime:open",
+    ]);
     expect(b.checkpoints.find((c) => c.id === "free_look_30")?.evidence?.turnOrder).toBe(16);
     expect(b.checkpoints.find((c) => c.id === "lock_in_5y")?.evidence?.turnOrder).toBe(7);
   });
@@ -126,5 +132,92 @@ describe("checkpoint board", () => {
     const b = rebuildBoard(pack, revised);
     // lock-in is still met later by turn 14 ("after the lock-in"), from a different turn.
     expect(b.checkpoints.find((c) => c.id === "lock_in_5y")?.evidence?.turnOrder).toBe(14);
+  });
+});
+
+describe("board runtime facts", () => {
+  const { applyCorrections, acknowledgeViolation, setViolationLatency, markNudged, mergeSticky } =
+    boardExtras;
+
+  it("marks earlier open violations corrected when a later advisor turn corrects the claim", () => {
+    let b = rebuildBoard(pack, script.slice(0, 10)); // up to and including turn 9
+    expect(b.violations.every((v) => v.status === "open")).toBe(true);
+    b = applyCorrections(b, ["guaranteed_returns"], 11);
+    expect(b.violations.find((v) => v.id === "guaranteed_returns")?.status).toBe("corrected");
+    expect(b.violations.find((v) => v.id === "withdraw_anytime")?.status).toBe("open");
+    // A correction that predates the violation does nothing.
+    expect(
+      applyCorrections(b, ["withdraw_anytime"], 5).violations.find(
+        (v) => v.id === "withdraw_anytime",
+      )?.status,
+    ).toBe("open");
+  });
+
+  it("rebuild applies the corrections found in the script itself", () => {
+    const b = rebuildBoard(pack, script);
+    expect(b.violations.find((v) => v.id === "guaranteed_returns")?.status).toBe("corrected");
+    expect(boardSummary(b).open).toBe(1);
+  });
+
+  it("acknowledges and records latency, and keeps both across a rebuild", () => {
+    let b = rebuildBoard(pack, script.slice(0, 10));
+    b = acknowledgeViolation(b, "guaranteed_returns@9");
+    b = setViolationLatency(b, "guaranteed_returns@9", 1834);
+    const rebuilt = rebuildBoard(pack, script.slice(0, 10), b);
+    const g = rebuilt.violations.find((v) => v.key === "guaranteed_returns@9");
+    expect(g).toMatchObject({ status: "acknowledged", latencyMs: 1834 });
+  });
+
+  it("marks disclosures made after the nudge as met_after_nudge and counts them as met", () => {
+    let b = rebuildBoard(pack, script.slice(0, 16)); // through turn 15 "Saakshi, verify."
+    expect(b.checkpoints.find((c) => c.id === "free_look_30")?.status).toBe("pending");
+    b = markNudged(b, 15);
+    const t16 = script[16]!;
+    b = applyEvaluation(b, evaluateTurn(pack, t16), () => t16);
+    expect(b.checkpoints.find((c) => c.id === "free_look_30")?.status).toBe("met_after_nudge");
+    expect(boardSummary(b).met).toBe(8);
+    const rebuilt = rebuildBoard(pack, script, b);
+    expect(rebuilt.checkpoints.find((c) => c.id === "free_look_30")?.status).toBe(
+      "met_after_nudge",
+    );
+  });
+
+  it("keeps analyzer-sourced findings through a rebuild", () => {
+    let b = rebuildBoard(pack, script.slice(0, 5));
+    const t4 = script[4]!;
+    b = applyEvaluation(
+      b,
+      {
+        checkpoints: [
+          {
+            id: "surrender_value",
+            kind: "checkpoint",
+            turnOrder: 4,
+            role: "advisor",
+            quote: t4.text,
+            pattern: "llm:0.70",
+            windowed: false,
+          },
+        ],
+        violations: [
+          {
+            id: "like_fd",
+            kind: "prohibited",
+            severity: "high",
+            turnOrder: 4,
+            role: "advisor",
+            quote: t4.text,
+            pattern: "llm:0.90:compared",
+            windowed: false,
+          },
+        ],
+        customerBeliefs: [],
+        corrections: [],
+      },
+      () => t4,
+    );
+    const rebuilt = mergeSticky(b, rebuildBoard(pack, script.slice(0, 5)));
+    expect(rebuilt.checkpoints.find((c) => c.id === "surrender_value")?.source).toBe("llm");
+    expect(rebuilt.violations.find((v) => v.id === "like_fd")?.source).toBe("llm");
   });
 });

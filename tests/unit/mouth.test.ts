@@ -188,3 +188,32 @@ describe("Mouth lifecycle", () => {
     }
   });
 });
+
+describe("Mouth tools and resume", () => {
+  it("setTools replaces the tool array through session.update", async () => {
+    const { mouth, ws } = await openMouth();
+    const tool = {
+      type: "function" as const,
+      name: "ack_intervention",
+      description: "d",
+      parameters: { type: "object" },
+    };
+    expect(mouth.setTools([tool])).toBe(true);
+    expect(ws.sentJson().at(-1)).toEqual({ type: "session.update", session: { tools: [tool] } });
+    expect(mouth.setTools([])).toBe(true);
+    expect(ws.sentJson().at(-1)).toEqual({ type: "session.update", session: { tools: [] } });
+  });
+
+  it("resume opens a fresh socket, sends session.resume and resolves on session.updated", async () => {
+    const m = make();
+    const p = m.mouth.resume("sess_old");
+    await Promise.resolve();
+    await Promise.resolve();
+    const ws = FakeWebSocket.latest();
+    ws.serverOpen();
+    expect(ws.sentJson()[0]).toEqual({ type: "session.resume", session_id: "sess_old" });
+    ws.serverMessage({ type: "session.updated", config: {} });
+    await p;
+    expect(m.mouth.ready).toBe(true);
+  });
+});

@@ -28,6 +28,8 @@ export type StoredTurn = {
   revisedLabel?: string;
   /** Final turn whose speaker is PENDING (under about one second) or unlabelled. */
   pending: boolean;
+  /** The microphone heard Saakshi through the speakers; excluded from rules and calibration. */
+  echo?: boolean;
 };
 
 export type TranscriptState = { turns: StoredTurn[] };
@@ -113,17 +115,24 @@ export function reassignRoles(state: TranscriptState, roleOf: RoleOf): Transcrip
   };
 }
 
+/** Mark a turn as Saakshi's own voice leaking into the microphone (see session/echo.ts). */
+export function markEcho(state: TranscriptState, order: number): TranscriptState {
+  return {
+    turns: state.turns.map((t) => (t.order === order ? { ...t, echo: true, role: undefined } : t)),
+  };
+}
+
 export function previousFinal(state: TranscriptState, order: number): StoredTurn | undefined {
   let best: StoredTurn | undefined;
   for (const t of state.turns) {
     if (t.order >= order) break;
-    if (t.final) best = t;
+    if (t.final && !t.echo) best = t;
   }
   return best;
 }
 
 export function finalTurns(state: TranscriptState): StoredTurn[] {
-  return state.turns.filter((t) => t.final);
+  return state.turns.filter((t) => t.final && !t.echo);
 }
 
 export function formatClock(ms: number): string {

@@ -4,9 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import { median } from "@/lib/session/stats";
 import type { RoomState } from "@/lib/session/store";
 
-type Props = Pick<RoomState, "status" | "captions" | "latenciesMs" | "gaps">;
+type Props = Pick<
+  RoomState,
+  | "status"
+  | "captions"
+  | "latenciesMs"
+  | "interventionLatenciesMs"
+  | "interventionTotalMs"
+  | "gaps"
+  | "analyzer"
+>;
 
-export function AgentBar({ status, captions, latenciesMs, gaps }: Props) {
+export function AgentBar({
+  status,
+  captions,
+  latenciesMs,
+  interventionLatenciesMs,
+  interventionTotalMs,
+  gaps,
+  analyzer,
+}: Props) {
+  // Prefer the end-of-speech figure; fall back to turn-received when the audio clock is unknown.
+  const interventionSamples =
+    interventionTotalMs.length > 0 ? interventionTotalMs : interventionLatenciesMs;
   const last = latenciesMs.at(-1);
   const p50 = median(latenciesMs);
   const hb = status.heartbeat;
@@ -54,6 +74,24 @@ export function AgentBar({ status, captions, latenciesMs, gaps }: Props) {
           reply latency {last === undefined ? "n/a" : `${last} ms`}
           {p50 !== null ? `, p50 ${p50} ms` : ""}
         </Badge>
+        {interventionSamples.length > 0 && (
+          <Badge variant="outline" data-testid="intervention-p50">
+            intervention p50 {median(interventionSamples)} ms over {interventionLatenciesMs.length}
+          </Badge>
+        )}
+        <Chip
+          testId="analyzer-status"
+          label="Analyzer"
+          value={analyzer.status}
+          detail={
+            analyzer.status === "ok"
+              ? `${analyzer.model} ${analyzer.latencyMs} ms, ${analyzer.calls} calls`
+              : analyzer.status === "skipped"
+                ? `budget, ${analyzer.skipped} skipped`
+                : analyzer.lastError
+          }
+          tone={analyzer.status === "error" ? "error" : "normal"}
+        />
         {gaps.length > 0 && <Badge variant="destructive">{gaps.length} STT gap(s)</Badge>}
       </div>
     </section>

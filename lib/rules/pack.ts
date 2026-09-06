@@ -21,6 +21,8 @@ export const CheckpointSchema = z.object({
   patterns: z.array(z.string().min(1)).min(1),
   citation: CitationSchema,
   hint: z.string().min(1),
+  /** How the nudge names it, e.g. "the thirty day free look period". */
+  spoken: z.string().min(1).optional(),
   teachback_topic: z.string().regex(idPattern).optional(),
 });
 
@@ -32,6 +34,8 @@ export const ProhibitedSchema = z.object({
   severity: SeveritySchema,
   patterns: z.array(z.string().min(1)).min(1),
   citation: CitationSchema,
+  /** Patterns that show the advisor corrected this claim later (marks the violation corrected). */
+  corrected_patterns: z.array(z.string().min(1)).optional(),
   /** Spoken by the agent. At most 20 words, no markdown, no exclamation marks. */
   correction: z
     .string()
@@ -79,7 +83,7 @@ export type TeachbackTopic = z.infer<typeof TeachbackTopicSchema>;
 export type DemoLine = z.infer<typeof DemoLineSchema>;
 
 export type CompiledCheckpoint = Checkpoint & { regexes: RegExp[] };
-export type CompiledProhibited = Prohibited & { regexes: RegExp[] };
+export type CompiledProhibited = Prohibited & { regexes: RegExp[]; correctedRegexes: RegExp[] };
 export type CompiledPack = Omit<Pack, "checkpoints" | "prohibited"> & {
   checkpoints: CompiledCheckpoint[];
   prohibited: CompiledProhibited[];
@@ -107,6 +111,7 @@ export function compilePack(pack: Pack): CompiledPack {
     prohibited: pack.prohibited.map((p) => ({
       ...p,
       regexes: compile("prohibited", p.id, p.patterns),
+      correctedRegexes: compile("prohibited", p.id, p.corrected_patterns ?? []),
     })),
   };
 }

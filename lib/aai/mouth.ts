@@ -1,5 +1,5 @@
 import { int16ToBase64 } from "@/lib/audio/pcm";
-import { AGENT_WS_BASE, type AgentSessionConfig } from "./agent-config";
+import { AGENT_WS_BASE, type AgentSessionConfig, type AgentToolDefinition } from "./agent-config";
 import { openSocket, type Socket, type SocketStatus, type WebSocketCtor } from "./socket";
 import { parseAgentEvent, type AgentClientMessage } from "./types";
 
@@ -66,43 +66,12 @@ export class Mouth {
   }
 
   /** Mint a token, open the socket, send session.update, resolve on session.ready. */
-  async connect(): Promise<void> {
-    const token = await this.opts.mintToken();
-    const url = `${AGENT_WS_BASE}?token=${encodeURIComponent(token)}`;
-    await new Promise<void>((resolve, reject) => {
-      let timer: ReturnType<typeof setTimeout> | null = null;
-      this.waiters.ready = (err) => {
-        if (timer) clearTimeout(timer);
-        this.waiters.ready = undefined;
-        if (err) reject(err);
-        else resolve();
-      };
-      this.socket = openSocket(
-        url,
-        {
-          onOpen: () => {
-            this.emit({ type: "status", status: "open" });
-            this.sendJson({
-              type: "session.update",
-              session: this.opts.session as Record<string, unknown>,
-            });
-            timer = setTimeout(() => {
-              this.waiters.ready?.(
-                new Error(
-                  `session.ready not received within ${this.opts.readyTimeoutMs ?? 15_000} ms`,
-                ),
-              );
-              this.socket?.close();
-            }, this.opts.readyTimeoutMs ?? 15_000);
-          },
-          onText: (raw) => this.onText(raw),
-          onClose: (code, reason) => this.onClose(code, reason),
-          onError: () => undefined,
-        },
-        this.opts.WebSocketCtor,
-      );
-      this.emit({ type: "status", status: "connecting" });
-    });
+  connect(): Promise<void> {
+    const first: AgentClientMessage = {
+      type: "session.update",
+      session: this.opts.session as Record<string, unknown>,
+    };
+    return this.openSession(first, "session.ready not received");
   }
 
   /** One PCM16 frame as base64 input.audio. Dropped until session.ready. */
@@ -121,6 +90,61 @@ export class Mouth {
   /** Mutable fields only: system_prompt, tools, input.keyterms, input.turn_detection, output.volume. */
   updateSession(session: Record<string, unknown>): boolean {
     return this.sendJson({ type: "session.update", session });
+  }
+
+  /** Replace the tool set. session.tools updates replace the array, they do not merge. */
+  setTools(tools: AgentToolDefinition[]): boolean {
+    return this.updateSession({ tools });
+  }
+
+  /**
+   * Reconnect to a session dropped without session.end (30 s window): fresh token, fresh socket,
+   * session.resume with the saved id. Resolves on session.ready or session.updated.
+   */
+  resume(sessionId: string): Promise<void> {
+    return this.openSession(
+      { type: "session.resume", session_id: sessionId },
+      "session.resume not confirmed",
+    );
+  }
+
+  /**
+   * Fresh token, fresh socket, one bootstrap message, then wait for the session to be usable.
+   * Shared by connect and resume, which differ only in that message.
+   */
+  private async openSession(first: AgentClientMessage, failure: string): Promise<void> {
+    const token = await this.opts.mintToken();
+    const url = `${AGENT_WS_BASE}?token=${encodeURIComponent(token)}`;
+    const readyTimeoutMs = this.opts.readyTimeoutMs ?? 15_000;
+    this.ending = false;
+    this.closing = false;
+    await new Promise<void>((resolve, reject) => {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      this.waiters.ready = (err) => {
+        if (timer) clearTimeout(timer);
+        this.waiters.ready = undefined;
+        if (err) reject(err);
+        else resolve();
+      };
+      this.socket = openSocket(
+        url,
+        {
+          onOpen: () => {
+            this.emit({ type: "status", status: "open" });
+            this.sendJson(first);
+            timer = setTimeout(() => {
+              this.waiters.ready?.(new Error(`${failure} within ${readyTimeoutMs} ms`));
+              this.socket?.close();
+            }, readyTimeoutMs);
+          },
+          onText: (raw) => this.onText(raw),
+          onClose: (code, reason) => this.onClose(code, reason),
+          onError: () => undefined,
+        },
+        this.opts.WebSocketCtor,
+      );
+      this.emit({ type: "status", status: "connecting" });
+    });
   }
 
   conversationMessage(role: "user" | "system", content: string): boolean {
@@ -183,7 +207,13 @@ export class Mouth {
         this.waiters.ready?.();
         return;
       case "session.updated":
-        return this.emit({ type: "updated", config: ev.config });
+        this.emit({ type: "updated", config: ev.config });
+        // A resumed session confirms with session.updated rather than session.ready.
+        if (!this.isReady && this.waiters.ready) {
+          this.isReady = true;
+          this.waiters.ready();
+        }
+        return;
       case "session.error":
         return this.emit({ type: "error", code: ev.code, message: ev.message });
       case "session.ended":

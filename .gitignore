@@ -30,3 +30,6 @@ Thumbs.db
 scratch/
 *.log
 docs/research/
+
+# Rendered locally for latency measurement (pnpm fixtures:wav:latency); 5 MB, not needed to run the app
+tests/fixtures/latency-probe.wav

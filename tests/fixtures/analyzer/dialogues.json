@@ -1,0 +1,138 @@
+{
+  "note": "Golden dialogues for the layer-2 analyzer. Expected ids are what a careful compliance reviewer would mark. Used by tests/unit/analyzer-live.test.ts (SAAKSHI_LIVE_EVAL=1) and by the Phase 4 eval harness.",
+  "context": { "advisor": "Rahul", "customer": "Mrs. Sharma", "product": "ULIP" },
+  "dialogues": [
+    {
+      "id": "guaranteed_english",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "This plan gives you guaranteed twelve percent returns every single year, madam."
+        }
+      ],
+      "expect": { "violations": ["guaranteed_returns"], "checkpoints": [] }
+    },
+    {
+      "id": "not_guaranteed_market",
+      "turns": [
+        { "order": 1, "role": "customer", "text": "Returns fix hain kya?" },
+        {
+          "order": 2,
+          "role": "advisor",
+          "text": "No madam, returns are not guaranteed. The fund value depends on the market and can go down."
+        }
+      ],
+      "expect": { "violations": [], "checkpoints": ["market_risk"] }
+    },
+    {
+      "id": "hinglish_pakka",
+      "turns": [
+        { "order": 1, "role": "customer", "text": "Return pakka hai na?" },
+        {
+          "order": 2,
+          "role": "advisor",
+          "text": "Haan madam, bilkul pakka, barah percent har saal milega, tension mat lo."
+        }
+      ],
+      "expect": { "violations": ["guaranteed_returns"], "checkpoints": [] }
+    },
+    {
+      "id": "fd_comparison",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "Think of it like a fixed deposit, but with much better returns."
+        }
+      ],
+      "expect": { "violations": ["like_fd"], "checkpoints": [] }
+    },
+    {
+      "id": "no_charges",
+      "turns": [
+        { "order": 1, "role": "customer", "text": "Koi charges lagenge?" },
+        {
+          "order": 2,
+          "role": "advisor",
+          "text": "Nahi madam, there are no charges at all, the full amount gets invested."
+        }
+      ],
+      "expect": { "violations": ["no_charges"], "checkpoints": [] }
+    },
+    {
+      "id": "withdraw_anytime",
+      "turns": [
+        { "order": 1, "role": "customer", "text": "Isme paisa kab nikal sakti hoon?" },
+        {
+          "order": 2,
+          "role": "advisor",
+          "text": "Anytime madam, whenever you need it, just tell us."
+        }
+      ],
+      "expect": { "violations": ["withdraw_anytime"], "checkpoints": [] }
+    },
+    {
+      "id": "lockin_and_charges",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "There is a five year lock-in, and charges like premium allocation and fund management apply."
+        }
+      ],
+      "expect": { "violations": [], "checkpoints": ["lock_in_5y", "charges"] }
+    },
+    {
+      "id": "tax_free_forever",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "And it is completely tax free, you will never pay any tax on this, ever."
+        }
+      ],
+      "expect": { "violations": ["tax_free_forever"], "checkpoints": [] }
+    },
+    {
+      "id": "pressure",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "This offer closes today, so please sign the form now."
+        }
+      ],
+      "expect": { "violations": ["pressure"], "checkpoints": [] }
+    },
+    {
+      "id": "clean_pitch",
+      "turns": [
+        {
+          "order": 1,
+          "role": "advisor",
+          "text": "The premium is fifty thousand a year for ten years, and the policy term is fifteen years."
+        },
+        {
+          "order": 2,
+          "role": "advisor",
+          "text": "The benefit illustration shows values at four percent and eight percent."
+        },
+        {
+          "order": 3,
+          "role": "advisor",
+          "text": "You also have a thirty day free look period to return the policy."
+        }
+      ],
+      "expect": {
+        "violations": [],
+        "checkpoints": [
+          "premium_and_term",
+          "policy_term",
+          "benefit_illustration_4_8",
+          "free_look_30"
+        ]
+      }
+    }
+  ]
+}

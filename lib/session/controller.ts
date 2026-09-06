@@ -1,37 +1,50 @@
-import { buildInitialSession } from "@/lib/aai/agent-config";
-import { Ears } from "@/lib/aai/ears";
-import { Mouth } from "@/lib/aai/mouth";
+import type { AnalyzeRequest, AnalyzeResponse } from "@/lib/analyzer/schema";
 import { startCapture, type Capture } from "@/lib/audio/capture";
 import { createPlayback, type Playback } from "@/lib/audio/playback";
-import { CALIBRATE_PROMPT } from "@/lib/prompts";
+import { buildObserverPrompt } from "@/lib/prompts/observer";
 import type { Role } from "@/lib/rules/engine";
 import { getPack } from "@/lib/rules/load";
 import type { CompiledPack } from "@/lib/rules/pack";
+import type { Ears } from "@/lib/aai/ears";
+import type { Mouth } from "@/lib/aai/mouth";
+import type { AnalyzerClient } from "@/lib/analyzer/client";
+import type { Router } from "@/lib/audio/router";
 import { emptyBoard, rebuildBoard } from "./board";
-import { handleEarsEvent, handleMouthEvent } from "./controller-handlers";
-import {
-  buildCalibrationLine,
-  buildGreeting,
-  buildKeyterms,
-  buildSttPrompt,
-  type SessionSetup,
-} from "./keyterms";
-import { appendEvent, fixtureExport, stripAudio, type LogEvent, type LogSource } from "./log";
-import { audioGates, transition, type MachineEvent } from "./machine";
-import { assignRole, roleOfLabel, rolesBound, swapRoles } from "./roles";
+import { applyAnalysis } from "./ears-handler";
+import { acknowledgeIntervention, startNudge } from "./flows";
+import type { RateLimitState } from "./fusion";
+import { buildCalibrationLine, type SessionSetup } from "./keyterms";
+import { appendEvent, stripAudio, type LogEvent, type LogSource } from "./log";
+import { transition, type MachineEvent } from "./machine";
+import { roleOfLabel, rolesBound } from "./roles";
+import { addKeyterms, assignRoleTo, exportFixtures, swapRoleAssignment } from "./room-actions";
 import { initialRoom, useRoomStore, type RoomState } from "./store";
-import { finalTurns, reassignRoles } from "./transcript";
+import { buildAnalyzerClient, buildEars, buildMouth, buildRouter } from "./wiring";
+import { finalTurns } from "./transcript";
 
-// Orchestrates one Saakshi session: mic capture, the Ears and Mouth clients, calibration, the
-// rule engine and the board. Writes to the Zustand store; the UI only reads.
+// Orchestrates one Saakshi session: mic capture and routing, the Ears and Mouth clients,
+// calibration, the rule engine, the LLM analyzer, interventions and the nudge. Writes to the
+// Zustand store; the UI only reads.
 
 export class RoomController {
   pack: CompiledPack | null = null;
   ears: Ears | null = null;
   mouth: Mouth | null = null;
   playback: Playback | null = null;
+  analyzer: AnalyzerClient | null = null;
   t0 = 0;
+  /** Keys `${id}@${turnOrder}` Saakshi has already spoken about. */
+  readonly intervened = new Set<string>();
+  rate: RateLimitState = { lastInterventionAt: null };
+  pendingIntervention: { key: string; detectedAt: number; sttLagMs?: number } | null = null;
+  ackTimer: ReturnType<typeof setTimeout> | null = null;
+  /** The last few lines Saakshi said, for the echo guard. */
+  readonly recentAgentSpeech: string[] = [];
+  /** performance.now() when the first mic frame reached the Ears; turn timings are audio-relative. */
+  audioClockStart: number | null = null;
+
   private capture: Capture | null = null;
+  private router: Router | null = null;
   private seq = 0;
   private stopping = false;
 
@@ -52,35 +65,22 @@ export class RoomController {
     this.t0 = performance.now();
     this.seq = 0;
     this.stopping = false;
+    this.intervened.clear();
+    this.rate = { lastInterventionAt: null };
+    this.recentAgentSpeech.length = 0;
+    this.audioClockStart = null;
     this.set({ ...initialRoom(setup), board: emptyBoard(pack), phase: "CALIBRATE" });
-    const keyterms = buildKeyterms(setup, pack);
     try {
-      const capture = await startCapture((pcm) => this.onFrame(pcm));
+      const capture = await startCapture((pcm) => this.router?.push(pcm));
       this.capture = capture;
       this.playback = createPlayback(capture.ctx);
+      this.router = buildRouter(this);
       this.set((s) => ({ status: { ...s.status, micRate: capture.sampleRate } }));
       this.log("client", "mic.started", { sampleRate: capture.sampleRate });
 
-      this.ears = new Ears({
-        mintToken: () => mintToken("/api/token/stt"),
-        config: {
-          sampleRate: capture.sampleRate,
-          keyterms,
-          prompt: buildSttPrompt(setup, pack),
-          languageCodes: ["en", "hi"],
-        },
-        onEvent: (e) => handleEarsEvent(this, e),
-      });
-      this.mouth = new Mouth({
-        mintToken: () => mintToken("/api/token/agent"),
-        session: buildInitialSession({
-          systemPrompt: CALIBRATE_PROMPT,
-          greeting: buildGreeting(setup),
-          keyterms,
-          languageCodes: ["en", "hi"],
-        }).session,
-        onEvent: (e) => handleMouthEvent(this, e),
-      });
+      this.analyzer = buildAnalyzerClient(this);
+      this.ears = buildEars(this, setup, pack, capture.sampleRate);
+      this.mouth = buildMouth(this, setup, pack);
       await Promise.all([this.ears.connect(), this.mouth.connect()]);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -93,6 +93,8 @@ export class RoomController {
   async stop(): Promise<void> {
     if (this.stopping) return;
     this.stopping = true;
+    // ABORT is legal from CALIBRATE, OBSERVE and TEACHBACK (trd.md section 2). From the other
+    // phases the operator's Stop is a hard end, so the final DONE below is set outright.
     this.dispatch({ type: "ABORT" });
     await this.capture?.stop().catch(() => undefined);
     this.capture = null;
@@ -107,12 +109,16 @@ export class RoomController {
   }
 
   private async teardown(): Promise<void> {
+    this.clearAckTimer();
+    this.analyzer?.dispose();
+    this.analyzer = null;
     this.playback?.flush();
     this.playback = null;
     this.ears?.close();
     this.mouth?.close();
     this.ears = null;
     this.mouth = null;
+    this.router = null;
     await this.capture?.stop().catch(() => undefined);
     this.capture = null;
   }
@@ -127,65 +133,60 @@ export class RoomController {
     return true;
   }
 
-  swapRoles(): void {
-    this.applyRoles(swapRoles(this.state.roles), "swap");
-  }
+  swapRoles = (): void => swapRoleAssignment(this);
+  assignRole = (role: Role, label: string): void => assignRoleTo(this, role, label);
+  addKeyterms = (terms: string[]): void => addKeyterms(this, terms);
+  exportFixtures = (): void => exportFixtures(this);
 
-  assignRole(role: Role, label: string): void {
-    this.applyRoles(assignRole(this.state.roles, role, label), `assign ${role}=${label}`);
-  }
-
-  /** Called by the handlers when calibration binds a role; speaks the next prompt. */
+  /** Called when calibration binds a role; speaks the next prompt and swaps to the observer prompt. */
   onRolesChanged(): void {
     const { roles, setup, phase } = this.state;
     if (phase !== "CALIBRATE") return;
     if (rolesBound(roles)) {
-      this.speak(buildCalibrationLine(setup, "done"));
+      this.speakExact(buildCalibrationLine(setup, "done"));
+      this.mouth?.updateSession({
+        system_prompt: buildObserverPrompt({
+          advisor: setup.advisorName,
+          customer: setup.customerName,
+        }),
+      });
       this.dispatch({ type: "ROLES_BOUND" });
     } else if (roles.advisor && !roles.customer) {
-      this.speak(buildCalibrationLine(setup, "customer"));
+      this.speakExact(buildCalibrationLine(setup, "customer"));
     }
   }
 
-  addKeyterms(terms: string[]): void {
-    if (!this.pack) return;
-    const setup = {
-      ...this.state.setup,
-      productTerms: [...this.state.setup.productTerms, ...terms],
-    };
-    const keyterms = buildKeyterms(setup, this.pack);
-    this.set({ setup });
-    if (this.ears?.updateConfiguration({ keyterms_prompt: keyterms })) {
-      this.log("client", "UpdateConfiguration", { keyterms_prompt: keyterms });
-    }
-    if (this.mouth?.updateSession({ input: { keyterms } })) {
-      this.log("client", "session.update", { input: { keyterms } });
-    }
+  verify(trigger: "spoken" | "button", turnOrder?: number): void {
+    const lastOrder = turnOrder ?? finalTurns(this.state.transcript).at(-1)?.order ?? 0;
+    startNudge(this, trigger, lastOrder);
   }
 
-  speak(text: string): void {
-    if (this.mouth?.replyCreate(`Say exactly this and nothing else: ${text}`)) {
-      this.log("client", "reply.create", { text });
-    }
+  acknowledge(note = "acknowledged in the room"): void {
+    acknowledgeIntervention(this, note, false);
+  }
+
+  /** Every spoken line is scripted here; the agent repeats it verbatim (spike S5: 10/10). */
+  speakExact(text: string): void {
+    if (!this.mouth?.replyCreate(`Say exactly this and nothing else: ${text}`)) return;
+    this.log("client", "reply.create", { text });
+    this.recentAgentSpeech.push(text);
+    if (this.recentAgentSpeech.length > 6) this.recentAgentSpeech.shift();
   }
 
   rebuild(): void {
     if (!this.pack) return;
-    this.set({ board: rebuildBoard(this.pack, finalTurns(this.state.transcript)) });
+    const pack = this.pack;
+    this.set((s) => ({
+      board: rebuildBoard(pack, finalTurns(s.transcript), s.board ?? undefined),
+    }));
+  }
+
+  clearAckTimer(): void {
+    if (this.ackTimer) clearTimeout(this.ackTimer);
+    this.ackTimer = null;
   }
 
   roleOf = (label: string | undefined): Role | undefined => roleOfLabel(this.state.roles, label);
-
-  exportFixtures(): void {
-    const blob = new Blob([JSON.stringify(fixtureExport(this.state.events), null, 2)], {
-      type: "application/json",
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `saakshi-fixtures-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  }
 
   log(source: LogSource, type: string, payload: unknown): void {
     const event: LogEvent = {
@@ -200,26 +201,28 @@ export class RoomController {
 
   // ------------------------------------------------------------------ internals
 
-  private applyRoles(roles: RoomState["roles"], why: string): void {
-    this.log("client", "roles", { why, advisor: roles.advisor, customer: roles.customer });
-    this.set({ roles });
-    this.set((s) => ({ transcript: reassignRoles(s.transcript, this.roleOf) }));
-    this.rebuild();
-    this.onRolesChanged();
+  /** Called by the analyzer client (see wiring.ts) when a completed analysis arrives. */
+  onAnalysis(result: AnalyzeResponse, request: AnalyzeRequest): void {
+    this.log("client", "analyze.result", {
+      model: result.model,
+      latency_ms: result.latency_ms,
+      request_id: result.request_id,
+      violations: result.analysis.violations.map((v) => `${v.id}@${v.turn_order}:${v.confidence}`),
+      checkpoints: result.analysis.checkpoints_satisfied.map((c) => `${c.id}@${c.turn_order}`),
+    });
+    this.set((s) => ({
+      analyzer: {
+        ...s.analyzer,
+        status: "ok",
+        model: result.model,
+        latencyMs: result.latency_ms,
+        calls: s.analyzer.calls + 1,
+      },
+    }));
+    const lastOrder = request.turns.at(-1)?.order;
+    // Re-run fusion for the newest turn with the analysis in hand.
+    if (lastOrder !== undefined) applyAnalysis(this, result.analysis, lastOrder);
   }
-
-  private onFrame(pcm: Int16Array): void {
-    const gates = audioGates(this.state.phase);
-    if (gates.micToEars) this.ears?.sendAudio(pcm);
-    if (gates.micToMouth) this.mouth?.sendAudio(pcm);
-  }
-}
-
-async function mintToken(path: string): Promise<string> {
-  const res = await fetch(path, { cache: "no-store" });
-  if (!res.ok) throw new Error(`${path} responded ${res.status}`);
-  const body = (await res.json()) as { token: string };
-  return body.token;
 }
 
 let singleton: RoomController | null = null;

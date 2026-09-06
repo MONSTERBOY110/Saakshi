@@ -16,6 +16,7 @@ export type RuleMatch = {
   role: Role;
   /** Verbatim transcript of the turn that completed the match. */
   quote: string;
+  /** The pattern source that matched, or `llm:<confidence>` for analyzer findings. */
   pattern: string;
   /** True when the match only exists across the previous turn plus this one. */
   windowed: boolean;
@@ -26,9 +27,11 @@ export type Evaluation = {
   violations: RuleMatch[];
   /** Prohibited phrases spoken by the customer: recorded, never an intervention. */
   customerBeliefs: RuleMatch[];
+  /** Prohibited-claim ids whose corrected_patterns this advisor turn matched. */
+  corrections: string[];
 };
 
-const EMPTY: Evaluation = { checkpoints: [], violations: [], customerBeliefs: [] };
+const EMPTY: Evaluation = { checkpoints: [], violations: [], customerBeliefs: [], corrections: [] };
 
 /**
  * Evaluate one finalized turn. `prev` is the immediately preceding finalized turn (any speaker);
@@ -59,12 +62,13 @@ export function evaluateTurn(pack: CompiledPack, turn: RuleTurn, prev?: RuleTurn
   };
 
   const checkpoints: RuleMatch[] = [];
+  const corrections: string[] = [];
   if (role === "advisor") {
     // Disclosures must come from the advisor, so the window only spans two advisor turns.
     const windowOk = prev?.role === "advisor";
     for (const c of pack.checkpoints) {
       const hit = find(c.regexes, c.patterns, windowOk);
-      if (hit)
+      if (hit) {
         checkpoints.push({
           id: c.id,
           kind: "checkpoint",
@@ -73,6 +77,10 @@ export function evaluateTurn(pack: CompiledPack, turn: RuleTurn, prev?: RuleTurn
           quote,
           ...hit,
         });
+      }
+    }
+    for (const p of pack.prohibited) {
+      if (p.correctedRegexes.some((re) => matchesWhole(re, cur))) corrections.push(p.id);
     }
   }
 
@@ -94,7 +102,7 @@ export function evaluateTurn(pack: CompiledPack, turn: RuleTurn, prev?: RuleTurn
     (role === "advisor" ? violations : customerBeliefs).push(match);
   }
 
-  return { checkpoints, violations, customerBeliefs };
+  return { checkpoints, violations, customerBeliefs, corrections };
 }
 
 function matchesWhole(re: RegExp, text: string): boolean {

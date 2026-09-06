@@ -19,6 +19,10 @@ schema that drifts from the wire fails the unit suite.
 
 `golden-turns.json` bundles the 23 finalized `Turn` payloads, the `Begin` and the `SpeakerRevision` of one WAV session; `tests/unit/golden.test.ts` runs the whole Phase 1 pipeline over it.
 
+`latency-probe.wav` is generated locally and not committed (5 MB). `pnpm fixtures:wav:latency` repeats the demo’s guaranteed-returns claim twelve times behind different filler sentences, so `tests/e2e/latency.live.spec.ts` can measure intervention latency many times in one session.
+
+`analyzer/dialogues.json` holds ten labelled dialogues for the layer-2 accuracy check (`SAAKSHI_LIVE_EVAL=1`).
+
 ## Not captured yet
 
 `agent/tool-call.json`, `agent/session-error.json`, `agent/out-reply-create.json` and

@@ -6,7 +6,9 @@ import {
   applyRevision,
   applyTurn,
   emptyTranscript,
+  finalTurns,
   formatClock,
+  markEcho,
   previousFinal,
   reassignRoles,
 } from "@/lib/session/transcript";
@@ -204,5 +206,26 @@ describe("revision policy for labelled turns", () => {
       revisedLabel: "B",
     });
     expect(r.state.turns[1]).toMatchObject({ speakerLabel: "B", role: "customer", pending: false });
+  });
+});
+
+describe("echo marker", () => {
+  it("removes the role, keeps the text, and hides the turn from finals and previousFinal", () => {
+    let s = emptyTranscript();
+    s = applyTurn(s, final(1, "There is a lock in.", "A"), roles).state;
+    s = applyTurn(
+      s,
+      final(2, "Rahul a quick flag returns cannot be called guaranteed", "B"),
+      roles,
+    ).state;
+    s = applyTurn(s, final(3, "Okay understood.", "A"), roles).state;
+    s = markEcho(s, 2);
+    expect(s.turns[1]).toMatchObject({
+      echo: true,
+      role: undefined,
+      text: "Rahul a quick flag returns cannot be called guaranteed",
+    });
+    expect(finalTurns(s).map((t) => t.order)).toEqual([1, 3]);
+    expect(previousFinal(s, 3)?.order).toBe(1);
   });
 });

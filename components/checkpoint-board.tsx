@@ -57,7 +57,7 @@ export function CheckpointBoard({ board, setup }: Props) {
 }
 
 function CheckpointRow({ c, setup }: { c: CheckpointState; setup: SessionSetup }) {
-  const met = c.status === "met";
+  const met = c.status !== "pending";
   return (
     <li
       data-testid="checkpoint"
@@ -70,7 +70,10 @@ function CheckpointRow({ c, setup }: { c: CheckpointState; setup: SessionSetup }
           {met ? "✓" : "○"}
         </span>
         <span className="font-medium">{c.label}</span>
-        <span className="text-muted-foreground ml-auto text-xs">{met ? "met" : "pending"}</span>
+        <span className="text-muted-foreground ml-auto text-xs">
+          {c.status === "met_after_nudge" ? "met after nudge" : c.status}
+          {c.source === "llm" ? " (analyzer)" : ""}
+        </span>
       </div>
       {met && c.evidence ? (
         <p className="text-muted-foreground mt-1 pl-5 text-xs">
@@ -107,7 +110,8 @@ function ViolationRow({ v, setup }: { v: ViolationState; setup: SessionSetup }) 
         {v.citation.authority}, {v.citation.instrument}
       </p>
       <p className="text-muted-foreground mt-0.5 font-mono text-[11px]" data-testid="latency-slot">
-        intervention latency: {v.latencyMs !== undefined ? `${v.latencyMs} ms` : "n/a (Phase 2)"}
+        {v.latencyMs !== undefined ? `intervention latency: ${v.latencyMs} ms` : "no intervention"}
+        {v.source === "llm" ? " (analyzer)" : ""}
       </p>
     </li>
   );

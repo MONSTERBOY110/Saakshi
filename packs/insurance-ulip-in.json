@@ -42,7 +42,8 @@
         "clause": "Customised benefit illustration at point of sale, including premium and payment term",
         "url": "https://irdai.gov.in"
       },
-      "hint": "State the yearly premium and for how many years it is paid."
+      "hint": "State the yearly premium and for how many years it is paid.",
+      "spoken": "the premium and payment term"
     },
     {
       "id": "policy_term",
@@ -62,7 +63,8 @@
         "clause": "Customised benefit illustration at point of sale, including policy term",
         "url": "https://irdai.gov.in"
       },
-      "hint": "State how many years the policy runs."
+      "hint": "State how many years the policy runs.",
+      "spoken": "the policy term"
     },
     {
       "id": "lock_in_5y",
@@ -84,7 +86,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Say that money cannot be withdrawn for five years.",
-      "teachback_topic": "lock_in"
+      "teachback_topic": "lock_in",
+      "spoken": "the five year lock in"
     },
     {
       "id": "charges",
@@ -98,7 +101,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Name the charges: premium allocation, fund management, mortality, policy administration.",
-      "teachback_topic": "charges"
+      "teachback_topic": "charges",
+      "spoken": "the charges"
     },
     {
       "id": "market_risk",
@@ -121,7 +125,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Say that the fund value depends on the market and can fall.",
-      "teachback_topic": "market_risk"
+      "teachback_topic": "market_risk",
+      "spoken": "the market risk"
     },
     {
       "id": "benefit_illustration_4_8",
@@ -140,7 +145,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Show the illustration at four and eight percent assumed returns.",
-      "teachback_topic": "benefit_illustration"
+      "teachback_topic": "benefit_illustration",
+      "spoken": "the benefit illustration at four and eight percent"
     },
     {
       "id": "surrender_value",
@@ -159,7 +165,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Explain what the customer gets if the policy is surrendered or discontinued.",
-      "teachback_topic": "surrender_value"
+      "teachback_topic": "surrender_value",
+      "spoken": "the surrender value"
     },
     {
       "id": "free_look_30",
@@ -179,7 +186,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "Say the customer can return the policy within thirty days of receiving it.",
-      "teachback_topic": "free_look"
+      "teachback_topic": "free_look",
+      "spoken": "the thirty day free look period"
     }
   ],
   "prohibited": [
@@ -202,7 +210,16 @@
         "clause": "No statement that returns on a unit linked product are guaranteed or assured",
         "url": "https://irdai.gov.in"
       },
-      "correction": "Returns on a market-linked plan cannot be called guaranteed."
+      "correction": "Returns on a market-linked plan cannot be called guaranteed.",
+      "corrected_patterns": [
+        "not guaranteed",
+        "no guarantee",
+        "guaranteed? (nahi|nahin)",
+        "koi guarantee (nahi|nahin)",
+        "cannot be (called )?guaranteed",
+        "returns? (are |is )?not (fixed|assured|certain|pakka)",
+        "गारंटी नहीं"
+      ]
     },
     {
       "id": "like_fd",
@@ -221,7 +238,12 @@
         "clause": "No comparison of a unit linked product with a bank deposit",
         "url": "https://irdai.gov.in"
       },
-      "correction": "This is not a fixed deposit; the value can go down."
+      "correction": "This is not a fixed deposit; the value can go down.",
+      "corrected_patterns": [
+        "not (an? |a |the )?(fd|fixed deposit|bank deposit)",
+        "(fd|fixed deposit) (nahi|nahin|se alag|se different)",
+        "different from (an? |a )?(fd|fixed deposit)"
+      ]
     },
     {
       "id": "no_charges",
@@ -241,7 +263,13 @@
         "clause": "All charges must be disclosed; no representation that the product is charge free",
         "url": "https://irdai.gov.in"
       },
-      "correction": "This plan has charges; they are listed in the benefit illustration."
+      "correction": "This plan has charges; they are listed in the benefit illustration.",
+      "corrected_patterns": [
+        "there are charges",
+        "charges (apply|lagte|lagenge|hain|hai)",
+        "(yes|haan) .{0,20}charges",
+        "charges .{0,30}(should have|listed|illustration)"
+      ]
     },
     {
       "id": "withdraw_anytime",
@@ -261,7 +289,17 @@
         "clause": "No withdrawal during the five-year lock-in period",
         "url": "https://irdai.gov.in"
       },
-      "correction": "There is a five-year lock-in on this plan; money cannot be withdrawn anytime."
+      "correction": "There is a five-year lock-in on this plan; money cannot be withdrawn anytime.",
+      "corrected_patterns": [
+        "(there is|there s|thats|there was) .{0,25}lock ?in",
+        "locked (in )?(for|till|until)",
+        "(five|5|paanch|panch|pach) (years?|saal).{0,30}(lock|nikal|withdraw|cannot|can not)",
+        "can ?not (be )?withdraw",
+        "cannot take (it |the money )?out",
+        "(nahi|nahin) nikal",
+        "nikal (nahi|nahin)",
+        "लॉक ?इन है"
+      ]
     },
     {
       "id": "tax_free_forever",
@@ -281,7 +319,13 @@
         "clause": "Tax benefits must be stated as subject to prevailing tax law",
         "url": "https://irdai.gov.in"
       },
-      "correction": "Tax treatment depends on current law and your situation."
+      "correction": "Tax treatment depends on current law and your situation.",
+      "corrected_patterns": [
+        "depends? on (the )?(tax|current) (law|rules)",
+        "subject to tax",
+        "tax (law|rules) (may|can|could) change",
+        "tax .{0,20}(depend|badal)"
+      ]
     },
     {
       "id": "pressure",
@@ -303,7 +347,14 @@
         "clause": "Free look period; no undue pressure at point of sale",
         "url": "https://irdai.gov.in"
       },
-      "correction": "There is a thirty-day free-look period; there is no rush to sign."
+      "correction": "There is a thirty-day free-look period; there is no rush to sign.",
+      "corrected_patterns": [
+        "no rush",
+        "take your time",
+        "free ?look",
+        "(koi|no) jaldi",
+        "sochne ka (time|waqt|samay)"
+      ]
     }
   ],
   "teachback_topics": [

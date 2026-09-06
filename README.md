@@ -61,7 +61,7 @@ See `docs/deployment.md` for the Vercel setup, environment variables, Upstash, a
 
 ## Status
 
-Phase 1 (Ears and the Checkpoint Board), 2026-09-06. The session room calibrates roles by name, shows a role-coloured diarized transcript with language tags, and ticks the ULIP disclosures and flags prohibited claims from a versioned protocol pack (`packs/insurance-ulip-in.json`). Both AssemblyAI sessions run from the browser: Streaming STT
+Phase 2 (Mouth, analyzer and intervention), 2026-09-06. The session room calibrates roles by name, shows a role-coloured diarized transcript with language tags, and ticks the ULIP disclosures and flags prohibited claims from a versioned protocol pack (`packs/insurance-ulip-in.json`). When a critical claim is confirmed, Saakshi speaks the pack correction, shows how long it took from the end of the advisor speech to her first sound, and waits for an acknowledgement. "Saakshi, verify" reads whatever disclosure is still missing. Both AssemblyAI sessions run from the browser: Streaming STT
 (Universal-3.5 Pro, diarized, English and Hindi) as the ears and the Voice Agent API as the mouth, with
 server-minted single-use tokens. Spike results and every verified payload shape are in
 `docs/decisions.md`; recorded fixtures are in `tests/fixtures/`.
@@ -69,11 +69,13 @@ server-minted single-use tokens. Spike results and every verified payload shape 
 Live checks against AssemblyAI (need `ASSEMBLYAI_API_KEY` in `.env`, cost a few cents):
 
 ```bash
-pnpm test:e2e:live                                   # both sockets with Chromium fake mic
-pnpm fixtures:wav                                    # two-voice WAV from the demo script (Windows voices)
-SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav SAAKSHI_LIVE_HOLD_MS=90000 pnpm exec playwright test tests/e2e/dual-session.live.spec.ts   # diarized turns, then pnpm fixtures:split
-SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav pnpm exec playwright test tests/e2e/golden.live.spec.ts   # golden path v1
-node scripts/spike-agent-context.mjs 300000          # Voice Agent context and idle spikes, headless
+pnpm test:e2e:live         # both sockets open, Chromium fake mic
+pnpm fixtures:wav          # two-voice WAV of the demo script (offline Windows voices)
+pnpm test:e2e:golden       # golden path: calibration, board, interruption, nudge
+pnpm fixtures:wav:latency  # probe WAV that repeats the critical claim
+pnpm test:e2e:latency      # intervention latency over several interventions
+pnpm eval:analyzer         # layer-2 accuracy over ten labelled dialogues
+node scripts/spike-agent-context.mjs 300000   # Voice Agent context and idle spikes, headless
 ```
 
 ## Licence

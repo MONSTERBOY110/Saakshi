@@ -201,3 +201,31 @@ describe("the recorded golden script", () => {
     expect(violations.sort()).toEqual(["guaranteed_returns@9", "withdraw_anytime@9"]);
   });
 });
+
+describe("corrections and spoken labels", () => {
+  it("reports which open violations an advisor turn corrects", () => {
+    expect(
+      evaluateTurn(pack, adv(11, "Sorry, let me correct that. Returns are not guaranteed."))
+        .corrections,
+    ).toEqual(["guaranteed_returns"]);
+    expect(
+      evaluateTurn(
+        pack,
+        adv(12, "Actually there is a five year lock in, you cannot withdraw before that."),
+      ).corrections,
+    ).toContain("withdraw_anytime");
+    expect(
+      evaluateTurn(pack, adv(13, "Yes there are charges, I should have said so.")).corrections,
+    ).toContain("no_charges");
+    expect(evaluateTurn(pack, cus(14, "Returns are not guaranteed?")).corrections).toEqual([]);
+    expect(evaluateTurn(pack, adv(15, "The policy term is 15 years.")).corrections).toEqual([]);
+  });
+
+  it("gives every checkpoint a spoken label that fits a nudge sentence", () => {
+    for (const c of pack.checkpoints) {
+      expect(c.spoken, c.id).toBeDefined();
+      expect(c.spoken!.startsWith("the "), c.id).toBe(true);
+      expect(c.spoken, c.id).not.toMatch(/[!*_#`]/);
+    }
+  });
+});

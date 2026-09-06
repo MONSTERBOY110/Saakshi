@@ -5,6 +5,7 @@ import { AgentBar } from "@/components/agent-bar";
 import { CalibrationBanner } from "@/components/calibration-banner";
 import { CheckpointBoard } from "@/components/checkpoint-board";
 import { DebugDrawer } from "@/components/debug-drawer";
+import { InterventionBanner } from "@/components/intervention-banner";
 import { SetupForm } from "@/components/setup-form";
 import { TranscriptPanel } from "@/components/transcript-panel";
 import { Badge } from "@/components/ui/badge";
@@ -47,9 +48,20 @@ export default function SessionPage() {
             {state.phase.toLowerCase()}
           </Badge>
           {!inSetup && !done && (
-            <Button variant="destructive" onClick={() => void controller.stop()}>
-              Stop
-            </Button>
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => controller.verify("button")}
+                disabled={state.phase !== "OBSERVE"}
+                data-testid="verify"
+                title="End the pitch and read any missing disclosures"
+              >
+                Saakshi, verify
+              </Button>
+              <Button variant="destructive" onClick={() => void controller.stop()}>
+                Stop
+              </Button>
+            </>
           )}
           {done && (
             <Button variant="outline" onClick={() => controller.reset()}>
@@ -85,6 +97,11 @@ export default function SessionPage() {
             onSwap={() => controller.swapRoles()}
             onAssign={(role, label) => controller.assignRole(role, label)}
           />
+          <InterventionBanner
+            intervention={state.intervention}
+            nudge={state.nudge}
+            onAcknowledge={() => controller.acknowledge()}
+          />
           <div className="grid min-h-[50vh] gap-4 lg:grid-cols-5">
             <div className="max-h-[60vh] lg:col-span-3">
               <TranscriptPanel turns={state.transcript.turns} setup={state.setup} />
@@ -97,7 +114,10 @@ export default function SessionPage() {
             status={state.status}
             captions={state.captions}
             latenciesMs={state.latenciesMs}
+            interventionLatenciesMs={state.interventionLatenciesMs}
+            interventionTotalMs={state.interventionTotalMs}
             gaps={state.gaps}
+            analyzer={state.analyzer}
           />
           <div className="flex flex-wrap items-center gap-2">
             <DebugDrawer events={state.events} onExport={() => controller.exportFixtures()} />
