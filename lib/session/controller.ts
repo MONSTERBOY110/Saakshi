@@ -12,6 +12,7 @@ import type { Router } from "@/lib/audio/router";
 import { emptyBoard, rebuildBoard } from "./board";
 import { applyAnalysis } from "./ears-handler";
 import { certifySession } from "./certify";
+import { createJudgeSolo, type JudgeSolo } from "./judge-solo";
 import { acknowledgeIntervention, startNudge } from "./flows";
 import type { RateLimitState } from "./fusion";
 import { buildCalibrationLine, type SessionSetup } from "./keyterms";
@@ -35,6 +36,7 @@ export class RoomController {
   mouth: Mouth | null = null;
   playback: Playback | null = null;
   analyzer: AnalyzerClient | null = null;
+  judgeSolo: JudgeSolo | null = null;
   t0 = 0;
   /** Keys `${id}@${turnOrder}` Saakshi has already spoken about. */
   readonly intervened = new Set<string>();
@@ -43,6 +45,8 @@ export class RoomController {
   ackTimer: ReturnType<typeof setTimeout> | null = null;
   /** The last few lines Saakshi said, for the echo guard. */
   readonly recentAgentSpeech: string[] = [];
+  /** performance.now() of the last Turn from the Ears, partial or final: the room is noisy. */
+  lastTurnAt = 0;
   /** performance.now() when the first mic frame reached the Ears; turn timings are audio-relative. */
   audioClockStart: number | null = null;
   /** performance.now() of the last time the advisor was asked to let the customer answer. */
@@ -76,6 +80,7 @@ export class RoomController {
     this.rate = { lastInterventionAt: null };
     this.recentAgentSpeech.length = 0;
     this.audioClockStart = null;
+    this.lastTurnAt = 0;
     this.lastAdvisorGuardAt = null;
     this.toolResults.reset();
     this.set({
@@ -92,6 +97,16 @@ export class RoomController {
       this.set((s) => ({ status: { ...s.status, micRate: capture.sampleRate } }));
       this.log("client", "mic.started", { sampleRate: capture.sampleRate });
 
+      if (setup.judgeSolo) {
+        this.judgeSolo = createJudgeSolo({
+          pack,
+          ctx: capture.ctx,
+          canSpeak: () => this.roomIsQuiet(),
+          onState: (judgeSolo) => this.set({ judgeSolo }),
+          onLog: (type, payload) => this.log("client", type, payload),
+        });
+        this.set({ judgeSolo: this.judgeSolo.state() });
+      }
       this.analyzer = buildAnalyzerClient(this);
       this.ears = buildEars(this, setup, pack, capture.sampleRate);
       this.mouth = buildMouth(this, setup, pack);
@@ -124,6 +139,8 @@ export class RoomController {
 
   private async teardown(): Promise<void> {
     this.clearAckTimer();
+    this.judgeSolo?.stop();
+    this.judgeSolo = null;
     this.analyzer?.dispose();
     this.analyzer = null;
     this.playback?.flush();
@@ -184,6 +201,18 @@ export class RoomController {
 
   /** CERTIFY: build the certificate, store it, and release the held finish_teachback tool. */
   certify = (callId: string | null): Promise<void> => certifySession(this, callId);
+
+  /**
+   * Nobody else is talking. The synthetic advisor uses this to avoid speaking over the judge:
+   * two voices in one turn cannot be diarized apart, and calibration then binds nobody.
+   */
+  roomIsQuiet(quietMs = 1200): boolean {
+    if (this.state.status.agentSpeaking) return false;
+    return performance.now() - this.lastTurnAt > quietMs;
+  }
+
+  /** Judge-solo: the operator asks the synthetic advisor for his next line. */
+  nextDemoLine = (): void => this.judgeSolo?.advance();
 
   /** The operator ends the teach-back from the room, without waiting for the agent to decide. */
   finishTeachback = (): void => {

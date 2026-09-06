@@ -7,6 +7,8 @@ export const PLAYBACK_RATE = 24000;
 
 export type Playback = {
   play(b64: string): void;
+  /** The same, for audio the room already holds as samples (judge-solo synthetic advisor). */
+  playPcm(pcm: Int16Array): void;
   /** Stop everything queued. Call on input.speech.started and on reply.done status interrupted. */
   flush(): void;
   queuedSeconds(): number;
@@ -17,7 +19,10 @@ export function createPlayback(ctx: AudioContext): Playback {
   const liveSources = new Set<AudioBufferSourceNode>();
 
   function play(b64: string): void {
-    const pcm = base64ToInt16(b64);
+    playPcm(base64ToInt16(b64));
+  }
+
+  function playPcm(pcm: Int16Array): void {
     if (pcm.length === 0) return;
     const buffer = ctx.createBuffer(1, pcm.length, PLAYBACK_RATE);
     const channel = buffer.getChannelData(0);
@@ -46,5 +51,10 @@ export function createPlayback(ctx: AudioContext): Playback {
     nextStartTime = ctx.currentTime;
   }
 
-  return { play, flush, queuedSeconds: () => Math.max(0, nextStartTime - ctx.currentTime) };
+  return {
+    play,
+    playPcm,
+    flush,
+    queuedSeconds: () => Math.max(0, nextStartTime - ctx.currentTime),
+  };
 }

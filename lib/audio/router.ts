@@ -1,3 +1,4 @@
+import { mixInt16 } from "./mixer";
 import type { AudioGates } from "@/lib/session/machine";
 
 // Audio router (trd.md section 3.2): every frame goes to the Ears when the phase allows, and to the
@@ -17,9 +18,22 @@ export type RouterOptions = {
   frameMs?: number;
   /** Maximum audio lead over wall time for the Mouth. Default 1000. */
   maxLeadMs?: number;
+  /**
+   * Judge-solo mode: the next pre-rendered advisor frame, or null when he is not speaking. It is
+   * mixed into what the Ears hear and never reaches the Mouth, which must not answer its own
+   * script (prd.md FR-11). Taking one frame per microphone frame keeps the two voices in step and
+   * keeps the Ears stream at real time, which is the only rate Streaming STT accepts.
+   */
+  nextSynthetic?: () => Int16Array | null;
 };
 
-export type RouterStats = { frames: number; earsSent: number; mouthSent: number; dropped: number };
+export type RouterStats = {
+  frames: number;
+  earsSent: number;
+  mouthSent: number;
+  dropped: number;
+  syntheticMixed: number;
+};
 
 export type Router = {
   push(pcm: Int16Array): { ears: boolean; mouth: boolean; dropped: boolean };
@@ -30,7 +44,13 @@ export function createRouter(opts: RouterOptions): Router {
   const now = opts.now ?? (() => performance.now());
   const frameMs = opts.frameMs ?? 50;
   const maxLead = opts.maxLeadMs ?? 1000;
-  const stats: RouterStats = { frames: 0, earsSent: 0, mouthSent: 0, dropped: 0 };
+  const stats: RouterStats = {
+    frames: 0,
+    earsSent: 0,
+    mouthSent: 0,
+    dropped: 0,
+    syntheticMixed: 0,
+  };
   let mouthStart: number | null = null;
   let mouthSentMs = 0;
 
@@ -42,7 +62,9 @@ export function createRouter(opts: RouterOptions): Router {
       let mouth = false;
       let dropped = false;
       if (gates.micToEars) {
-        ears = opts.sinks.ears(pcm);
+        const synthetic = opts.nextSynthetic?.() ?? null;
+        if (synthetic) stats.syntheticMixed += 1;
+        ears = opts.sinks.ears(synthetic ? mixInt16(pcm, synthetic) : pcm);
         if (ears) stats.earsSent += 1;
       }
       if (gates.micToMouth) {

@@ -52,7 +52,7 @@ export function CalibrationBanner({
       <div className="flex flex-wrap items-center gap-2">
         {labelsSeen.map((label) => (
           <span key={label} className="flex items-center gap-1">
-            <span className="text-muted-foreground font-mono text-xs">Speaker {label}:</span>
+            <span className="text-ink-soft font-mono text-xs">Speaker {label}:</span>
             <Button size="sm" variant="outline" onClick={() => onAssign("advisor", label)}>
               advisor
             </Button>

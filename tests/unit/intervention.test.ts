@@ -16,6 +16,7 @@ const setup: SessionSetup = {
   customerName: "Mrs. Sharma",
   productName: "ULIP",
   productTerms: [],
+  judgeSolo: false,
 };
 
 describe("composeIntervention", () => {

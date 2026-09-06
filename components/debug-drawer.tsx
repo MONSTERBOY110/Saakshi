@@ -73,7 +73,7 @@ export function DebugDrawer({ events, onExport }: Props) {
               <EventRow key={e.id} event={e} />
             ))}
             {visible.length === 0 && (
-              <li className="text-muted-foreground py-6 text-center text-sm">No events yet.</li>
+              <li className="text-ink-soft py-6 text-center text-sm">No events yet.</li>
             )}
           </ul>
         </ScrollArea>
@@ -87,12 +87,12 @@ function EventRow({ event }: { event: LogEvent }) {
     <li>
       <details className="rounded-md border px-2 py-1 text-xs">
         <summary className="flex cursor-pointer items-center gap-2 font-mono">
-          <span className="text-muted-foreground shrink-0">{formatClockMs(event.t)}</span>
+          <span className="text-ink-soft shrink-0">{formatClockMs(event.t)}</span>
           <Badge variant={badgeVariant(event.source)}>{event.source}</Badge>
           <span className="shrink-0 font-semibold">{event.type}</span>
-          <span className="text-muted-foreground truncate">{preview(event.payload)}</span>
+          <span className="text-ink-soft truncate">{preview(event.payload)}</span>
         </summary>
-        <pre className="bg-muted mt-1 max-h-72 overflow-auto rounded p-2 break-all whitespace-pre-wrap">
+        <pre className="bg-paper-deep mt-1 max-h-72 overflow-auto rounded p-2 break-all whitespace-pre-wrap">
           {JSON.stringify(event.payload, null, 1)}
         </pre>
       </details>

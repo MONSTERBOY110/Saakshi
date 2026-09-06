@@ -1,10 +1,95 @@
+<div align="center">
+
+![Saakshi: it calls the claim, out loud](docs/images/hero.png)
+
 # Saakshi
 
 **Consent you can prove.**
 
-Live: https://saakshi-1.vercel.app (Chromium recommended; allow the microphone on `/session`).
+An AI witness for regulated sales conversations. It knows who said what in English or Hinglish,
+interrupts a mis-selling claim while it is still in the air, checks that the customer actually
+understood, and issues a certificate anyone can verify without trusting the seller.
 
-Saakshi is an AI witness that sits in on regulated sales conversations, knows who said what in English or Hinglish, speaks up within two seconds when a customer is about to be misled, runs a teach-back with the customer, and ends by issuing a hash-chained Consent Certificate that anyone can verify. It uses AssemblyAI Streaming STT (Universal-3.5 Pro, diarized) as its ears, the Voice Agent API as its mouth, and the LLM Gateway for structured analysis. Built for the lablab.ai x AssemblyAI Voice Agent Hackathon, September 2026.
+[**Open the live demo →**](https://saakshi-1.vercel.app) · [Verify a certificate](https://saakshi-1.vercel.app) · MIT licensed
+
+Built on AssemblyAI Streaming STT (Universal-3.5 Pro, diarized), the Voice Agent API, and the LLM
+Gateway, for the lablab.ai x AssemblyAI Voice Agent Hackathon, September 2026.
+
+</div>
+
+---
+
+## The moment it exists for
+
+An advisor says *"Anytime, madam, and the returns are guaranteed, twelve percent."*
+**1754 milliseconds later**, from the end of that sentence to Saakshi's first sound, she says it out
+loud: *"Rahul, a quick flag. Returns on a market-linked plan cannot be called guaranteed."*
+
+![The session room at the moment Saakshi interrupts a guaranteed-returns claim](docs/images/room.png)
+
+Everything on that screen is real: the transcript is live diarized speech in two scripts, the tabla
+on the right is the regulator's disclosure list filling as they are actually made, and the number in
+the banner is measured end to end, recogniser lag included.
+
+## How it works
+
+Saakshi is a called game. Every disclosure the regulator requires is a named, numbered card, and it
+gets a bean the moment it is genuinely said, with the quote and the clock time that prove it.
+
+**1. It hears two people.** Streaming STT with speaker labels tells the advisor from the customer,
+in English, in Hindi, or in a sentence that switches halfway. Roles bind from the spoken names, in
+either script.
+
+**2. It marks the tabla.** A versioned protocol pack (`packs/insurance-ulip-in.json`: eight
+checkpoints, six prohibited claims, seven teach-back topics, each with its IRDAI citation) is
+evaluated deterministically on every finalized turn, with an LLM layer for the claims that rules
+alone miss.
+
+**3. It calls the foul.** A confirmed critical claim goes to the Voice Agent as a scripted
+correction, under twenty words, spoken over the conversation.
+
+**4. It checks she understood.** At the end, Saakshi asks three to five teach-back questions built
+from what was actually said, listens to the answers in Hinglish, re-explains once where she was
+only partly right, and records a verdict per question.
+
+**5. It issues proof.** Every finalized turn is hash-chained in the browser; the server recomputes
+the chain and the certificate hash before storing, and refuses anything that does not verify.
+
+## The proof
+
+The certificate stores hashes of the words, never the words themselves, and no audio is recorded at
+any point. Anyone can recompute both proofs from the stored record alone.
+
+| Verified | One character changed |
+|---|---|
+| ![A certificate reading VALID with its evidence table](docs/images/verify.png) | ![The same certificate reading TAMPERED](docs/images/verify-tampered.png) |
+
+## Measured, not claimed
+
+Every number here was produced by a live run against the real APIs. The method for each is in
+[`docs/decisions.md`](docs/decisions.md).
+
+| What | Result | How |
+|---|---|---|
+| Time to interrupt, end of speech to first sound | **p50 1533 ms, p95 1807 ms** | 10 interventions, `pnpm test:e2e:latency` |
+| Prohibited-claim detection precision | **1.00** | 10 labelled dialogues, `pnpm eval:analyzer` |
+| Disclosures caught on one pass of the demo script | **6 to 7 of 8** | `pnpm test:e2e:golden` |
+| Teach-back question generation | **5.4 s, once per session** | `pnpm eval:questions` |
+| Judge-solo, whole demo driven by one person | **interrupts at 2226 ms** | `pnpm test:e2e:judge-solo` |
+| Unit tests | **369 passing** | `pnpm test` |
+
+Latency is reported honestly: the badge shows the recogniser's endpointing lag plus Saakshi's own
+reaction, and says **reply only** when the end-to-end total cannot be computed.
+
+## Judge-solo mode
+
+You do not need two people. Judge-solo plays a pre-rendered advisor into the same microphone stream
+the recogniser hears, so diarization finds two speakers and you only have to play the customer. The
+panel tells you what to say next, including the Hinglish lines. It is on by default; turn it off on
+the start screen when two people are actually in the room.
+
+The synthetic advisor is never sent to the Voice Agent, and it waits for a quiet moment before each
+line so it does not talk over you.
 
 ## Architecture
 
@@ -18,7 +103,7 @@ flowchart LR
     EARS --> SM[Session State Machine]
     MOUTH --> SM
     SM --> RULES[Rule Engine<br/>protocol pack, deterministic]
-    SM --> UI[Checkpoint Board · Transcript · Teach-back · Certificate]
+    SM --> UI[Tabla · Transcript · Teach-back · Certificate]
     MOUTH -->|reply.audio| SPK[Speaker playback + flush]
   end
   subgraph Vercel["Vercel route handlers (Node)"]
@@ -44,39 +129,73 @@ flowchart LR
   T2 -.mint token.-> VA
 ```
 
-## Setup
+The API key never reaches the browser: both sockets are opened with single-use tokens minted
+server-side and valid for sixty seconds.
+
+## Using the AssemblyAI APIs
+
+Things this build had to get right, each verified against the docs and recorded with evidence in
+[`docs/decisions.md`](docs/decisions.md):
+
+- **Streaming STT** at 24 kHz PCM16, `speaker_labels`, `max_speakers=2`, `language_codes` as a
+  JSON-array parameter, `format_turns=true`, keyterms from the room's own names and product terms.
+  `SpeakerRevision` only fills PENDING turns, after it was measured mislabelling settled ones.
+- **Voice Agent** with `session.update` for the mutable fields, scripted `reply.create` for every
+  spoken line (verbatim in 10 of 10 trials), playback flushed on `input.speech.started`, and
+  `session.end` before an intentional close.
+- **Client-side tools** with results held until `reply.done` is the latest event, which is what the
+  docs require, plus the documented hold-mode exception for `finish_teachback`.
+- **Progressive tool reveal**: `finish_teachback` appears only after three answers are recorded, and
+  the prompt changes in the same message.
+- **LLM Gateway** with strict JSON schema where the model supports it, falling back to a
+  prompt-described shape with `json-repair` where it does not.
+
+## Run it yourself
 
 ```bash
 pnpm install
 cp .env.example .env.local   # fill ASSEMBLYAI_API_KEY
-pnpm dev                     # http://localhost:3000
-pnpm test                    # vitest unit tests
-pnpm test:e2e                # playwright with a fake mic
+pnpm dev                     # http://localhost:3000, allow the microphone on /session
+```
+
+Checks that need no API key:
+
+```bash
+pnpm test                    # 369 unit tests
+pnpm test:e2e                # smoke and certificate verification, fake mic
 pnpm lint && pnpm typecheck && pnpm build
 ```
 
-## Deployment
-
-See `docs/deployment.md` for the Vercel setup, environment variables, Upstash, and the post-deploy verification steps.
-
-## Status
-
-Phase 2 (Mouth, analyzer and intervention), 2026-09-06. The session room calibrates roles by name, shows a role-coloured diarized transcript with language tags, and ticks the ULIP disclosures and flags prohibited claims from a versioned protocol pack (`packs/insurance-ulip-in.json`). When a critical claim is confirmed, Saakshi speaks the pack correction, shows how long it took from the end of the advisor speech to her first sound, and waits for an acknowledgement. "Saakshi, verify" reads whatever disclosure is still missing. Both AssemblyAI sessions run from the browser: Streaming STT
-(Universal-3.5 Pro, diarized, English and Hindi) as the ears and the Voice Agent API as the mouth, with
-server-minted single-use tokens. Spike results and every verified payload shape are in
-`docs/decisions.md`; recorded fixtures are in `tests/fixtures/`.
-
-Live checks against AssemblyAI (need `ASSEMBLYAI_API_KEY` in `.env`, cost a few cents):
+Live checks against AssemblyAI (need the key, cost a few cents):
 
 ```bash
-pnpm test:e2e:live         # both sockets open, Chromium fake mic
-pnpm fixtures:wav          # two-voice WAV of the demo script (offline Windows voices)
-pnpm test:e2e:golden       # golden path: calibration, board, interruption, nudge
-pnpm fixtures:wav:latency  # probe WAV that repeats the critical claim
-pnpm test:e2e:latency      # intervention latency over several interventions
-pnpm eval:analyzer         # layer-2 accuracy over ten labelled dialogues
-node scripts/spike-agent-context.mjs 300000   # Voice Agent context and idle spikes, headless
+pnpm demo:render             # pre-render the synthetic advisor for judge-solo
+pnpm fixtures:wav            # two-voice WAV of the demo script
+pnpm fixtures:wav:customer   # customer-only WAV for judge-solo
+pnpm test:e2e:live           # both sockets open
+pnpm test:e2e:golden         # the whole path, to a certificate that verifies
+pnpm test:e2e:judge-solo     # one person drives the entire demo
+pnpm test:e2e:latency        # interruption latency over ten samples
+pnpm eval:analyzer           # detection accuracy over ten labelled dialogues
+pnpm eval:questions          # teach-back question quality, one live call
 ```
+
+## Repository
+
+| Path | What is in it |
+|---|---|
+| `packs/` | Protocol packs: checkpoints, prohibited claims, citations, teach-back topics, demo script |
+| `lib/aai/` | Typed Streaming STT and Voice Agent clients, token minting, message schemas |
+| `lib/session/` | Phase machine, transcript, role calibration, rule fusion, teach-back, judge-solo |
+| `lib/cert/` | Canonical JSON, the hash chain, the certificate builder and store |
+| `lib/demo/` | The synthetic advisor |
+| `docs/decisions.md` | Every verified API fact, spike result and measurement, with its method |
+| `PRODUCT.md`, `DESIGN.md` | Product truth and the visual world, both binding on future work |
+
+## Deployment
+
+See [`docs/deployment.md`](docs/deployment.md) for the Vercel setup, environment variables, Upstash,
+and the post-deploy verification steps.
 
 ## Licence
 

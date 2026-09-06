@@ -33,6 +33,8 @@ test.describe("intervention latency (live AssemblyAI)", () => {
 
     await page.goto("/session");
     await Promise.all([page.request.get("/api/token/stt"), page.request.get("/api/token/agent")]);
+    // The fixture WAV already carries both voices, so the synthetic advisor must stay off.
+    await page.getByTestId("judge-solo-toggle").uncheck();
     await page.getByRole("button", { name: "Start", exact: true }).click();
     await expect(page.getByTestId("mouth-status")).toHaveText("ready", { timeout: 45_000 });
     await expect(page.getByTestId("phase")).toHaveText("observe", { timeout: 90_000 });

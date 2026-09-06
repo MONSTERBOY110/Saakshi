@@ -134,7 +134,10 @@ describe.skipIf(!live)("teach-back question generation, live (SAAKSHI_LIVE_EVAL)
     // If the prompt were poor, every question would silently fall back to the pack and the demo
     // would look fine while the model contributed nothing. Most kept questions must be generated.
     const fromModel = questions.filter((q) => q.source === "llm").length;
-    expect(fromModel, `only ${fromModel} of ${questions.length} came from the model`).toBeGreaterThanOrEqual(3);
+    expect(
+      fromModel,
+      `only ${fromModel} of ${questions.length} came from the model`,
+    ).toBeGreaterThanOrEqual(3);
     // The point of the phase: ask about what went wrong and what was never said.
     const topics = new Set(questions.map((q) => q.topic));
     expect(topics.has("market_risk") || topics.has("lock_in")).toBe(true);

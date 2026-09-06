@@ -1,4 +1,5 @@
 import type { Certificate } from "@/lib/cert/schema";
+import { Bean, EmptySquare } from "@/components/marks";
 
 // Every claim on the certificate links to a speaker, a time and the words that were said
 // (prd.md principle 2: speaker-attributed or it did not happen).
@@ -8,7 +9,7 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h2 className="mb-2 text-sm font-medium tracking-wide uppercase">
+        <h2 className="ribbon ribbon-quiet mb-2">
           Required disclosures ({met} of {certificate.checkpoints.length})
         </h2>
         <table className="w-full border-collapse text-sm">
@@ -30,12 +31,16 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
               >
                 <Td>
                   {c.label}
-                  <span className="text-muted-foreground block text-xs">
+                  <span className="text-ink-soft block text-xs">
                     {c.citation.authority}, {c.citation.clause}
                   </span>
                 </Td>
                 <Td>
-                  <span aria-hidden>{c.status === "missing" ? "○ " : "✓ "}</span>
+                  {c.status === "missing" ? (
+                    <EmptySquare className="mr-1 inline-block h-3.5 w-3.5 align-[-2px]" />
+                  ) : (
+                    <Bean className="mr-1 inline-block h-3.5 w-3.5 align-[-2px]" />
+                  )}
                   {c.status === "met_after_nudge" ? "met after prompt" : c.status}
                 </Td>
                 <Td className="font-mono text-xs">
@@ -49,11 +54,11 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium tracking-wide uppercase">
+        <h2 className="ribbon ribbon-quiet mb-2">
           Flagged claims ({certificate.violations.length})
         </h2>
         {certificate.violations.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No prohibited claim was detected.</p>
+          <p className="text-ink-soft text-sm">No prohibited claim was detected.</p>
         ) : (
           <table className="w-full border-collapse text-sm">
             <thead>
@@ -74,7 +79,7 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
                 >
                   <Td>
                     {v.label}
-                    <span className="text-muted-foreground block text-xs">
+                    <span className="text-ink-soft block text-xs">
                       {v.citation.authority}, {v.citation.clause}
                     </span>
                   </Td>
@@ -101,11 +106,11 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-medium tracking-wide uppercase">
+        <h2 className="ribbon ribbon-quiet mb-2">
           Teach-back ({certificate.teachback.length} questions)
         </h2>
         {certificate.teachback.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No teach-back was recorded.</p>
+          <p className="text-ink-soft text-sm">No teach-back was recorded.</p>
         ) : (
           <table className="w-full border-collapse text-sm">
             <thead>
@@ -140,9 +145,7 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return (
-    <th className="text-muted-foreground py-1 pr-3 text-xs font-medium uppercase">{children}</th>
-  );
+  return <th className="plate text-ink-soft py-1 pr-3 text-left">{children}</th>;
 }
 
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {

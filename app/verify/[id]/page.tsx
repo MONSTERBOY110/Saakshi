@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import QRCode from "qrcode";
 import { verifyCertificate } from "@/lib/cert/chain";
 import { CertificateSchema, type Certificate } from "@/lib/cert/schema";
@@ -35,7 +36,7 @@ export default async function VerifyPage({
     return (
       <Shell>
         <VerdictBanner verdict="not_found" id={id} />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-ink-soft text-sm">
           No certificate with this identifier. Certificates expire ninety days after the
           conversation.
         </p>
@@ -55,13 +56,13 @@ export default async function VerifyPage({
   return (
     <Shell>
       {tamper && (
-        <p
-          data-testid="tamper-notice"
-          className="rounded-md border border-amber-500 bg-amber-50 px-3 py-2 text-sm dark:bg-amber-950/40"
-        >
-          Demonstration. One character of one quote has been changed in this view only. The stored
-          record is untouched:{" "}
-          <a className="underline" href={`/verify/${certificate.id}`}>
+        <p data-testid="tamper-notice" className="card-print-tight bg-sun px-3 py-2 text-sm">
+          <span className="plate">Demonstration.</span> One character of one quote has been changed
+          in this view only. The stored record is untouched:{" "}
+          <a
+            className="decoration-carnival underline decoration-2 underline-offset-2"
+            href={`/verify/${certificate.id}`}
+          >
             see the original
           </a>
           .
@@ -74,18 +75,18 @@ export default async function VerifyPage({
         hashOk={result.hashOk}
       />
       {!tamper && result.valid && (
-        <p className="text-muted-foreground text-sm print:hidden">
+        <p className="text-ink-soft text-sm print:hidden">
           <a
             data-testid="tamper-link"
-            className="underline"
+            className="decoration-carnival underline decoration-2 underline-offset-4"
             href={`/verify/${certificate.id}?tamper=quote`}
           >
             Show what an altered copy looks like
           </a>
         </p>
       )}
-      <section className="grid gap-4 sm:grid-cols-[1fr_auto]">
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+      <section className="card-print grid gap-4 border-[3px] p-4 sm:grid-cols-[1fr_auto]">
+        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-sm">
           <Row label="Advisor">{certificate.parties.advisor}</Row>
           <Row label="Customer">{certificate.parties.customer}</Row>
           <Row label="Product">{certificate.product.name}</Row>
@@ -111,15 +112,19 @@ export default async function VerifyPage({
 
       <EvidenceTable certificate={certificate} />
 
-      <section className="text-muted-foreground space-y-1 text-xs">
-        <h2 className="text-foreground text-sm font-medium">How this was checked</h2>
+      <section className="rule-dashed text-ink-soft space-y-1.5 pt-4 text-xs">
+        <h2 className="ribbon ribbon-quiet mb-1">How this was checked</h2>
         <p>
           The chain starts from the pack identity and the speech session id, then folds in every
           finalized turn in order: its number, who spoke, a hash of the words, and the start and end
           time. Changing any of them changes the head.
         </p>
-        <p className="font-mono break-all">chain head {certificate.turns_digest.chain_head}</p>
-        <p className="font-mono break-all">certificate hash {certificate.certificate_hash}</p>
+        <p className="num break-all">
+          <span className="plate text-ink">chain head</span> {certificate.turns_digest.chain_head}
+        </p>
+        <p className="num break-all">
+          <span className="plate text-ink">certificate hash</span> {certificate.certificate_hash}
+        </p>
         <p>
           The certificate stores hashes of the words, never the words themselves, and no audio is
           recorded at any point.
@@ -159,12 +164,20 @@ function tamperCopy(certificate: Certificate): Certificate {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 px-6 py-10 print:py-0">
-      <header>
-        <p className="text-muted-foreground text-xs tracking-wide uppercase">
-          Saakshi, consent you can prove
-        </p>
-        <h1 className="text-2xl font-semibold">Consent Certificate</h1>
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-5 px-5 py-8 sm:px-8 print:py-0">
+      <header className="border-ink flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b-2 pb-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="shout text-3xl">CONSENT CERTIFICATE</h1>
+          <p className="plate text-ink-soft mt-1">
+            Saakshi · साक्षी · anyone can recompute this without trusting the seller
+          </p>
+        </div>
+        <Link
+          href="/"
+          className="plate decoration-carnival shrink-0 underline decoration-2 underline-offset-4 print:hidden"
+        >
+          What is Saakshi
+        </Link>
       </header>
       {children}
     </main>
@@ -174,8 +187,10 @@ function Shell({ children }: { children: React.ReactNode }) {
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <>
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd>{children}</dd>
+      <dt className="plate text-ink-soft self-center">{label}</dt>
+      <dd className="border-b border-dashed border-[color-mix(in_srgb,var(--ink)_30%,transparent)] py-1">
+        {children}
+      </dd>
     </>
   );
 }

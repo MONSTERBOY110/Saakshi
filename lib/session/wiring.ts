@@ -22,6 +22,8 @@ export function buildRouter(c: RoomController): Router {
       // incoming speech as barge-in and would cut its own correction short.
       return { ...gates, micToMouth: gates.micToMouth && !c.state.status.agentSpeaking };
     },
+    // Judge-solo: the pre-rendered advisor rides along into the Ears and nowhere else.
+    nextSynthetic: () => c.judgeSolo?.nextFrame() ?? null,
     sinks: {
       ears: (pcm) => {
         const sent = c.ears?.sendAudio(pcm) ?? false;

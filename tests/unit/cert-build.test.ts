@@ -33,12 +33,20 @@ const turn = (
 const turns: StoredTurn[] = [
   turn(0, "advisor", "Good morning, my name is Rahul."),
   turn(1, "customer", "Namaste, my name is Mrs. Sharma."),
-  turn(2, "advisor", "You pay a premium of fifty thousand every year for ten years, policy term fifteen years."),
+  turn(
+    2,
+    "advisor",
+    "You pay a premium of fifty thousand every year for ten years, policy term fifteen years.",
+  ),
   turn(3, "advisor", "The money is market-linked and there is a five year lock-in."),
   turn(4, "advisor", "Anytime, madam, and the returns are guaranteed, 12%."),
   turn(5, "advisor", "Sorry, let me correct that. Returns are not guaranteed."),
   turn(6, "advisor", "There are charges, including premium allocation and fund management."),
-  turn(7, "advisor", "The illustration shows four percent and eight percent, and the surrender value after the lock-in."),
+  turn(
+    7,
+    "advisor",
+    "The illustration shows four percent and eight percent, and the surrender value after the lock-in.",
+  ),
   turn(8, "advisor", "You have a thirty day free look period to return the policy."),
   turn(9, undefined, "Saakshi speaking.", { echo: true }),
 ];
@@ -80,6 +88,7 @@ function roomState() {
       customerName: "Mrs. Sharma",
       productName: "SecureGrowth ULIP",
       productTerms: ["SecureGrowth"],
+      judgeSolo: false,
     },
     session: {
       startedAt: "2026-09-06T09:00:00.000Z",
@@ -91,7 +100,8 @@ function roomState() {
     interventions: [
       {
         key: "guaranteed_returns@4",
-        spokenText: "Rahul, a quick flag. Returns on a market-linked plan cannot be called guaranteed.",
+        spokenText:
+          "Rahul, a quick flag. Returns on a market-linked plan cannot be called guaranteed.",
         latencyMs: 1533,
         acknowledged: false,
       },
@@ -111,7 +121,11 @@ describe("buildCertificateDraft", () => {
     const draft = await buildCertificateDraft(roomState());
     expect(draft.parties).toMatchObject({ advisor: "Rahul", customer: "Mrs. Sharma" });
     expect(draft.product.name).toBe("SecureGrowth ULIP");
-    expect(draft.pack).toMatchObject({ id: "insurance-ulip-in", version: "1.0.0", jurisdiction: "IN" });
+    expect(draft.pack).toMatchObject({
+      id: "insurance-ulip-in",
+      version: "1.0.0",
+      jurisdiction: "IN",
+    });
     expect(draft.demo).toBe(true);
   });
 
@@ -133,7 +147,9 @@ describe("buildCertificateDraft", () => {
     expect(guaranteed?.resolution).toBe("corrected");
     expect(guaranteed?.intervention).toMatchObject({ latency_ms: 1533, acknowledged: false });
     expect(guaranteed?.intervention?.spoken_text).toContain("cannot be called guaranteed");
-    expect(draft.violations.find((v) => v.id === "withdraw_anytime")?.resolution).toBe("acknowledged");
+    expect(draft.violations.find((v) => v.id === "withdraw_anytime")?.resolution).toBe(
+      "acknowledged",
+    );
   });
 
   it("keeps the teach-back answers with verdicts, quotes and the re-explain marker", async () => {
@@ -180,7 +196,11 @@ describe("finaliseCertificate", () => {
     const cert = await finaliseCertificate(draft, "cert-abcdefgh");
     expect(CertificateSchema.safeParse(cert).success).toBe(true);
     expect(cert.id).toBe("cert-abcdefgh");
-    await expect(verifyCertificate(cert)).resolves.toEqual({ valid: true, chainOk: true, hashOk: true });
+    await expect(verifyCertificate(cert)).resolves.toEqual({
+      valid: true,
+      chainOk: true,
+      hashOk: true,
+    });
   });
 
   it("fails verification after a one-character edit of a quote", async () => {

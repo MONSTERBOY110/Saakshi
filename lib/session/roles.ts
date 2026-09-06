@@ -55,6 +55,24 @@ export function observeFinalTurn(
   return bindPositional(state, label);
 }
 
+/**
+ * Bind a label to a role the room already knows for certain. Judge-solo is the case: the room
+ * played the advisor's voice itself, so it does not have to infer who spoke from a name or from
+ * speaking order, and calibration finishes on the first turn from each person.
+ */
+export function bindKnownSpeaker(
+  state: RolesState,
+  label: string | undefined,
+  role: Role,
+): { state: RolesState; bound?: Role } {
+  if (!label || label === "PENDING" || state.step === "done") return { state };
+  if (state[role] === label) return { state };
+  // The other role already owns this label, so the room's guess about whose turn it is was wrong.
+  const other: Role = role === "advisor" ? "customer" : "advisor";
+  if (state[other] === label) return { state };
+  return finish({ ...state, [role]: label }, role);
+}
+
 export function swapRoles(state: RolesState): RolesState {
   return { ...state, advisor: state.customer, customer: state.advisor };
 }

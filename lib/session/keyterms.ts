@@ -10,6 +10,8 @@ export type SessionSetup = {
   customerName: string;
   productName: string;
   productTerms: string[];
+  /** Judge-solo (P0-10): the pack's advisor is played from a recording so one person can demo. */
+  judgeSolo: boolean;
 };
 
 export const DEFAULT_SETUP: SessionSetup = {
@@ -18,6 +20,8 @@ export const DEFAULT_SETUP: SessionSetup = {
   customerName: "Mrs. Sharma",
   productName: "ULIP",
   productTerms: [],
+  // On unless the deployment says otherwise, so a judge who just opens the URL can run the demo.
+  judgeSolo: process.env.NEXT_PUBLIC_JUDGE_SOLO_MODE !== "false",
 };
 
 /** People and product first (they matter most for the transcript), then the pack vocabulary. */

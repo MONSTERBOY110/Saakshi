@@ -6,7 +6,7 @@ import type { RoomController } from "./controller";
 import { isAgentEcho } from "./echo";
 import { startIntervention } from "./flows";
 import { fuse } from "./fusion";
-import { observeFinalTurn, rolesBound } from "./roles";
+import { bindKnownSpeaker, observeFinalTurn, rolesBound } from "./roles";
 import {
   applyRevision,
   applyTurn,
@@ -82,6 +82,8 @@ export function handleEarsEvent(c: RoomController, e: EarsEvent): void {
 
 function onTurn(c: RoomController, e: Extract<EarsEvent, { type: "turn" }>): void {
   const detectedAt = performance.now();
+  // Any turn, partial or final, means someone is talking; judge-solo waits for a gap.
+  c.lastTurnAt = detectedAt;
   const r = applyTurn(c.state.transcript, e.turn, c.roleOf);
   c.set({ transcript: r.state });
   const finalized = r.finalized;
@@ -96,17 +98,29 @@ function onTurn(c: RoomController, e: Extract<EarsEvent, { type: "turn" }>): voi
     return;
   }
   calibrate(c, finalized);
+  // Judge-solo: a line that waits for the customer is released by the customer actually speaking.
+  const role = c.state.transcript.turns.find((t) => t.order === finalized.order)?.role;
+  if (role === "customer") c.judgeSolo?.customerSpoke();
   runRules(c, finalized, detectedAt);
 }
 
 function calibrate(c: RoomController, turn: StoredTurn): void {
   const { roles, setup, phase } = c.state;
   if (phase !== "CALIBRATE" || rolesBound(roles)) return;
-  const next = observeFinalTurn(
-    roles,
-    { label: turn.speakerLabel, text: turn.text },
-    { advisor: setup.advisorName, customer: setup.customerName },
-  );
+  // Judge-solo: the room played the advisor's voice itself, so it does not have to infer who spoke.
+  // Anyone talking when he is not is the judge. That makes calibration deterministic, which is what
+  // a three minute solo demo needs, and it survives a name the recogniser wrote in another script.
+  const next = c.judgeSolo
+    ? bindKnownSpeaker(
+        roles,
+        turn.speakerLabel,
+        c.judgeSolo.spokeRecently() ? "advisor" : "customer",
+      )
+    : observeFinalTurn(
+        roles,
+        { label: turn.speakerLabel, text: turn.text },
+        { advisor: setup.advisorName, customer: setup.customerName },
+      );
   if (next.state === roles) return;
   c.log("client", "roles", {
     bound: next.bound,

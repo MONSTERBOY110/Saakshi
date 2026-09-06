@@ -1,29 +1,30 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Bean, BeanHalf, CrossMark, StarOrnament } from "@/components/marks";
 import type { SessionSetup } from "@/lib/session/keyterms";
 import type { TeachbackAnswer, TeachbackState, TeachbackVerdict } from "@/lib/session/store";
 import { formatClock } from "@/lib/session/transcript";
 
 type Props = { teachback: TeachbackState | undefined; setup: SessionSetup };
 
-// Colour is never the only signal: every verdict carries a symbol and a word as well, so the panel
-// reads the same to a judge watching a projector or a colour-blind reviewer.
-const VERDICT: Record<TeachbackVerdict, { symbol: string; word: string; className: string }> = {
+// The customer's answers are marked with the same objects the tabla uses: a whole bean when she
+// covered it, half a bean when she got part of it, a crossed square when she could not. Colour is
+// never the only signal, so every mark ships beside its word.
+const VERDICT: Record<TeachbackVerdict, { Mark: typeof Bean; word: string; className: string }> = {
   understood: {
-    symbol: "✓",
+    Mark: Bean,
     word: "Understood",
-    className: "border-emerald-600/40 text-emerald-700 dark:text-emerald-400",
+    className: "border-ink bg-turquoise text-[#fff8e8]",
   },
   partial: {
-    symbol: "≈",
+    Mark: BeanHalf,
     word: "Partly",
-    className: "border-amber-600/40 text-amber-700 dark:text-amber-400",
+    className: "border-ink bg-sun text-ink",
   },
   not_understood: {
-    symbol: "✗",
+    Mark: CrossMark,
     word: "Not understood",
-    className: "border-red-600/40 text-red-700 dark:text-red-400",
+    className: "border-ink bg-carnival text-[#fff8e8]",
   },
 };
 
@@ -35,22 +36,23 @@ export function TeachbackPanel({ teachback, setup }: Props) {
   return (
     <section aria-label="Teach-back" className="flex flex-col gap-3" data-testid="teachback-panel">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-medium tracking-wide uppercase">
+        <h2 className="ribbon">
+          <StarOrnament className="h-3 w-3" />
           Teach-back with {setup.customerName}
         </h2>
-        <p className="text-muted-foreground text-xs" data-testid="teachback-progress">
+        <p className="text-ink-soft text-xs" data-testid="teachback-progress">
           {answers.length} of {questions.length} answered
         </p>
       </div>
 
       {teachback.status === "loading" && (
-        <p className="text-muted-foreground text-sm" data-testid="teachback-loading">
+        <p className="text-ink-soft text-sm" data-testid="teachback-loading">
           Preparing questions from what was actually said.
         </p>
       )}
 
       {teachback.error && (
-        <p className="text-muted-foreground text-xs" data-testid="teachback-error">
+        <p className="text-ink-soft text-xs" data-testid="teachback-error">
           Questions came from the protocol pack: {teachback.error}
         </p>
       )}
@@ -64,7 +66,7 @@ export function TeachbackPanel({ teachback, setup }: Props) {
               key={q.id}
               data-testid={`teachback-q-${q.id}`}
               data-verdict={answer?.verdict ?? "pending"}
-              className={`rounded-md border p-2.5 text-sm ${current ? "border-foreground/40" : "border-border"}`}
+              className={`card-print-tight p-2.5 text-sm ${current ? "border-foreground/40" : "border-border"}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <p className="font-medium">
@@ -72,9 +74,7 @@ export function TeachbackPanel({ teachback, setup }: Props) {
                 </p>
                 <VerdictChip answer={answer} current={current} />
               </div>
-              {q.hintHi && !answer && (
-                <p className="text-muted-foreground mt-1 text-xs">{q.hintHi}</p>
-              )}
+              {q.hintHi && !answer && <p className="text-ink-soft mt-1 text-xs">{q.hintHi}</p>}
               {answer && <AnswerBody answer={answer} />}
             </li>
           );
@@ -82,7 +82,7 @@ export function TeachbackPanel({ teachback, setup }: Props) {
       </ol>
 
       {teachback.advisorInterjections > 0 && (
-        <p className="text-muted-foreground text-xs" data-testid="advisor-interjections">
+        <p className="text-ink-soft text-xs" data-testid="advisor-interjections">
           {setup.advisorName} answered for {setup.customerName}{" "}
           {teachback.advisorInterjections === 1
             ? "once"
@@ -92,7 +92,7 @@ export function TeachbackPanel({ teachback, setup }: Props) {
       )}
 
       {teachback.summary && (
-        <p className="text-muted-foreground text-xs" data-testid="teachback-summary">
+        <p className="text-ink-soft text-xs" data-testid="teachback-summary">
           {teachback.summary}
         </p>
       )}
@@ -103,35 +103,32 @@ export function TeachbackPanel({ teachback, setup }: Props) {
 function VerdictChip({ answer, current }: { answer?: TeachbackAnswer; current: boolean }) {
   if (!answer) {
     return (
-      <Badge variant="outline" className="shrink-0 text-xs">
+      <span className="num border-ink bg-paper shrink-0 rounded-sm border-2 px-1.5 py-0.5">
         {current ? "Asking now" : "To come"}
-      </Badge>
+      </span>
     );
   }
   const v = VERDICT[answer.verdict];
   return (
-    <Badge
-      variant="outline"
-      className={`shrink-0 text-xs ${v.className}`}
+    <span
+      className={`num flex shrink-0 items-center gap-1 rounded-sm border-2 px-1.5 py-0.5 ${v.className}`}
       data-testid={`verdict-${answer.questionId}`}
     >
-      <span aria-hidden="true">{v.symbol}</span> {v.word}
-    </Badge>
+      <v.Mark className="h-3.5 w-3.5" />
+      {v.word}
+    </span>
   );
 }
 
 function AnswerBody({ answer }: { answer: TeachbackAnswer }) {
   return (
     <div className="mt-1.5 flex flex-col gap-1">
-      <p className="text-muted-foreground text-xs">
+      <p className="text-ink-soft text-xs">
         {answer.evidence && <span>{formatClock(answer.evidence.start_ms)} </span>}
         <q>{answer.customerQuote}</q>
       </p>
       {answer.reexplained && (
-        <p
-          className="text-muted-foreground text-xs"
-          data-testid={`reexplained-${answer.questionId}`}
-        >
+        <p className="text-ink-soft text-xs" data-testid={`reexplained-${answer.questionId}`}>
           Saakshi explained this again before she answered.
         </p>
       )}

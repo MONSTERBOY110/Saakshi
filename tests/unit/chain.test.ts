@@ -17,7 +17,13 @@ const seed = { packId: "insurance-ulip-in", packVersion: "1.0.0", sttSessionId: 
 const turns: ChainTurn[] = [
   { order: 0, role: "advisor", transcript: "Good morning, Mrs. Sharma.", startMs: 0, endMs: 1500 },
   { order: 1, role: "customer", transcript: "Namaste.", startMs: 2000, endMs: 2600 },
-  { order: 2, role: "advisor", transcript: "There is a 5-year lock-in.", startMs: 3000, endMs: 5200 },
+  {
+    order: 2,
+    role: "advisor",
+    transcript: "There is a 5-year lock-in.",
+    startMs: 3000,
+    endMs: 5200,
+  },
 ];
 
 describe("chainHead", () => {
@@ -42,7 +48,9 @@ describe("chainHead", () => {
 
   it("changes when a single character of a transcript changes", async () => {
     const before = await chainHead(seed, turns);
-    const edited = turns.map((t) => (t.order === 2 ? { ...t, transcript: "There is a 4-year lock-in." } : t));
+    const edited = turns.map((t) =>
+      t.order === 2 ? { ...t, transcript: "There is a 4-year lock-in." } : t,
+    );
     await expect(chainHead(seed, edited)).resolves.not.toBe(before);
   });
 
@@ -126,7 +134,10 @@ describe("verifyCertificate", () => {
     const flipped = first.transcript_hash[0] === "a" ? "b" : "a";
     const tampered = {
       ...cert,
-      turns: [{ ...first, transcript_hash: flipped + first.transcript_hash.slice(1) }, ...cert.turns.slice(1)],
+      turns: [
+        { ...first, transcript_hash: flipped + first.transcript_hash.slice(1) },
+        ...cert.turns.slice(1),
+      ],
     };
     const result = await verifyCertificate(tampered);
     expect(result.valid).toBe(false);

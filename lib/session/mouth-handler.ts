@@ -103,6 +103,9 @@ function onReplyDone(c: RoomController, interrupted: boolean): void {
   c.set((s) => ({ status: { ...s.status, agentSpeaking: false } }));
   c.toolResults.noteReplyDone(c, interrupted);
   const phase = c.state.phase;
+  // Judge-solo: the synthetic advisor waits for Saakshi's greeting to finish before he starts, so
+  // the two voices do not talk over each other on the judge's very first impression.
+  if (phase === "CALIBRATE" && c.judgeSolo?.state().status === "idle") c.judgeSolo.start();
   // The acknowledgement window opens once the correction has been spoken.
   if (phase === "INTERVENE" && !c.state.intervention?.acknowledged) return armAckWindow(c);
   // The nudge line has finished, so the room moves on to the teach-back.

@@ -8,6 +8,7 @@ import {
   rolesBound,
   swapRoles,
   whoseName,
+  bindKnownSpeaker,
 } from "@/lib/session/roles";
 
 describe("role calibration", () => {
@@ -121,5 +122,39 @@ describe("name-aware calibration", () => {
     s = observeFinalTurn(s, { label: "B", text: "Mera naam Sharma hai." }, names).state;
     expect(rolesBound(s)).toBe(true);
     expect(observeFinalTurn(s, { label: "C", text: "My name is Rahul." }, names).state).toEqual(s);
+  });
+});
+
+describe("bindKnownSpeaker", () => {
+  it("binds the label to the role the room already knows", () => {
+    const out = bindKnownSpeaker(initialRoles(), "A", "advisor");
+    expect(out.bound).toBe("advisor");
+    expect(out.state.advisor).toBe("A");
+  });
+
+  it("binds the other person on their first turn and finishes calibration", () => {
+    const first = bindKnownSpeaker(initialRoles(), "A", "advisor");
+    const second = bindKnownSpeaker(first.state, "B", "customer");
+    expect(second.state).toMatchObject({ advisor: "A", customer: "B", step: "done" });
+  });
+
+  it("changes nothing when the same person speaks again", () => {
+    const first = bindKnownSpeaker(initialRoles(), "A", "advisor");
+    const again = bindKnownSpeaker(first.state, "A", "advisor");
+    expect(again.bound).toBeUndefined();
+    expect(again.state).toBe(first.state);
+  });
+
+  it("never steals a label that is already the other role", () => {
+    const first = bindKnownSpeaker(initialRoles(), "A", "advisor");
+    // The advisor speaks again but the room thought it was the customer's turn.
+    const wrong = bindKnownSpeaker(first.state, "A", "customer");
+    expect(wrong.state.advisor).toBe("A");
+    expect(wrong.state.customer).toBeUndefined();
+  });
+
+  it("ignores a PENDING label, which names nobody", () => {
+    const out = bindKnownSpeaker(initialRoles(), "PENDING", "advisor");
+    expect(out.state.advisor).toBeUndefined();
   });
 });

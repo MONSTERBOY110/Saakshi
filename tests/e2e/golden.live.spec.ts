@@ -26,6 +26,8 @@ test.describe("golden path v3 (live AssemblyAI, two-voice WAV)", () => {
     // Warm the token routes: in dev they compile on first hit and can take 10 s or more.
     await Promise.all([page.request.get("/api/token/stt"), page.request.get("/api/token/agent")]);
     await expect(page.getByLabel("Advisor name")).toHaveValue("Rahul");
+    // The fixture WAV already carries both voices, so the synthetic advisor must stay off.
+    await page.getByTestId("judge-solo-toggle").uncheck();
     await page.getByRole("button", { name: "Start", exact: true }).click();
 
     await expect(page.getByTestId("mic-status")).toHaveText("24000 Hz", { timeout: 30_000 });

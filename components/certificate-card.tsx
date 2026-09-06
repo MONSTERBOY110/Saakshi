@@ -15,7 +15,7 @@ export function CertificateCard({ certificate }: Props) {
 
   if (certificate.status === "building") {
     return (
-      <section className="rounded-md border p-3 text-sm" data-testid="certificate-building">
+      <section className="card-print p-3 text-sm" data-testid="certificate-building">
         Writing the consent certificate.
       </section>
     );
@@ -24,11 +24,11 @@ export function CertificateCard({ certificate }: Props) {
   if (certificate.status === "error") {
     return (
       <section
-        className="rounded-md border border-red-600/40 p-3 text-sm"
+        className="border-carnival rounded-md border p-3 text-sm"
         data-testid="certificate-error"
       >
         <p className="font-medium">The certificate could not be stored</p>
-        <p className="text-muted-foreground mt-1 text-xs">{certificate.error}</p>
+        <p className="text-ink-soft mt-1 text-xs">{certificate.error}</p>
       </section>
     );
   }
@@ -36,7 +36,7 @@ export function CertificateCard({ certificate }: Props) {
   return (
     <section
       aria-label="Consent certificate"
-      className="flex flex-col gap-2 rounded-md border p-3"
+      className="card-print flex flex-col gap-2 p-3"
       data-testid="certificate-card"
     >
       <div className="flex items-center justify-between gap-3">
@@ -45,10 +45,7 @@ export function CertificateCard({ certificate }: Props) {
           {certificate.id}
         </Badge>
       </div>
-      <p
-        className="text-muted-foreground font-mono text-xs break-all"
-        data-testid="certificate-hash"
-      >
+      <p className="text-ink-soft font-mono text-xs break-all" data-testid="certificate-hash">
         {certificate.hash}
       </p>
       {certificate.url && (

@@ -37,15 +37,13 @@ export function AgentBar({
       className="grid gap-3 rounded-lg border p-3 sm:grid-cols-[1fr_auto]"
     >
       <div className="text-sm">
-        <p className="text-muted-foreground text-xs uppercase">Saakshi says</p>
+        <p className="text-ink-soft text-xs uppercase">Saakshi says</p>
         <p className="min-h-6" aria-live="polite" data-testid="caption-live">
           {captions.live || (
-            <span className="text-muted-foreground">
-              {status.agentSpeaking ? "..." : "(silent)"}
-            </span>
+            <span className="text-ink-soft">{status.agentSpeaking ? "..." : "(silent)"}</span>
           )}
         </p>
-        <ul className="text-muted-foreground text-xs">
+        <ul className="text-ink-soft text-xs">
           {captions.history.slice(-3).map((line, i) => (
             <li key={i}>{line}</li>
           ))}
@@ -113,11 +111,11 @@ function Chip({
 }) {
   return (
     <span className="flex items-baseline gap-1.5 font-mono">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="text-ink-soft">{label}</span>
       <span data-testid={testId} className={tone === "error" ? "text-destructive" : ""}>
         {value}
       </span>
-      {detail && <span className="text-muted-foreground">{detail}</span>}
+      {detail && <span className="text-ink-soft">{detail}</span>}
     </span>
   );
 }

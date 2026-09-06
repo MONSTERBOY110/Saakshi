@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { TeachbackQuestion } from "@/lib/teachback/questions";
+import type { JudgeSoloState } from "./judge-solo";
 import type { SocketStatus } from "@/lib/aai/socket";
 import type { BoardState } from "./board";
 import type { Severity } from "@/lib/rules/pack";
@@ -130,6 +131,7 @@ export type RoomState = {
   interventionsLog: InterventionRecord[];
   nudge?: NudgeState;
   teachback?: TeachbackState;
+  judgeSolo?: JudgeSoloState;
   certificate?: CertificateState;
   /** ISO time the session started, for the certificate. */
   startedAt?: string;
@@ -163,6 +165,7 @@ export const initialRoom = (setup: SessionSetup = DEFAULT_SETUP) => ({
   interventionsLog: [] as InterventionRecord[],
   nudge: undefined as NudgeState | undefined,
   teachback: undefined as TeachbackState | undefined,
+  judgeSolo: undefined as JudgeSoloState | undefined,
   certificate: undefined as CertificateState | undefined,
   startedAt: undefined as string | undefined,
   analyzer: { status: "idle", calls: 0, skipped: 0 } as AnalyzerState,

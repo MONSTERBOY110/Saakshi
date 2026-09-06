@@ -109,7 +109,10 @@ describe("POST /api/teachback/questions", () => {
   });
 
   it("falls back to the pack when the gateway fails", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("down", { status: 503 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("down", { status: 503 })),
+    );
     const json = await (await POST(post())).json();
     expect(json.source).toBe("pack");
     expect(json.questions.length).toBeGreaterThanOrEqual(3);
@@ -123,7 +126,10 @@ describe("POST /api/teachback/questions", () => {
   });
 
   it("asks about a flagged topic first", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("down", { status: 503 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("down", { status: 503 })),
+    );
     const json = await (await POST(post())).json();
     expect(["market_risk", "lock_in"]).toContain(json.questions[0].topic);
   });
@@ -134,7 +140,10 @@ describe("POST /api/teachback/questions", () => {
   });
 
   it("keeps every spoken question short and free of markdown", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("down", { status: 503 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("down", { status: 503 })),
+    );
     const json = await (await POST(post())).json();
     for (const q of json.questions as Array<{ question: string }>) {
       expect(q.question.split(/\s+/).length).toBeLessThanOrEqual(18);

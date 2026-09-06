@@ -42,6 +42,7 @@ async function draft(): Promise<CertificateDraft> {
       customerName: "Mrs. Sharma",
       productName: "ULIP",
       productTerms: [],
+      judgeSolo: false,
     },
     session: {
       startedAt: "2026-09-06T09:00:00.000Z",
@@ -102,7 +103,9 @@ describe("POST /api/certificate", () => {
 
   it("rejects a draft whose chain head does not match its own turns", async () => {
     const d = await draft();
-    const res = await POST(post({ ...d, turns_digest: { ...d.turns_digest, chain_head: "f".repeat(64) } }));
+    const res = await POST(
+      post({ ...d, turns_digest: { ...d.turns_digest, chain_head: "f".repeat(64) } }),
+    );
     expect(res.status).toBe(422);
     expect((await res.json()).error).toBe("chain_mismatch");
   });
@@ -124,8 +127,8 @@ describe("GET /api/certificate/[id]", () => {
       headers: { "x-forwarded-for": "4.4.4.4" },
     });
     expect((await GET(req, { params: Promise.resolve({ id: "short" }) })).status).toBe(404);
-    expect(
-      (await GET(req, { params: Promise.resolve({ id: "abcdefghijklmnop" }) })).status,
-    ).toBe(404);
+    expect((await GET(req, { params: Promise.resolve({ id: "abcdefghijklmnop" }) })).status).toBe(
+      404,
+    );
   });
 });

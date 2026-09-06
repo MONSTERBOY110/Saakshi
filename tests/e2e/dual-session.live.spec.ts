@@ -20,6 +20,8 @@ test.describe("dual session (live AssemblyAI)", () => {
       await page.goto("/session");
       // Warm the token routes: in dev they compile on first hit and can take 10 s or more.
       await Promise.all([page.request.get("/api/token/stt"), page.request.get("/api/token/agent")]);
+      // No synthetic advisor here: this spec is about the sockets, not the script.
+      await page.getByTestId("judge-solo-toggle").uncheck();
       await page.getByRole("button", { name: "Start", exact: true }).click();
 
       await expect(page.getByTestId("mic-status")).toHaveText("24000 Hz", { timeout: 30_000 });

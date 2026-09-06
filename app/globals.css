@@ -2,14 +2,34 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/*
+  Saakshi's world: a called game printed on cream stock. Flat colour fields behind heavy contour
+  ink, cards that are named and numbered in the same breath, and a bean as the mark of progress.
+  Carnival red is reserved: it means a prohibited claim was made, nothing else. Every state also
+  carries a symbol and a word, because colour is never the only signal here.
+*/
 
 @theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-turquoise: var(--turquoise);
+  --color-turquoise-deep: var(--turquoise-deep);
+  --color-sun: var(--sun);
+  --color-rose: var(--rose);
+  --color-carnival: var(--carnival);
+  --color-bean: var(--bean);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-data: var(--font-data);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -18,11 +38,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -39,92 +54,265 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --radius-4xl: 12px;
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* The printed world. */
+  --paper: #f6eedc;
+  --paper-deep: #ece0c6;
+  --ink: #14110e;
+  --ink-soft: #5d5346;
+  --turquoise: #1b9aaa;
+  --turquoise-deep: #0f6f7c;
+  --sun: #f4c430;
+  --rose: #e4677e;
+  --carnival: #cf2118;
+  --bean: #7a5230;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* shadcn surface tokens, repainted so inherited components live in the same world. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #fbf6ea;
+  --card-foreground: var(--ink);
+  --popover: #fbf6ea;
+  --popover-foreground: var(--ink);
+  --primary: var(--carnival);
+  --primary-foreground: #fff8e8;
+  --secondary: var(--sun);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-deep);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--turquoise);
+  --accent-foreground: #fff8e8;
+  --destructive: var(--carnival);
+  --border: var(--ink);
+  --input: var(--ink);
+  --ring: var(--turquoise-deep);
+  --radius: 3px;
+  --sidebar: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--carnival);
+  --sidebar-primary-foreground: #fff8e8;
+  --sidebar-accent: var(--sun);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--ink);
+  --sidebar-ring: var(--turquoise-deep);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--paper);
+    color: var(--ink);
+    /* Printed stock, not a flat fill: a fine tooth so the flat colour fields sit on something. */
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(27, 154, 170, 0.05), transparent 45%),
+      radial-gradient(circle at 88% 4%, rgba(244, 196, 48, 0.07), transparent 40%);
+    background-attachment: fixed;
   }
-  html {
-    @apply font-sans;
+
+  /* The browser's own surfaces belong to the world too. */
+  ::selection {
+    background: var(--sun);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--turquoise-deep);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--paper-deep);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink);
+    border: 3px solid var(--paper-deep);
+    border-radius: 0;
+  }
+
+  * {
+    scrollbar-color: var(--ink) var(--paper-deep);
+  }
+
+  /* Form controls belong to the world too, not to the operating system. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--carnival);
+    width: 1rem;
+    height: 1rem;
+  }
+
+  select,
+  input,
+  textarea {
+    border-radius: 2px;
+  }
+
+  /* Numbers in evidence line up: times, hashes, latencies, counts. */
+  [data-testid="turn"] time,
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /*
+    A printed card. The offset shadow is the world's own material, the ink shadow a letterpress
+    card throws on the table, not a neobrutalist costume.
+  */
+  .card-print {
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+    box-shadow: 3px 3px 0 0 var(--ink);
+    background: #fbf6ea;
+  }
+
+  .card-print-tight {
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+    box-shadow: 2px 2px 0 0 var(--ink);
+  }
+
+  /* The dashed red hairline that separates everything on a printed sheet. */
+  .rule-dashed {
+    border-top: 1.5px dashed var(--carnival);
+  }
+
+  /* A section header on its ribbon. */
+  .ribbon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--sun);
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    box-shadow: 2px 2px 0 0 var(--ink);
+    padding: 0.25rem 0.9rem;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .ribbon-quiet {
+    background: var(--paper-deep);
+  }
+
+  /* The display voice, always with its printed shadow. */
+  .shout {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    line-height: 0.92;
+    text-shadow: 4px 4px 0 rgba(20, 17, 14, 0.14);
+  }
+
+  /* A card's name plate: spaced caps under the image, never cropped. */
+  .plate {
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    line-height: 1.25;
+  }
+
+  .num {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+/*
+  Motion is a card flip and a bean drop, nothing else. Both are weighted: they land, they do not
+  glide. Anyone who asks for less motion gets the end state with no travel.
+*/
+@keyframes bean-drop {
+  0% {
+    transform: translateY(-14px) scale(0.7);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(1px) scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes card-called {
+  0% {
+    transform: rotateX(-88deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes shout-in {
+  0% {
+    transform: translateY(6px) scale(0.98);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.anim-bean {
+  /* The settle is in the keyframes, where a dropped bean really has it; the easing stays a clean
+     exponential decelerate rather than doubling the overshoot. */
+  animation: bean-drop 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-called {
+  transform-origin: top center;
+  animation: card-called 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-shout {
+  animation: shout-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-bean,
+  .anim-called,
+  .anim-shout {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .card-print,
+  .card-print-tight {
+    box-shadow: none;
   }
 }

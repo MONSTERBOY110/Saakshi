@@ -7,13 +7,15 @@ import { CertificateCard } from "@/components/certificate-card";
 import { CheckpointBoard } from "@/components/checkpoint-board";
 import { DebugDrawer } from "@/components/debug-drawer";
 import { InterventionBanner } from "@/components/intervention-banner";
+import { JudgeSoloPanel } from "@/components/judge-solo-panel";
 import { SetupForm } from "@/components/setup-form";
+import { TablaPreview } from "@/components/tabla-preview";
 import { TeachbackPanel } from "@/components/teachback-panel";
 import { TranscriptPanel } from "@/components/transcript-panel";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getRoomController } from "@/lib/session/controller";
+import { getPack } from "@/lib/rules/load";
 import { rolesBound } from "@/lib/session/roles";
 import { useRoomStore } from "@/lib/session/store";
 
@@ -21,6 +23,7 @@ export default function SessionPage() {
   const state = useRoomStore();
   const controller = getRoomController();
   const [term, setTerm] = useState("");
+  const pack = useMemo(() => getPack(state.setup.packId), [state.setup.packId]);
   const inSetup = state.phase === "SETUP";
   const done = state.phase === "DONE";
   const labelsSeen = useMemo(
@@ -36,19 +39,22 @@ export default function SessionPage() {
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-4 px-6 py-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">Session room</h1>
-          <p className="text-muted-foreground text-sm">
+    <main className="mx-auto flex min-h-screen max-w-[92rem] flex-col gap-4 px-5 py-5 sm:px-7">
+      <header className="border-ink flex flex-wrap items-center justify-between gap-3 border-b-2 pb-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="shout text-2xl">SAAKSHI</span>
+          <p className="text-ink-soft text-sm">
             {state.setup.productName} sale, {state.setup.advisorName} with{" "}
             {state.setup.customerName}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge data-testid="phase" variant={state.error ? "destructive" : "secondary"}>
+          <span
+            data-testid="phase"
+            className={`num border-ink rounded-sm border-2 px-2 py-1 ${state.error ? "bg-carnival text-[#fff8e8]" : "bg-sun"}`}
+          >
             {state.phase.toLowerCase()}
-          </Badge>
+          </span>
           {!inSetup && !done && (
             <>
               <Button
@@ -85,19 +91,32 @@ export default function SessionPage() {
       {state.error && (
         <p
           role="alert"
-          className="text-destructive border-destructive/40 rounded-md border p-3 text-sm"
+          className="card-print border-carnival bg-carnival p-3 text-sm text-[#fff8e8]"
         >
           {state.error}
         </p>
       )}
 
       {inSetup ? (
-        <SetupForm
-          setup={state.setup}
-          onChange={(patch) => state.setSetup(patch)}
-          onStart={() => void controller.start(state.setup)}
-          starting={false}
-        />
+        <div className="grid items-start gap-8 py-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]">
+          <SetupForm
+            setup={state.setup}
+            onChange={(patch) => state.setSetup(patch)}
+            onStart={() => void controller.start(state.setup)}
+            starting={false}
+          />
+          <figure className="flex flex-col items-center gap-3">
+            <figcaption className="ribbon ribbon-quiet">
+              What this pack tracks, all of it
+            </figcaption>
+            <TablaPreview pack={pack} />
+            <figcaption className="text-ink-soft max-w-[46ch] text-center text-xs">
+              Every card gets a bean the moment that disclosure is actually made, with the quote and
+              the clock time that prove it. Anything still empty when the pitch ends is what Saakshi
+              reads back out loud.
+            </figcaption>
+          </figure>
+        </div>
       ) : (
         <>
           <CalibrationBanner
@@ -118,6 +137,14 @@ export default function SessionPage() {
               <TranscriptPanel turns={state.transcript.turns} setup={state.setup} />
             </div>
             <div className="flex flex-col gap-4 lg:col-span-2">
+              <JudgeSoloPanel
+                judgeSolo={state.judgeSolo}
+                script={pack.demo_script}
+                hints={pack.customer_hints}
+                phase={state.phase}
+                customerName={state.setup.customerName}
+                onNext={() => controller.nextDemoLine()}
+              />
               <CheckpointBoard board={state.board} setup={state.setup} />
               <TeachbackPanel teachback={state.teachback} setup={state.setup} />
               <CertificateCard certificate={state.certificate} />

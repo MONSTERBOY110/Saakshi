@@ -15,6 +15,7 @@ const setup: SessionSetup = {
   customerName: "Mrs. Sharma",
   productName: "SecureGrowth ULIP",
   productTerms: ["SecureGrowth", "Balanced Fund", "  "],
+  judgeSolo: false,
 };
 
 describe("keyterms and prompts", () => {

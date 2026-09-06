@@ -43,7 +43,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "State the yearly premium and for how many years it is paid.",
-      "spoken": "the premium and payment term"
+      "spoken": "the premium and payment term",
+      "short_label": "Premium and term"
     },
     {
       "id": "policy_term",
@@ -64,7 +65,8 @@
         "url": "https://irdai.gov.in"
       },
       "hint": "State how many years the policy runs.",
-      "spoken": "the policy term"
+      "spoken": "the policy term",
+      "short_label": "Policy term"
     },
     {
       "id": "lock_in_5y",
@@ -87,13 +89,21 @@
       },
       "hint": "Say that money cannot be withdrawn for five years.",
       "teachback_topic": "lock_in",
-      "spoken": "the five year lock in"
+      "spoken": "the five year lock in",
+      "short_label": "Five-year lock-in"
     },
     {
       "id": "charges",
       "label": "Charges disclosed",
       "required_speaker": "advisor",
-      "patterns": ["charges?", "allocation", "fund management", "mortality", "शुल्क", "चार्ज"],
+      "patterns": [
+        "charges?",
+        "allocation",
+        "fund management",
+        "mortality",
+        "शुल्क",
+        "चार्ज"
+      ],
       "citation": {
         "authority": "IRDAI",
         "instrument": "Master Circular on Life Insurance Products, June 2024",
@@ -102,7 +112,8 @@
       },
       "hint": "Name the charges: premium allocation, fund management, mortality, policy administration.",
       "teachback_topic": "charges",
-      "spoken": "the charges"
+      "spoken": "the charges",
+      "short_label": "Charges"
     },
     {
       "id": "market_risk",
@@ -126,7 +137,8 @@
       },
       "hint": "Say that the fund value depends on the market and can fall.",
       "teachback_topic": "market_risk",
-      "spoken": "the market risk"
+      "spoken": "the market risk",
+      "short_label": "Market risk"
     },
     {
       "id": "benefit_illustration_4_8",
@@ -146,7 +158,8 @@
       },
       "hint": "Show the illustration at four and eight percent assumed returns.",
       "teachback_topic": "benefit_illustration",
-      "spoken": "the benefit illustration at four and eight percent"
+      "spoken": "the benefit illustration at four and eight percent",
+      "short_label": "4% and 8% illustration"
     },
     {
       "id": "surrender_value",
@@ -166,7 +179,8 @@
       },
       "hint": "Explain what the customer gets if the policy is surrendered or discontinued.",
       "teachback_topic": "surrender_value",
-      "spoken": "the surrender value"
+      "spoken": "the surrender value",
+      "short_label": "Surrender value"
     },
     {
       "id": "free_look_30",
@@ -187,7 +201,8 @@
       },
       "hint": "Say the customer can return the policy within thirty days of receiving it.",
       "teachback_topic": "free_look",
-      "spoken": "the thirty day free look period"
+      "spoken": "the thirty day free look period",
+      "short_label": "30-day free look"
     }
   ],
   "prohibited": [
@@ -361,13 +376,18 @@
     {
       "id": "lock_in",
       "label": "Lock-in",
-      "expected_points": ["money cannot be withdrawn for five years"],
+      "expected_points": [
+        "money cannot be withdrawn for five years"
+      ],
       "hint_hi": "Paanch saal tak paisa nahi nikal sakte."
     },
     {
       "id": "charges",
       "label": "Charges",
-      "expected_points": ["the plan has charges", "charges reduce the amount invested"],
+      "expected_points": [
+        "the plan has charges",
+        "charges reduce the amount invested"
+      ],
       "hint_hi": "Plan mein charges lagte hain, jaise allocation aur fund management."
     },
     {
@@ -383,19 +403,26 @@
     {
       "id": "free_look",
       "label": "Free look",
-      "expected_points": ["can return the policy within thirty days"],
+      "expected_points": [
+        "can return the policy within thirty days"
+      ],
       "hint_hi": "Tees din ke andar policy wapas kar sakte hain."
     },
     {
       "id": "premium_term",
       "label": "Premium and term",
-      "expected_points": ["how much is paid each year", "for how many years"],
+      "expected_points": [
+        "how much is paid each year",
+        "for how many years"
+      ],
       "hint_hi": "Har saal kitna premium aur kitne saal tak."
     },
     {
       "id": "surrender_value",
       "label": "Surrender value",
-      "expected_points": ["surrendering early gives less than the fund value"],
+      "expected_points": [
+        "surrendering early gives less than the fund value"
+      ],
       "hint_hi": "Beech mein band karne par poora paisa nahi milta."
     },
     {
@@ -462,6 +489,38 @@
       "text_en": "You also have a thirty day free look period to return the policy.",
       "text_display": "You also have a thirty day free look period to return the policy.",
       "wait_for": "ms:800"
+    }
+  ],
+  "customer_hints": [
+    {
+      "when": "after:d01",
+      "text_en": "Namaste. My name is Mrs. Sharma.",
+      "text_hi": "Namaste. Mera naam Mrs. Sharma hai."
+    },
+    {
+      "when": "after:d03",
+      "text_en": "When can I take the money out?",
+      "text_hi": "Isme paisa kab nikal sakti hoon?"
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "Five years, and after that I can take it out.",
+      "text_hi": "Paanch saal, five years, uske baad nikal sakti hoon."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "If the market falls, the value goes down.",
+      "text_hi": "Market gire to fund value kam ho jaayegi."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "Some charges are taken, I am not sure which ones.",
+      "text_hi": "Kuch charges lagte hain, pata nahi kaunse."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "I can return the policy within thirty days.",
+      "text_hi": "Tees din ke andar policy wapas kar sakti hoon."
     }
   ]
 }

@@ -33,6 +33,8 @@ test("diagnose socket startup", async ({ page }) => {
   });
 
   await page.goto("/session");
+  // No synthetic advisor here: this spec is about the sockets, not the script.
+  await page.getByTestId("judge-solo-toggle").uncheck();
   await page.getByRole("button", { name: "Start", exact: true }).click();
   await page.waitForTimeout(20_000);
 

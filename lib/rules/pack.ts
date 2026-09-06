@@ -17,6 +17,8 @@ export const CitationSchema = z.object({
 export const CheckpointSchema = z.object({
   id: z.string().regex(idPattern),
   label: z.string().min(1),
+  /** The name the tabla card carries. Cards are never cropped, so long labels get a short form. */
+  short_label: z.string().min(1).optional(),
   required_speaker: z.literal("advisor"),
   patterns: z.array(z.string().min(1)).min(1),
   citation: CitationSchema,
@@ -58,6 +60,15 @@ export const DemoLineSchema = z.object({
   wait_for: z.string().regex(/^(customer_turn|click|ms:\d+)$/),
 });
 
+/** What the judge should say, and when, so a stranger can play the customer alone (P0-10). */
+export const CustomerHintSchema = z.object({
+  /** "after:<demo line id>" while the advisor waits, or "phase:<PHASE>" for a whole phase. */
+  when: z.string().regex(/^(after:[a-z0-9_-]+|phase:[A-Z]+)$/),
+  text_en: z.string().min(1),
+  /** The same line in Roman Hindi, which is how the demo is actually spoken. */
+  text_hi: z.string().optional(),
+});
+
 const uniqueIds = <T extends { id: string }>(items: T[]) =>
   new Set(items.map((i) => i.id)).size === items.length;
 
@@ -72,6 +83,7 @@ export const PackSchema = z.object({
   prohibited: z.array(ProhibitedSchema).refine(uniqueIds, "duplicate prohibited id"),
   teachback_topics: z.array(TeachbackTopicSchema).refine(uniqueIds, "duplicate topic id"),
   demo_script: z.array(DemoLineSchema).refine(uniqueIds, "duplicate demo line id"),
+  customer_hints: z.array(CustomerHintSchema).default([]),
 });
 
 export type Pack = z.infer<typeof PackSchema>;
@@ -81,6 +93,7 @@ export type Citation = z.infer<typeof CitationSchema>;
 export type Severity = z.infer<typeof SeveritySchema>;
 export type TeachbackTopic = z.infer<typeof TeachbackTopicSchema>;
 export type DemoLine = z.infer<typeof DemoLineSchema>;
+export type CustomerHint = z.infer<typeof CustomerHintSchema>;
 
 export type CompiledCheckpoint = Checkpoint & { regexes: RegExp[] };
 export type CompiledProhibited = Prohibited & { regexes: RegExp[]; correctedRegexes: RegExp[] };

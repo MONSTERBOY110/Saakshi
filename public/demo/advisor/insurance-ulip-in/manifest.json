@@ -1,0 +1,57 @@
+{
+  "pack_id": "insurance-ulip-in",
+  "voice": "george",
+  "rendered_at": "2026-09-06T10:28:39.442Z",
+  "format": {
+    "encoding": "pcm_s16le",
+    "sample_rate": 24000,
+    "channels": 1
+  },
+  "lines": [
+    {
+      "id": "d01",
+      "bytes": 313920,
+      "seconds": 6.54
+    },
+    {
+      "id": "d02",
+      "bytes": 450720,
+      "seconds": 9.39
+    },
+    {
+      "id": "d03",
+      "bytes": 338400,
+      "seconds": 7.05
+    },
+    {
+      "id": "d04",
+      "bytes": 231360,
+      "seconds": 4.82
+    },
+    {
+      "id": "d05",
+      "bytes": 262080,
+      "seconds": 5.46
+    },
+    {
+      "id": "d06",
+      "bytes": 258240,
+      "seconds": 5.38
+    },
+    {
+      "id": "d07",
+      "bytes": 372480,
+      "seconds": 7.76
+    },
+    {
+      "id": "d08",
+      "bytes": 148800,
+      "seconds": 3.1
+    },
+    {
+      "id": "d09",
+      "bytes": 223200,
+      "seconds": 4.65
+    }
+  ]
+}

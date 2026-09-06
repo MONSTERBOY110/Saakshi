@@ -15,9 +15,11 @@ type Props = {
 
 export function SetupForm({ setup, onChange, onStart, starting }: Props) {
   return (
-    <Card className="max-w-2xl">
+    <Card className="card-print max-w-2xl border-[3px] bg-[#fbf6ea]">
       <CardHeader>
-        <CardTitle>Start a witnessed conversation</CardTitle>
+        <CardTitle className="font-display text-2xl leading-tight">
+          START A WITNESSED CONVERSATION
+        </CardTitle>
         <CardDescription>
           Names and product terms become recognition vocabulary for both AssemblyAI sessions.
           Saakshi greets the room, asks each person for their full name, then listens.
@@ -77,6 +79,26 @@ export function SetupForm({ setup, onChange, onStart, starting }: Props) {
           </Field>
         </div>
         <div className="sm:col-span-2">
+          <label htmlFor="judge-solo" className="flex items-start gap-2 text-sm">
+            <input
+              id="judge-solo"
+              type="checkbox"
+              className="mt-0.5"
+              checked={setup.judgeSolo}
+              onChange={(e) => onChange({ judgeSolo: e.target.checked })}
+              data-testid="judge-solo-toggle"
+            />
+            <span>
+              <span className="font-medium">Judge-solo mode</span>
+              <span className="text-ink-soft">
+                {" "}
+                plays the advisor from a recording, so one person can run the whole demo. Turn it
+                off when two people are in the room.
+              </span>
+            </span>
+          </label>
+        </div>
+        <div className="sm:col-span-2">
           <Button
             size="lg"
             onClick={onStart}
@@ -101,7 +123,7 @@ function Field({
 }) {
   return (
     <label htmlFor={htmlFor} className="flex flex-col gap-1.5 text-sm">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="plate text-ink-soft">{label}</span>
       {children}
     </label>
   );

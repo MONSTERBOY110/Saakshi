@@ -20,6 +20,8 @@ export type CheckpointStatus = "pending" | "met" | "met_after_nudge";
 export type CheckpointState = {
   id: string;
   label: string;
+  /** The name the tabla card carries; the full label when the pack gives no short form. */
+  shortLabel: string;
   hint: string;
   citation: Citation;
   status: CheckpointStatus;
@@ -76,6 +78,7 @@ export function emptyBoard(pack: CompiledPack): BoardState {
     checkpoints: pack.checkpoints.map((c) => ({
       id: c.id,
       label: c.label,
+      shortLabel: c.short_label ?? c.label,
       hint: c.hint,
       citation: c.citation,
       status: "pending",
