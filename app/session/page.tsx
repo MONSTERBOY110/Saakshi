@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import { AgentBar } from "@/components/agent-bar";
 import { CalibrationBanner } from "@/components/calibration-banner";
+import { CertificateCard } from "@/components/certificate-card";
 import { CheckpointBoard } from "@/components/checkpoint-board";
 import { DebugDrawer } from "@/components/debug-drawer";
 import { InterventionBanner } from "@/components/intervention-banner";
 import { SetupForm } from "@/components/setup-form";
+import { TeachbackPanel } from "@/components/teachback-panel";
 import { TranscriptPanel } from "@/components/transcript-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,6 +60,15 @@ export default function SessionPage() {
               >
                 Saakshi, verify
               </Button>
+              <Button
+                variant="secondary"
+                onClick={() => controller.finishTeachback()}
+                disabled={state.phase !== "TEACHBACK"}
+                data-testid="finish-teachback"
+                title="End the teach-back and issue the consent certificate"
+              >
+                Finish teach-back
+              </Button>
               <Button variant="destructive" onClick={() => void controller.stop()}>
                 Stop
               </Button>
@@ -106,8 +117,10 @@ export default function SessionPage() {
             <div className="max-h-[60vh] lg:col-span-3">
               <TranscriptPanel turns={state.transcript.turns} setup={state.setup} />
             </div>
-            <div className="lg:col-span-2">
+            <div className="flex flex-col gap-4 lg:col-span-2">
               <CheckpointBoard board={state.board} setup={state.setup} />
+              <TeachbackPanel teachback={state.teachback} setup={state.setup} />
+              <CertificateCard certificate={state.certificate} />
             </div>
           </div>
           <AgentBar

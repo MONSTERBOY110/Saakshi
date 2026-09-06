@@ -1,5 +1,6 @@
 import type { Role } from "@/lib/rules/engine";
 import { normalise } from "@/lib/rules/normalise";
+import { devanagariToRoman, hasDevanagari, loosen } from "./devanagari";
 
 // Role calibration (P0-2). Saakshi asks the advisor, then the customer, to say their name, and
 // the setup form already knows both names. A finalized turn that mentions exactly one of the
@@ -86,8 +87,18 @@ export function rolesBound(state: RolesState): boolean {
 export function whoseName(text: string, names: Names): Role | undefined {
   const norm = ` ${normalise(text)} `;
   const mentions = (name: string) => nameTokens(name).some((tok) => norm.includes(` ${tok} `));
-  const adv = mentions(names.advisor);
-  const cus = mentions(names.customer);
+  let adv = mentions(names.advisor);
+  let cus = mentions(names.customer);
+  if (!adv && !cus && hasDevanagari(text)) {
+    // The same sentence can arrive in either script (spike S7), and a name in Devanagari must bind
+    // the role just as well. Transliteration is approximate, so this compares loosely and only for
+    // names long enough that a chance substring is not a real risk.
+    const roman = loosen(devanagariToRoman(text));
+    const nearby = (name: string) =>
+      nameTokens(name).some((tok) => tok.length >= 4 && roman.includes(loosen(tok)));
+    adv = nearby(names.advisor);
+    cus = nearby(names.customer);
+  }
   if (adv && !cus) return "advisor";
   if (cus && !adv) return "customer";
   return undefined;

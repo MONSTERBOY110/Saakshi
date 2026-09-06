@@ -46,6 +46,7 @@ function makeController(phase: Phase = "OBSERVE") {
     intervention: undefined as unknown,
     nudge: undefined as unknown,
     interventionLatenciesMs: [] as number[],
+    interventionsLog: [] as Array<Record<string, unknown>>,
     transcript: { turns: [] as StoredTurn[] },
   };
   const c = {
@@ -205,5 +206,20 @@ describe("startNudge", () => {
     startNudge(c, "button", 4);
     expect(state.phase).toBe("TEACHBACK");
     expect(spoken).toEqual([]);
+  });
+});
+
+describe("the intervention record for the certificate", () => {
+  it("keeps every intervention after the banner clears", () => {
+    const { c, state } = makeController();
+    startIntervention(c, critical, 1000);
+    acknowledgeIntervention(c, "sorry, let me correct that", true);
+    expect(state.intervention).toBeUndefined();
+    expect(state.interventionsLog).toHaveLength(1);
+    expect(state.interventionsLog[0]).toMatchObject({
+      key: "guaranteed_returns@9",
+      acknowledged: true,
+    });
+    expect(String(state.interventionsLog[0]?.spokenText)).toMatch(/guarantee/i);
   });
 });

@@ -66,7 +66,21 @@ export function endIntervention(c: RoomController, reason: "tool" | "button" | "
   c.log("client", "intervention.end", { reason, key: c.state.intervention?.key });
   c.mouth?.setTools([]);
   c.dispatch({ type: "INTERVENE_DONE" });
-  c.set({ intervention: undefined });
+  // Keep the record before clearing the banner; the certificate lists every intervention.
+  c.set((s) => ({
+    intervention: undefined,
+    interventionsLog: s.intervention
+      ? [
+          ...s.interventionsLog.filter((x) => x.key !== s.intervention?.key),
+          {
+            key: s.intervention.key,
+            spokenText: s.intervention.spokenText,
+            latencyMs: s.intervention.totalMs ?? s.intervention.latencyMs,
+            acknowledged: s.intervention.acknowledged,
+          },
+        ]
+      : s.interventionsLog,
+  }));
 }
 
 /** Record how long the room waited between the violating turn and Saakshi's first sound. */

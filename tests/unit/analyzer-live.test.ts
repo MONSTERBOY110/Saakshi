@@ -1,9 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { analyzeWithGateway } from "@/lib/analyzer/gateway";
 import type { AnalyzeRequest } from "@/lib/analyzer/schema";
 import { getPack } from "@/lib/rules/load";
+import { apiKeyFromEnv } from "../helpers/api-key";
 
 // Live evaluation of the layer-2 analyzer over the golden dialogues. Costs a few cents.
 // Run: SAAKSHI_LIVE_EVAL=1 pnpm exec vitest run tests/unit/analyzer-live.test.ts
@@ -20,23 +21,13 @@ const live = !!process.env.SAAKSHI_LIVE_EVAL;
 const PACE_MS = Number(process.env.SAAKSHI_EVAL_PACE_MS ?? 35_000);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-function apiKey(): string {
-  if (process.env.ASSEMBLYAI_API_KEY) return process.env.ASSEMBLYAI_API_KEY;
-  const envPath = join(process.cwd(), ".env");
-  if (!existsSync(envPath)) return "";
-  const line = readFileSync(envPath, "utf8")
-    .split(/\r?\n/)
-    .find((l) => l.startsWith("ASSEMBLYAI_API_KEY="));
-  return line ? line.slice("ASSEMBLYAI_API_KEY=".length).trim() : "";
-}
-
 describe.skipIf(!live)("analyzer live eval (SAAKSHI_LIVE_EVAL)", () => {
   it("reaches precision 0.9 or better on violations over the golden dialogues", async () => {
     const pack = getPack("insurance-ulip-in");
     const fixture = JSON.parse(
       readFileSync(join(process.cwd(), "tests", "fixtures", "analyzer", "dialogues.json"), "utf8"),
     ) as Fixture;
-    const key = apiKey();
+    const key = apiKeyFromEnv();
     expect(key, "ASSEMBLYAI_API_KEY").not.toBe("");
     const deps = {
       apiKey: key,

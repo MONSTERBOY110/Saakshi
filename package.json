@@ -20,7 +20,8 @@
     "fixtures:wav:latency": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-latency-wav.ps1",
     "test:e2e:golden": "cross-env SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav playwright test tests/e2e/golden.live.spec.ts",
     "test:e2e:latency": "cross-env SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/latency-probe.wav playwright test tests/e2e/latency.live.spec.ts",
-    "eval:analyzer": "cross-env SAAKSHI_LIVE_EVAL=1 vitest run tests/unit/analyzer-live.test.ts"
+    "eval:analyzer": "cross-env SAAKSHI_LIVE_EVAL=1 vitest run tests/unit/analyzer-live.test.ts",
+    "eval:questions": "cross-env SAAKSHI_LIVE_EVAL=1 vitest run tests/unit/questions-live.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -29,6 +30,7 @@
     "lucide-react": "^1.41.0",
     "nanoid": "^6.0.1",
     "next": "15.5.25",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "server-only": "^0.0.1",
@@ -42,6 +44,7 @@
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^5.0.0",

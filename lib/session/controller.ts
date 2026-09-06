@@ -11,6 +11,7 @@ import type { AnalyzerClient } from "@/lib/analyzer/client";
 import type { Router } from "@/lib/audio/router";
 import { emptyBoard, rebuildBoard } from "./board";
 import { applyAnalysis } from "./ears-handler";
+import { certifySession } from "./certify";
 import { acknowledgeIntervention, startNudge } from "./flows";
 import type { RateLimitState } from "./fusion";
 import { buildCalibrationLine, type SessionSetup } from "./keyterms";
@@ -19,6 +20,8 @@ import { transition, type MachineEvent } from "./machine";
 import { roleOfLabel, rolesBound } from "./roles";
 import { addKeyterms, assignRoleTo, exportFixtures, swapRoleAssignment } from "./room-actions";
 import { initialRoom, useRoomStore, type RoomState } from "./store";
+import { ToolResultQueue } from "./tool-results";
+import { finishTeachback, startTeachback } from "./teachback";
 import { buildAnalyzerClient, buildEars, buildMouth, buildRouter } from "./wiring";
 import { finalTurns } from "./transcript";
 
@@ -42,6 +45,10 @@ export class RoomController {
   readonly recentAgentSpeech: string[] = [];
   /** performance.now() when the first mic frame reached the Ears; turn timings are audio-relative. */
   audioClockStart: number | null = null;
+  /** performance.now() of the last time the advisor was asked to let the customer answer. */
+  lastAdvisorGuardAt: number | null = null;
+  /** Tool results wait for reply.done, as the client-side-tools docs require. */
+  readonly toolResults = new ToolResultQueue();
 
   private capture: Capture | null = null;
   private router: Router | null = null;
@@ -69,7 +76,14 @@ export class RoomController {
     this.rate = { lastInterventionAt: null };
     this.recentAgentSpeech.length = 0;
     this.audioClockStart = null;
-    this.set({ ...initialRoom(setup), board: emptyBoard(pack), phase: "CALIBRATE" });
+    this.lastAdvisorGuardAt = null;
+    this.toolResults.reset();
+    this.set({
+      ...initialRoom(setup),
+      board: emptyBoard(pack),
+      phase: "CALIBRATE",
+      startedAt: new Date().toISOString(),
+    });
     try {
       const capture = await startCapture((pcm) => this.router?.push(pcm));
       this.capture = capture;
@@ -164,6 +178,17 @@ export class RoomController {
   acknowledge(note = "acknowledged in the room"): void {
     acknowledgeIntervention(this, note, false);
   }
+
+  /** NUDGE to TEACHBACK: load the questions, swap the prompt and hand the room to the agent. */
+  teachback = (): Promise<void> => startTeachback(this);
+
+  /** CERTIFY: build the certificate, store it, and release the held finish_teachback tool. */
+  certify = (callId: string | null): Promise<void> => certifySession(this, callId);
+
+  /** The operator ends the teach-back from the room, without waiting for the agent to decide. */
+  finishTeachback = (): void => {
+    finishTeachback(this, "The teach-back was ended from the room.", null);
+  };
 
   /** Every spoken line is scripted here; the agent repeats it verbatim (spike S5: 10/10). */
   speakExact(text: string): void {

@@ -1,22 +1,24 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
-// Golden path v2 (Phase 2): the two-voice WAV plays through the fake microphone into the room.
+// Golden path v3 (Phase 3): the two-voice WAV plays through the fake microphone into the room.
 // Calibration binds Rahul and Mrs. Sharma by name, the board ticks the disclosures, Saakshi
-// interrupts the planted "returns are guaranteed" line, and the nudge reads what is still missing.
+// interrupts the planted "returns are guaranteed" line, the nudge reads what is still missing, the
+// teach-back loads its questions, and the session ends in a stored certificate whose verify page
+// reads VALID and, with one character altered, TAMPERED.
 // Needs live AssemblyAI:
 //   SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav pnpm exec playwright test tests/e2e/golden.live.spec.ts
 // A single intervention only has to be obviously prompt; the 2500 ms budget from prd.md section 7
 // is judged over ten samples in tests/e2e/latency.live.spec.ts.
 const SANITY_CEILING_MS = 8000;
 
-test.describe("golden path v2 (live AssemblyAI, two-voice WAV)", () => {
+test.describe("golden path v3 (live AssemblyAI, two-voice WAV)", () => {
   test.skip(
     !process.env.SAAKSHI_LIVE_E2E || !process.env.SAAKSHI_FAKE_WAV,
     "set SAAKSHI_LIVE_E2E=1 and SAAKSHI_FAKE_WAV=tests/fixtures/golden-draft.wav",
   );
 
-  test("roles bind, disclosures tick, Saakshi interrupts in time, and the nudge reads what is missing", async ({
+  test("the room runs the pitch, interrupts, nudges, teaches back and issues a certificate that verifies", async ({
     page,
   }) => {
     test.setTimeout(300_000);
@@ -78,10 +80,60 @@ test.describe("golden path v2 (live AssemblyAI, two-voice WAV)", () => {
     const summary = (await page.getByTestId("board-summary").textContent()) ?? "";
     const analyzer = (await page.getByTestId("analyzer-status").textContent()) ?? "";
     console.log(`[golden] board: ${summary}; analyzer: ${analyzer}`);
-    await saveReport(page, { latencyMs, breakdown, summary, analyzer });
+    // ---------------------------------------------------------------- teach-back (v3)
+    // The nudge line ends and the room moves itself into the teach-back, loading questions built
+    // from what the advisor actually said.
+    await expect(page.getByTestId("phase")).toHaveText("teachback", { timeout: 60_000 });
+    const panel = page.getByTestId("teachback-panel");
+    await expect(panel).toBeVisible({ timeout: 30_000 });
+    await expect
+      .poll(async () => panel.locator('[data-testid^="teachback-q-"]').count(), {
+        timeout: 45_000,
+        intervals: [1_000],
+      })
+      .toBeGreaterThanOrEqual(3);
+    const questions = await panel.locator('[data-testid^="teachback-q-"] p').first().textContent();
+    console.log(`[golden] first teach-back question: ${questions?.trim()}`);
 
-    await page.getByRole("button", { name: "Stop", exact: true }).click();
-    await expect(page.getByTestId("phase")).toHaveText("done", { timeout: 20_000 });
+    // The WAV keeps looping the advisor's pitch, so how many answers the agent records depends on
+    // what it hears; that is reported, not gated. The operator's control is what ends the phase.
+    await page.waitForTimeout(20_000);
+    const progress = (await page.getByTestId("teachback-progress").textContent()) ?? "";
+    console.log(`[golden] teach-back progress: ${progress.trim()}`);
+
+    await page.getByTestId("finish-teachback").click();
+
+    // ---------------------------------------------------------------- certificate
+    const card = page.getByTestId("certificate-card");
+    await expect(card).toBeVisible({ timeout: 45_000 });
+    const certId = ((await page.getByTestId("certificate-id").textContent()) ?? "").trim();
+    const certHash = ((await page.getByTestId("certificate-hash").textContent()) ?? "").trim();
+    console.log(`[golden] certificate ${certId} ${certHash}`);
+    expect(certId).toMatch(/^[A-Za-z0-9_-]{16}$/);
+    expect(certHash).toMatch(/^[0-9a-f]{64}$/);
+
+    // Issuing the certificate ends the session by itself, so Stop is only there if something stalled.
+    const stop = page.getByRole("button", { name: "Stop", exact: true });
+    if (await stop.isVisible()) await stop.click();
+    await expect(page.getByTestId("phase")).toHaveText("done", { timeout: 30_000 });
+
+    // The proof: the stored record verifies on its own, and one altered character does not.
+    await page.goto(`/verify/${certId}`);
+    await expect(page.getByTestId("verdict")).toHaveAttribute("data-verdict", "valid");
+    await expect(page.getByTestId("verdict")).toContainText("VALID");
+
+    await page.goto(`/verify/${certId}?tamper=quote`);
+    await expect(page.getByTestId("verdict")).toHaveAttribute("data-verdict", "tampered");
+    await expect(page.getByTestId("verdict")).toContainText("TAMPERED");
+
+    await saveReport(page, {
+      latencyMs,
+      breakdown,
+      summary,
+      analyzer,
+      teachback: progress.trim(),
+      certificate: { id: certId, hash: certHash },
+    });
   });
 });
 

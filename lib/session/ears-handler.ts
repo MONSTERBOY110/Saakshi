@@ -15,6 +15,7 @@ import {
   reassignRoles,
   type StoredTurn,
 } from "./transcript";
+import { guardAdvisorAnswer } from "./teachback";
 import { isVerifyTrigger } from "./verify-trigger";
 
 // Streaming STT events into room state: transcript, calibration, the rule engine, fusion with the
@@ -55,8 +56,16 @@ export function handleEarsEvent(c: RoomController, e: EarsEvent): void {
         },
       }));
     case "gap":
+      // The Ears report the raw clock; the certificate wants milliseconds since the session began.
       return c.set((s) => ({
-        gaps: [...s.gaps, { fromMs: e.fromMs, toMs: e.toMs, code: e.code }],
+        gaps: [
+          ...s.gaps,
+          {
+            fromMs: Math.max(0, Math.round(e.fromMs - c.t0)),
+            toMs: Math.round(e.toMs - c.t0),
+            code: e.code,
+          },
+        ],
       }));
     case "turn":
       return onTurn(c, e);
@@ -134,6 +143,13 @@ function runRules(c: RoomController, turn: StoredTurn, detectedAt: number): void
   if (!c.pack || !c.state.board) return;
   const current = c.state.transcript.turns.find((t) => t.order === turn.order) ?? turn;
   if (!current.role) return;
+
+  // In teach-back the customer's answers are the evidence, not the pitch, so the rule engine stands
+  // down. The one thing that matters is who is speaking: the advisor must not answer for her.
+  if (c.state.phase === "TEACHBACK") {
+    if (current.role === "advisor") guardAdvisorAnswer(c);
+    return;
+  }
 
   // "Saakshi, verify" ends the pitch (P0-6) and is not evidence about the product.
   if (current.role === "advisor" && c.state.phase === "OBSERVE" && isVerifyTrigger(current.text)) {
