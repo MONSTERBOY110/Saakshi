@@ -1,0 +1,35 @@
+{"id": "u01", "pack": "insurance-ulip-in", "text": "This plan gives you guaranteed twelve percent returns every year.", "violations": ["guaranteed_returns"], "checkpoints": []}
+{"id": "u02", "pack": "insurance-ulip-in", "text": "Madam, the returns are guaranteed, there is no risk at all.", "violations": ["guaranteed_returns"], "checkpoints": []}
+{"id": "u03", "pack": "insurance-ulip-in", "text": "Haan madam, bilkul pakka, barah percent har saal milega.", "violations": ["guaranteed_returns"], "checkpoints": []}
+{"id": "u04", "pack": "insurance-ulip-in", "text": "Assured returns of ten percent, that is the beauty of this product.", "violations": ["guaranteed_returns"], "checkpoints": []}
+{"id": "u05", "pack": "insurance-ulip-in", "text": "Think of it like a fixed deposit, but with much better returns.", "violations": ["like_fd"], "checkpoints": []}
+{"id": "u06", "pack": "insurance-ulip-in", "text": "It is exactly like an FD, madam, same safety.", "violations": ["like_fd"], "checkpoints": []}
+{"id": "u07", "pack": "insurance-ulip-in", "text": "Nahi madam, there are no charges at all, the full amount gets invested.", "violations": ["no_charges"], "checkpoints": []}
+{"id": "u08", "pack": "insurance-ulip-in", "text": "Zero charges on this policy, every rupee goes into the fund.", "violations": ["no_charges"], "checkpoints": []}
+{"id": "u09", "pack": "insurance-ulip-in", "text": "You can withdraw anytime, madam, whenever you need the money.", "violations": ["withdraw_anytime"], "checkpoints": []}
+{"id": "u10", "pack": "insurance-ulip-in", "text": "Jab chahe paisa nikal sakti hain, koi rok nahi hai.", "violations": ["withdraw_anytime"], "checkpoints": []}
+{"id": "u11", "pack": "insurance-ulip-in", "text": "And it is completely tax free, you will never pay any tax on this.", "violations": ["tax_free_forever"], "checkpoints": []}
+{"id": "u12", "pack": "insurance-ulip-in", "text": "This offer closes today, so please sign the form now.", "violations": ["pressure"], "checkpoints": []}
+{"id": "u13", "pack": "insurance-ulip-in", "text": "Aaj hi sign kar dijiye, kal rate badal jayega.", "violations": ["pressure"], "checkpoints": []}
+{"id": "u14", "pack": "insurance-ulip-in", "text": "No madam, returns are not guaranteed. The fund value depends on the market.", "violations": [], "checkpoints": ["market_risk"]}
+{"id": "u15", "pack": "insurance-ulip-in", "text": "I cannot say the returns are guaranteed, because this is market linked.", "violations": [], "checkpoints": ["market_risk"]}
+{"id": "u16", "pack": "insurance-ulip-in", "text": "Returns nahi guaranteed hain, market par depend karta hai.", "violations": [], "checkpoints": ["market_risk"]}
+{"id": "u17", "pack": "insurance-ulip-in", "text": "Unlike a fixed deposit, this one moves with the market.", "violations": [], "checkpoints": ["market_risk"]}
+{"id": "u18", "pack": "insurance-ulip-in", "text": "There are charges, including premium allocation and fund management charges.", "violations": [], "checkpoints": ["charges"]}
+{"id": "u19", "pack": "insurance-ulip-in", "text": "You cannot withdraw for five years, there is a lock-in.", "violations": [], "checkpoints": ["lock_in_5y"]}
+{"id": "u20", "pack": "insurance-ulip-in", "text": "Take your time, there is no need to decide today.", "violations": [], "checkpoints": []}
+{"id": "u21", "pack": "insurance-ulip-in", "text": "Sorry, let me correct that. Returns are not guaranteed.", "violations": [], "checkpoints": []}
+{"id": "u22", "pack": "insurance-ulip-in", "text": "The premium is fifty thousand a year for ten years.", "violations": [], "checkpoints": ["premium_and_term"]}
+{"id": "u23", "pack": "insurance-ulip-in", "text": "The policy term is fifteen years in total.", "violations": [], "checkpoints": ["policy_term"]}
+{"id": "u24", "pack": "insurance-ulip-in", "text": "There is a five year lock-in on this plan.", "violations": [], "checkpoints": ["lock_in_5y"]}
+{"id": "u25", "pack": "insurance-ulip-in", "text": "The money goes into market-linked funds, so the fund value depends on the market.", "violations": [], "checkpoints": ["market_risk"]}
+{"id": "u26", "pack": "insurance-ulip-in", "text": "The benefit illustration shows values at four percent and eight percent.", "violations": [], "checkpoints": ["benefit_illustration_4_8"]}
+{"id": "u27", "pack": "insurance-ulip-in", "text": "The surrender value applies after the lock in period ends.", "violations": [], "checkpoints": ["lock_in_5y", "surrender_value"]}
+{"id": "u28", "pack": "insurance-ulip-in", "text": "You also have a thirty day free look period to return the policy.", "violations": [], "checkpoints": ["free_look_30"]}
+{"id": "u29", "pack": "insurance-ulip-in", "text": "Premium allocation charge and mortality charge are deducted each year.", "violations": [], "checkpoints": ["charges"]}
+{"id": "u30", "pack": "insurance-ulip-in", "text": "Paanch saal ka lock in hai, uske baad nikal sakti hain.", "violations": [], "checkpoints": ["lock_in_5y"]}
+{"id": "u31", "pack": "insurance-ulip-in", "text": "Good morning Mrs. Sharma, my name is Rahul.", "violations": [], "checkpoints": []}
+{"id": "u32", "pack": "insurance-ulip-in", "text": "Would you like a copy of the brochure to take home?", "violations": [], "checkpoints": []}
+{"id": "u33", "pack": "insurance-ulip-in", "text": "Let me know if anything is unclear and I will explain it again.", "violations": [], "checkpoints": []}
+{"id": "u34", "pack": "insurance-ulip-in", "text": "The nomination form needs your husband's name and date of birth.", "violations": [], "checkpoints": []}
+{"id": "u35", "pack": "insurance-ulip-in", "text": "Guaranteed returns and no charges at all, sign today.", "violations": ["guaranteed_returns", "no_charges", "pressure"], "checkpoints": []}

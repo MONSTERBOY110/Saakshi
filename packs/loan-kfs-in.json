@@ -1,0 +1,536 @@
+{
+  "id": "loan-kfs-in",
+  "version": "1.0.0",
+  "title": "Personal loan, RBI Key Facts Statement",
+  "product_default": "Personal loan",
+  "jurisdiction": "IN",
+  "keyterms": [
+    "Saakshi",
+    "personal loan",
+    "Key Facts Statement",
+    "KFS",
+    "APR",
+    "annual percentage rate",
+    "EMI",
+    "instalment",
+    "tenure",
+    "processing fee",
+    "documentation charge",
+    "floating rate",
+    "fixed rate",
+    "repo rate",
+    "benchmark",
+    "foreclosure",
+    "prepayment",
+    "part payment",
+    "cooling-off period",
+    "look-up period",
+    "sanction letter",
+    "grievance officer",
+    "nodal officer",
+    "recovery agent",
+    "CIBIL",
+    "credit score",
+    "credit bureau",
+    "no cost EMI",
+    "subvention",
+    "disbursal"
+  ],
+  "scenario_prompt": "Bank branch conversation in India. A loans officer explains a personal loan to a customer who speaks Hindi and English and switches between them mid-sentence. Topics: the loan amount, the monthly instalment, the tenure, the interest rate and whether it is fixed or floating, the annual percentage rate, the processing fee, the total amount repayable, foreclosure and prepayment charges, the cooling-off period, and the grievance officer. Expect rupee amounts, percentages, and the words KFS, APR, EMI, CIBIL, repo and foreclosure. Hindi words that appear: byaj, kist, shulk, kharcha, mahina, saal.",
+  "checkpoints": [
+    {
+      "id": "loan_amount_and_tenure",
+      "label": "Loan amount, tenure and EMI",
+      "short_label": "Amount and EMI",
+      "required_speaker": "advisor",
+      "patterns": [
+        "(loan|amount|sanction(ed)?|principal) .{0,30}(\\d{4,}|lakh|lakhs|crore)",
+        "(\\d{4,}|lakh|lakhs) .{0,25}(loan|sanction|amount)",
+        "emi .{0,25}(\\d{3,}|rupees|rs)",
+        "(\\d{3,}) .{0,15}(per month|a month|monthly|har mahine|mahina)",
+        "(tenure|term|period) .{0,20}(\\d+ ?(years?|months?|saal|mahine))",
+        "(\\d+) ?(years?|saal) .{0,20}(loan|tenure|term|repay)",
+        "क़िस्त|किस्त|ई ?एम ?आई",
+        "emi .{0,30}(hazaar|hazar|thousand|lakh|lakhs|sau)",
+        "(hazaar|hazar|thousand|lakh|lakhs) .{0,25}(har mahine|per month|a month|monthly|mahina)",
+        "(\\d+|adtalis|chalis|saath|baarah|barah|das) ?(mahine|months?) (tak|for)?",
+        "(loan|amount|sanction(ed)?) .{0,25}(lakh|lakhs|hazaar|hazar|thousand|crore)"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Sanctioned loan amount, tenor and instalment in the Key Facts Statement"
+      },
+      "hint": "State the sanctioned amount, the tenure and the monthly instalment.",
+      "teachback_topic": "emi_and_tenure",
+      "spoken": "the loan amount, the tenure and the monthly instalment"
+    },
+    {
+      "id": "interest_rate_type",
+      "label": "Interest rate, fixed or floating",
+      "short_label": "Rate, fixed or floating",
+      "required_speaker": "advisor",
+      "patterns": [
+        "(floating|variable|adjustable) (rate|interest)",
+        "(?<![a-z])fixed (rate|interest)",
+        "(rate|interest|byaj|byaaj) .{0,25}(floating|fixed|repo|mclr|benchmark|badal)",
+        "(?<![a-z])(repo|mclr)(?![a-z])",
+        "external benchmark",
+        "(interest|rate|byaj|byaaj) .{0,15}(\\d+(\\.\\d+)? ?(%|percent|per cent|pratishat))",
+        "(\\d+(\\.\\d+)? ?(%|percent|per cent|pratishat)) .{0,20}(interest|rate|byaj|byaaj|annum|saal)",
+        "ब्याज दर|फ्लोटिंग"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Interest rate and whether fixed or floating, with the benchmark for floating rates"
+      },
+      "hint": "Say the interest rate and whether it is fixed or floating.",
+      "teachback_topic": "rate_type",
+      "spoken": "whether the interest rate is fixed or floating"
+    },
+    {
+      "id": "apr_all_inclusive",
+      "label": "Annual Percentage Rate, all inclusive",
+      "short_label": "APR, all inclusive",
+      "required_speaker": "advisor",
+      "patterns": [
+        "\\bapr\\b",
+        "annual percentage rate",
+        "all ?inclusive (cost|rate)",
+        "(total|effective|all in) (cost|rate) of (the )?(loan|credit|borrowing)",
+        "(kul|poora) (kharcha|cost|lagat)",
+        "वार्षिक प्रतिशत"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Annual Percentage Rate disclosing the all-inclusive cost of the loan"
+      },
+      "hint": "State the Annual Percentage Rate, the all-inclusive cost including every fee.",
+      "teachback_topic": "apr",
+      "spoken": "the annual percentage rate, the all inclusive cost"
+    },
+    {
+      "id": "fees_and_charges",
+      "label": "Processing and other fees",
+      "short_label": "Fees and charges",
+      "required_speaker": "advisor",
+      "patterns": [
+        "processing (fee|fees|charge|charges)",
+        "(documentation|valuation|legal|inspection|stamp|franking) (fee|fees|charge|charges)",
+        "(fee|fees|charge|charges|shulk) .{0,25}(\\d{3,}|\\d+ ?(%|percent|per cent))",
+        "(charges|fees) (lagte|lagenge|hain|hai|honge)",
+        "शुल्क|प्रोसेसिंग"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Itemised fees and charges recovered from the borrower"
+      },
+      "hint": "Name the processing fee and any other charges, with amounts.",
+      "teachback_topic": "charges",
+      "spoken": "the processing fee and the other charges"
+    },
+    {
+      "id": "total_repayment",
+      "label": "Total amount repayable",
+      "short_label": "Total repayable",
+      "required_speaker": "advisor",
+      "patterns": [
+        "total (amount )?(repay|repayable|payable|payment|you (will )?pay|paid back)",
+        "(you|aap) .{0,20}(repay|pay back|wapas|total) .{0,25}(\\d{4,}|lakh|lakhs)",
+        "over (the )?(whole|full|entire) (tenure|term|period)",
+        "(kul|total) .{0,15}(bharna|dena|chukana|wapas)",
+        "कुल राशि|कुल भुगतान"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Total amount to be repaid, being principal plus interest and charges"
+      },
+      "hint": "Say the total amount the borrower repays over the whole tenure.",
+      "teachback_topic": "total_repayment",
+      "spoken": "the total amount repayable over the whole tenure"
+    },
+    {
+      "id": "prepayment_terms",
+      "label": "Prepayment and foreclosure",
+      "short_label": "Prepayment terms",
+      "required_speaker": "advisor",
+      "patterns": [
+        "(pre ?pay(ment)?|fore ?clos(e|ure)|part payment|early (repayment|closure))",
+        "(close|band|pay off|settle) .{0,25}(early|before|jaldi|pehle)",
+        "(no|nil|zero|koi nahi) (fore ?closure|pre ?payment) (charge|charges|penalty)",
+        "पूर्व भुगतान|फोरक्लोज"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Prepayment and foreclosure charges, and cases where none apply"
+      },
+      "hint": "Say what happens if the borrower repays early, and whether a charge applies.",
+      "teachback_topic": "prepayment",
+      "spoken": "what it costs to repay the loan early"
+    },
+    {
+      "id": "cooling_off",
+      "label": "Cooling-off period",
+      "short_label": "Cooling-off period",
+      "required_speaker": "advisor",
+      "patterns": [
+        "cooling ?off",
+        "look ?up period",
+        "(exit|cancel|opt out|return the loan|walk away) .{0,30}(without penalty|no penalty|\\d+ days?)",
+        "(\\d+|three|seven|teen|saat) days? .{0,30}(cancel|exit|change your mind|soch|badal)",
+        "कूलिंग|रद्द कर"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Guidelines on Digital Lending, 2 September 2022",
+        "url": "https://rbi.org.in",
+        "clause": "Cooling-off or look-up period during which the borrower may exit without penalty"
+      },
+      "hint": "State the cooling-off period in which the borrower can exit without a penalty.",
+      "teachback_topic": "cooling_off",
+      "spoken": "the cooling off period"
+    },
+    {
+      "id": "grievance_and_recovery",
+      "label": "Grievance officer and recovery practice",
+      "short_label": "Grievance and recovery",
+      "required_speaker": "advisor",
+      "patterns": [
+        "(grievance|nodal|ombudsman) (officer|redressal|cell|contact)?",
+        "(complaint|shikayat) .{0,25}(officer|cell|number|kahan|kaise)",
+        "recovery (agent|agents|practice|process|policy)",
+        "शिकायत|लोकपाल"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "Grievance redressal contact and the recovery practices the lender follows"
+      },
+      "hint": "Give the grievance officer contact and how recovery is handled.",
+      "teachback_topic": "grievance",
+      "spoken": "who to complain to if something goes wrong"
+    }
+  ],
+  "prohibited": [
+    {
+      "id": "zero_cost_emi",
+      "label": "No cost or zero interest EMI",
+      "severity": "critical",
+      "patterns": [
+        "(no|zero|0|shunya|bilkul free) ?(cost|interest|byaj|byaaj) ?emi",
+        "emi .{0,15}(no|zero|0|bina) (cost|interest|byaj|byaaj)",
+        "(no|zero|0|nil) (percent |per cent |% )?(interest|byaj|byaaj)(?! is charged separately)",
+        "interest ?free (loan|emi|finance)",
+        "(byaj|byaaj) (nahi|nahin) (lagega|lagta|hai)",
+        "शून्य ब्याज|ब्याज नहीं"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "Zero percent interest schemes misrepresent the true cost of credit and are not permitted"
+      },
+      "correction": "There is no zero cost loan. The interest is inside the price or the fee.",
+      "corrected_patterns": [
+        "(interest|byaj|byaaj) is (built|included|inside|part of)",
+        "not (really )?(zero|no) (cost|interest)",
+        "(discount|subvention) .{0,20}(instead|in place of)",
+        "apr .{0,20}\\d",
+        "annual percentage rate",
+        "includes every (charge|fee|cost)",
+        "(that|which|it) includes (all|every) (the )?(charge|charges|fee|fees)"
+      ]
+    },
+    {
+      "id": "guaranteed_approval",
+      "label": "Guaranteed approval",
+      "severity": "high",
+      "patterns": [
+        "(guaranteed|100 ?%|sure ?shot|pakka|certain|definite) (approval|approved|sanction|sanctioned)",
+        "(approval|sanction) .{0,15}(guaranteed|pakka|confirmed|certain)",
+        "(loan|it) (is|will be) (definitely |surely |certainly )?(approved|sanctioned)(?! subject)",
+        "मंजूरी पक्की|गारंटीड मंजूरी"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "No assurance of sanction before credit appraisal is complete"
+      },
+      "correction": "No loan is approved before the credit check. Sanction depends on the appraisal.",
+      "corrected_patterns": [
+        "subject to (credit )?(appraisal|approval|check|verification)",
+        "(cannot|can not|no one can) (promise|guarantee) (approval|sanction)",
+        "(approval|sanction) (nahi|nahin) (pakka|guaranteed)"
+      ]
+    },
+    {
+      "id": "no_hidden_charges",
+      "label": "No hidden charges, with no APR given",
+      "severity": "high",
+      "patterns": [
+        "(no|zero|koi|bilkul) (hidden|chhupa|chhupe|chhupi|extra|other) (hua |hue |hui )?(charge|charges|cost|costs|fee|fees)",
+        "(charges|fees) .{0,15}(kuch nahi|nahi hai|nahin hai|nothing else)",
+        "(only|sirf|bas) .{0,15}emi .{0,15}(nothing|kuch nahi|aur kuch nahi)",
+        "कोई छुपा|कोई अतिरिक्त शुल्क"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Key Facts Statement (KFS) for Loans and Advances, RBI/2024-25/19, 15 April 2024",
+        "url": "https://rbi.org.in",
+        "clause": "Every charge recovered from the borrower must appear in the Key Facts Statement"
+      },
+      "correction": "Say the annual percentage rate. That is the only number that includes every charge.",
+      "corrected_patterns": [
+        "apr .{0,20}\\d",
+        "annual percentage rate .{0,20}\\d",
+        "processing fee .{0,20}\\d",
+        "(these|the) charges are .{0,25}(listed|in the key facts|in the kfs)"
+      ]
+    },
+    {
+      "id": "forced_insurance",
+      "label": "Insurance presented as compulsory",
+      "severity": "critical",
+      "patterns": [
+        "insurance .{0,20}(compulsory|mandatory|must|zaroori|jaruri|necessary|required)",
+        "(must|have to|padega|padegi|karna hoga) .{0,20}(take|buy|lena|leni) .{0,15}(insurance|policy|cover)",
+        "(loan|it) .{0,20}(without|bina) .{0,15}insurance .{0,15}(not|nahi|nahin)",
+        "बीमा अनिवार्य|बीमा ज़रूरी",
+        "(insurance|policy|cover) (lena|leni|lene|karna) (hi )?(padega|padegi|hoga|hogi)"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "Bundled insurance must be optional and the borrower's choice of insurer preserved"
+      },
+      "correction": "Insurance with this loan is optional. You choose whether to take it.",
+      "corrected_patterns": [
+        "insurance is (optional|your choice|not compulsory|not mandatory)",
+        "(you|aap) (can|may) (decline|refuse|skip|mana kar)",
+        "बीमा वैकल्पिक"
+      ]
+    },
+    {
+      "id": "no_credit_impact",
+      "label": "Claim that the credit score is unaffected",
+      "severity": "medium",
+      "patterns": [
+        "(cibil|credit) (score|report|record) .{0,25}(not|nahi|nahin|never|no) .{0,15}(affect|effect|impact|change|kharab)",
+        "(no|zero|koi) (impact|effect|asar) .{0,20}(cibil|credit) (score|report)",
+        "(cibil|credit score) .{0,15}(safe|surakshit|theek rahega)",
+        "सिबिल .{0,15}(नहीं|असर नहीं)",
+        "(cibil|credit) (score|report) .{0,25}(koi )?(asar|impact|effect) (nahi|nahin)"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "Credit information reporting to bureaus is mandatory and must not be misdescribed"
+      },
+      "correction": "This loan is reported to the credit bureaus. A missed instalment lowers your score.",
+      "corrected_patterns": [
+        "(is|will be) reported to (the )?(credit )?(bureau|bureaus|cibil)",
+        "(missed|late) (payment|instalment|emi) .{0,25}(affect|lower|impact)"
+      ]
+    },
+    {
+      "id": "pressure",
+      "label": "Pressure to sign now",
+      "severity": "medium",
+      "patterns": [
+        "(offer|rate|scheme) .{0,20}(closes|expires|valid) (today|tonight|aaj)",
+        "(sign|apply|submit) .{0,15}(now|today|right away|abhi|turant)",
+        "(last|final) (day|chance|mauka)",
+        "(aaj hi|abhi hi) .{0,15}(sign|kar do|kar lijiye|apply)",
+        "आज ही|आखिरी मौका"
+      ],
+      "citation": {
+        "authority": "RBI",
+        "instrument": "Master Circular on Fair Practices Code for NBFCs / Banks",
+        "url": "https://rbi.org.in",
+        "clause": "No coercion or undue pressure in the sale of a credit product"
+      },
+      "correction": "There is no need to decide today. Take the key facts statement home first.",
+      "corrected_patterns": [
+        "(take|leke) .{0,20}(your time|time lijiye|ghar)",
+        "no (rush|hurry|jaldi)",
+        "(you|aap) can (decide|think) later"
+      ]
+    }
+  ],
+  "teachback_topics": [
+    {
+      "id": "apr",
+      "label": "The all-inclusive cost",
+      "expected_points": [
+        "the annual percentage rate includes every fee, not just the interest"
+      ],
+      "hint_hi": "APR mein saare charges shaamil hote hain, sirf byaj nahi."
+    },
+    {
+      "id": "emi_and_tenure",
+      "label": "Instalment and tenure",
+      "expected_points": [
+        "how much is paid each month",
+        "for how many months or years"
+      ],
+      "hint_hi": "Har mahine kitna, aur kitne saal tak."
+    },
+    {
+      "id": "rate_type",
+      "label": "Fixed or floating",
+      "expected_points": [
+        "a floating rate can change, so the instalment or the tenure can change"
+      ],
+      "hint_hi": "Floating rate badal sakta hai, to EMI ya tenure badal sakta hai."
+    },
+    {
+      "id": "charges",
+      "label": "Fees and charges",
+      "expected_points": [
+        "a processing fee is deducted",
+        "other charges apply"
+      ],
+      "hint_hi": "Processing fee kat ti hai aur kuch aur charges lagte hain."
+    },
+    {
+      "id": "prepayment",
+      "label": "Repaying early",
+      "expected_points": [
+        "what it costs to close the loan early"
+      ],
+      "hint_hi": "Loan jaldi band karne par kya lagega."
+    },
+    {
+      "id": "cooling_off",
+      "label": "Cooling-off period",
+      "expected_points": [
+        "the loan can be exited within the cooling-off period without a penalty"
+      ],
+      "hint_hi": "Cooling off period mein bina penalty ke bahar nikal sakte hain."
+    },
+    {
+      "id": "total_repayment",
+      "label": "Total repayable",
+      "expected_points": [
+        "the total paid back is more than the amount borrowed"
+      ],
+      "hint_hi": "Kul jitna wapas karna hai, wo liye gaye amount se zyada hai."
+    },
+    {
+      "id": "grievance",
+      "label": "Complaining",
+      "expected_points": [
+        "who to contact if something goes wrong"
+      ],
+      "hint_hi": "Kuch galat ho to kisse shikayat karni hai."
+    }
+  ],
+  "demo_script": [
+    {
+      "id": "l01",
+      "text_en": "Good morning Mrs. Sharma. My name is Rahul, I handle personal loans at this branch.",
+      "text_display": "Good morning Mrs. Sharma. My name is Rahul, I handle personal loans at this branch.",
+      "wait_for": "customer_turn"
+    },
+    {
+      "id": "l02",
+      "text_en": "This is a personal loan of five lakh rupees for forty eight months. The instalment is twelve thousand six hundred rupees a month.",
+      "text_display": "This is a personal loan of ₹5,00,000 for 48 months. The EMI is ₹12,600 a month.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "l03",
+      "text_en": "The interest rate is fourteen percent, and it is a floating rate linked to the repo benchmark.",
+      "text_display": "The interest rate is 14%, floating, linked to the repo benchmark.",
+      "wait_for": "customer_turn"
+    },
+    {
+      "id": "l04",
+      "text_en": "Do not worry about the cost, madam. This is a no cost EMI, there are no hidden charges at all.",
+      "text_display": "Do not worry about the cost, madam. This is a no cost EMI, there are no hidden charges at all.",
+      "wait_for": "ms:9000"
+    },
+    {
+      "id": "l05",
+      "text_en": "Sorry, let me correct that. The annual percentage rate is fifteen point eight percent, and that includes every charge.",
+      "text_display": "Sorry, let me correct that. The APR is 15.8%, and that includes every charge.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "l06",
+      "text_en": "There is a processing fee of nine thousand rupees, and a documentation charge of one thousand rupees.",
+      "text_display": "There is a processing fee of ₹9,000 and a documentation charge of ₹1,000.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "l07",
+      "text_en": "The total amount you repay over the whole tenure is six lakh four thousand eight hundred rupees. Foreclosure after twelve months is free.",
+      "text_display": "The total repayable over the tenure is ₹6,04,800. Foreclosure after 12 months is free.",
+      "wait_for": "ms:800"
+    },
+    {
+      "id": "l08",
+      "text_en": "Saakshi, verify.",
+      "text_display": "Saakshi, verify.",
+      "wait_for": "ms:6000"
+    },
+    {
+      "id": "l09",
+      "text_en": "You also have a three day cooling off period to exit without any penalty, and the grievance officer number is on the sanction letter.",
+      "text_display": "You also have a 3-day cooling-off period to exit without penalty, and the grievance officer number is on the sanction letter.",
+      "wait_for": "ms:800"
+    }
+  ],
+  "customer_hints": [
+    {
+      "when": "after:l01",
+      "text_en": "Namaste. My name is Mrs. Sharma.",
+      "text_hi": "Namaste. Mera naam Mrs. Sharma hai."
+    },
+    {
+      "when": "after:l03",
+      "text_en": "Will the instalment change later?",
+      "text_hi": "Kya EMI baad mein badal sakti hai?"
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "The APR is fifteen point eight, and it includes all the charges.",
+      "text_hi": "APR pandrah point aath hai, usme saare charges hain."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "Twelve thousand six hundred a month, for forty eight months.",
+      "text_hi": "Baarah hazaar chhe sau har mahine, adtalis mahine tak."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "Floating means the instalment can change.",
+      "text_hi": "Floating matlab EMI badal sakti hai."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "Some fee is taken, I am not sure how much.",
+      "text_hi": "Kuch fee kat ti hai, kitni pata nahi."
+    },
+    {
+      "when": "phase:TEACHBACK",
+      "text_en": "I can exit within three days without a penalty.",
+      "text_hi": "Teen din ke andar bina penalty ke nikal sakti hoon."
+    }
+  ]
+}

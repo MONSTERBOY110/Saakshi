@@ -2,6 +2,7 @@
   "id": "insurance-ulip-in",
   "version": "1.0.0",
   "title": "Unit linked insurance plan sale, India",
+  "product_default": "ULIP",
   "jurisdiction": "IN",
   "keyterms": [
     "Saakshi",
@@ -30,11 +31,11 @@
       "label": "Premium and payment term",
       "required_speaker": "advisor",
       "patterns": [
-        "premium",
+        "(?<![a-z])premium(?! allocation)(?! charge)",
         "प्रीमियम",
-        "(pay|paying|dena|dene) .{0,40}(years|saal)",
-        "every year",
-        "हर साल"
+        "(pay|paying|dena|dene) .{0,40}(years?|saal)",
+        "(\\d{3,}|lakh|lakhs|hazaar|thousand) .{0,25}(every year|per year|a year|har saal|annually)",
+        "(every year|per year|har saal|annually) .{0,25}(\\d{3,}|lakh|lakhs|hazaar|thousand)"
       ],
       "citation": {
         "authority": "IRDAI",
@@ -97,7 +98,7 @@
       "label": "Charges disclosed",
       "required_speaker": "advisor",
       "patterns": [
-        "charges?",
+        "(?<!no )(?<!zero )(?<!koi )(?<!bina )(?<!nahi )charges?(?! nahi)(?! nahin)(?! at all)",
         "allocation",
         "fund management",
         "mortality",
@@ -127,7 +128,9 @@
         "(?<!\\S)nav(?!\\S)",
         "बाज़ार",
         "बाजार",
-        "(value|paisa|fund) .{0,20}(upar niche|up and down|ghat|gir)"
+        "(value|paisa|fund) .{0,20}(upar niche|up and down|ghat|gir)",
+        "(moves?|moving|move) with (the )?market",
+        "(unlike|not like) (an? |the )?(fd|fixed deposit)"
       ],
       "citation": {
         "authority": "IRDAI",
@@ -212,12 +215,14 @@
       "severity": "critical",
       "patterns": [
         "(?<!not )(?<!no )(?<!never )(?<!nahi )guaranteed? (returns?|income|growth|profit|interest|munafa)",
-        "returns? (are|is|will be|hai|hain|hoga|honge|hoge) (fully |completely |totally |bilkul |100% )?(guaranteed|assured|pakka|fixed|fix|sure|certain)",
+        "(?<!cannot say the )(?<!can not say the )(?<!never say the )(?<!not say the )returns? (are|is|will be|hai|hain|hoga|honge|hoge) (fully |completely |totally |bilkul |100% )?(guaranteed|assured|pakka|fixed|fix|sure|certain)",
         "(?<!koi )(?<!no )(?<!not )guarantee (hai|hoga|milega|deta|dete|karta|karte)(?! nahi)(?! nahin)",
         "(?<!not )(?<!no )(?<!nahi )(?<!never )guaranteed (hai|hain|hoga|honge|hoge|h)(?! nahi)(?! nahin)",
         "(assured|pakka|sure ?shot|fixed|certain) (returns?|income|profit|munafa|paisa|growth)",
         "(\\d+|twelve|ten|fifteen|twenty|baarah|das|pandrah) ?(%|percent|per cent|pratishat) (guaranteed|assured|pakka|fix|fixed|sure|milega|confirm)",
-        "(?<!कोई )(?<!नहीं )गारंटी(ड)?(?! नहीं)"
+        "(?<!कोई )(?<!नहीं )गारंटी(ड)?(?! नहीं)",
+        "(?<!not )(?<!no )(?<!never )(?<!nahi )guaranteed? (\\S+ ){1,3}(returns?|income|growth|profit|munafa)",
+        "(pakka|pakki|assured|fixed|sure) .{0,25}(percent|per cent|%|pratishat) .{0,25}(milega|milegi|hoga|honge|har saal|every year)"
       ],
       "citation": {
         "authority": "IRDAI",
@@ -241,7 +246,7 @@
       "label": "Compared to a fixed deposit",
       "severity": "high",
       "patterns": [
-        "(like|same as|similar to|equal to) (an? |the )?(fd|fixed deposit|bank deposit)",
+        "(?<![a-z])(like|same as|similar to|equal to) (an? |the )?(fd|fixed deposit|bank deposit)",
         "(fd|fixed deposit) (jaisa|jaise|jaisi|ki tarah|ke barabar)",
         "(fd|fixed deposit) se (behtar|better|zyada|jyada|accha|achha)",
         "better than (an? |the )?(fd|fixed deposit)",
@@ -292,7 +297,7 @@
       "severity": "critical",
       "patterns": [
         "withdraw (it |money |the money |paisa )?(anytime|any time|whenever|kabhi bhi|jab chaho|jab chahe)",
-        "(anytime|any time|kabhi bhi|jab chaho|jab chahe) (withdraw|nikal|nikaal|le sakte|le sakti)",
+        "(anytime|any time|kabhi bhi|jab chaho|jab chahe) .{0,30}(withdraw|nikal|nikaal|le sakte|le sakti)",
         "(?<!\\S)no lock ?in(?!\\S)",
         "(koi|kuch) (bhi )?lock ?in nahi",
         "(nikal|nikaal|withdraw|paisa|money|kab).{0,60}(?<!\\S)(anytime|any time|whenever|kabhi bhi|jab chaho|jab chahe)(?!\\S)",

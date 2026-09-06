@@ -1,0 +1,59 @@
+{
+  "note": "Measurements taken against the live AssemblyAI APIs. Each carries the command that produced it, so anyone can reproduce or contradict it. Updated by hand when re-measured; the method is in docs/decisions.md.",
+  "measurements": [
+    {
+      "id": "intervention_latency",
+      "label": "Time to interrupt, end of speech to first sound",
+      "value": "1368 ms",
+      "detail": "p50 over ten interventions, re-measured after the anchor fix. Min 1278 ms, max 1538 ms, and all ten carried a full end-to-end total. Budget is 2500 ms.",
+      "method": "Ten live interventions driven by a probe recording, measured from the end of the advisor's speech in the recogniser's own audio timeline to Saakshi's first audio frame.",
+      "command": "pnpm test:e2e:latency",
+      "measured_on": "2026-09-06"
+    },
+    {
+      "id": "recogniser_share",
+      "label": "Of that, recogniser endpointing",
+      "value": "about 1.2 s",
+      "detail": "The wait before the turn is finalized dominates. Saakshi's own reply is roughly 210 to 320 ms of the total.",
+      "method": "Breakdown logged per intervention alongside the total.",
+      "command": "pnpm test:e2e:latency",
+      "measured_on": "2026-09-06"
+    },
+    {
+      "id": "judge_solo",
+      "label": "Judge-solo, one person drives the whole demo",
+      "value": "2226 ms",
+      "detail": "Roles bound, six advisor turns all from the recording, four of eight disclosures ticked, the planted claim interrupted.",
+      "method": "A pre-rendered advisor mixed into the microphone stream, with only the customer played from a fixture.",
+      "command": "pnpm test:e2e:judge-solo",
+      "measured_on": "2026-09-06"
+    },
+    {
+      "id": "analyzer_precision",
+      "label": "LLM layer, prohibited-claim precision",
+      "value": "1.00",
+      "detail": "Recall 0.71 on the seven dialogues that reached a model; the two misses were requests the gateway rate-limited, not wrong answers.",
+      "method": "Ten labelled dialogues through the LLM Gateway with a strict JSON schema.",
+      "command": "pnpm eval:analyzer",
+      "measured_on": "2026-09-06"
+    },
+    {
+      "id": "question_generation",
+      "label": "Teach-back question generation",
+      "value": "5.4 s",
+      "detail": "One call per session. Five of five questions passed validation and none fell back to the pack.",
+      "method": "One live call, then the same validation the room applies before speaking a question.",
+      "command": "pnpm eval:questions",
+      "measured_on": "2026-09-06"
+    },
+    {
+      "id": "cost",
+      "label": "Cost of one three-minute session",
+      "value": "not measured",
+      "detail": "Streaming STT and Voice Agent time are billed per second; a figure will only appear here once it has been read off the dashboard for a real session.",
+      "method": "Pending.",
+      "command": "",
+      "measured_on": ""
+    }
+  ]
+}

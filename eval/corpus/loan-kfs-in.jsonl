@@ -1,0 +1,35 @@
+{"id": "l01", "pack": "loan-kfs-in", "text": "This is a no cost EMI, madam, you pay only the price of the phone.", "violations": ["zero_cost_emi"], "checkpoints": []}
+{"id": "l02", "pack": "loan-kfs-in", "text": "Zero percent interest on this loan, nothing extra at all.", "violations": ["zero_cost_emi"], "checkpoints": []}
+{"id": "l03", "pack": "loan-kfs-in", "text": "Byaj nahi lagega madam, bilkul free hai.", "violations": ["zero_cost_emi"], "checkpoints": []}
+{"id": "l04", "pack": "loan-kfs-in", "text": "Your approval is guaranteed, one hundred percent, do not worry.", "violations": ["guaranteed_approval"], "checkpoints": []}
+{"id": "l05", "pack": "loan-kfs-in", "text": "Sanction is pakka, I will make sure it is approved.", "violations": ["guaranteed_approval"], "checkpoints": []}
+{"id": "l06", "pack": "loan-kfs-in", "text": "There are no hidden charges at all in this loan.", "violations": ["no_hidden_charges"], "checkpoints": []}
+{"id": "l07", "pack": "loan-kfs-in", "text": "Koi chhupa hua charge nahi hai, sirf EMI.", "violations": ["no_hidden_charges"], "checkpoints": []}
+{"id": "l08", "pack": "loan-kfs-in", "text": "Insurance is compulsory with this loan, you must take it.", "violations": ["forced_insurance"], "checkpoints": []}
+{"id": "l09", "pack": "loan-kfs-in", "text": "Loan ke saath insurance lena hi padega, bina insurance nahi milega.", "violations": ["forced_insurance"], "checkpoints": []}
+{"id": "l10", "pack": "loan-kfs-in", "text": "Your CIBIL score will not be affected by this at all.", "violations": ["no_credit_impact"], "checkpoints": []}
+{"id": "l11", "pack": "loan-kfs-in", "text": "Credit score par koi asar nahi padega.", "violations": ["no_credit_impact"], "checkpoints": []}
+{"id": "l12", "pack": "loan-kfs-in", "text": "This rate is valid today only, so please sign now.", "violations": ["pressure"], "checkpoints": []}
+{"id": "l13", "pack": "loan-kfs-in", "text": "It is not a zero cost loan. The interest is built into the price.", "violations": [], "checkpoints": []}
+{"id": "l14", "pack": "loan-kfs-in", "text": "No one can guarantee approval. Sanction is subject to credit appraisal.", "violations": [], "checkpoints": []}
+{"id": "l15", "pack": "loan-kfs-in", "text": "Insurance is optional. You choose whether to take it.", "violations": [], "checkpoints": []}
+{"id": "l16", "pack": "loan-kfs-in", "text": "This loan is reported to the credit bureaus, so a missed EMI will lower your score.", "violations": [], "checkpoints": []}
+{"id": "l17", "pack": "loan-kfs-in", "text": "Take your time, there is no need to decide today.", "violations": [], "checkpoints": []}
+{"id": "l18", "pack": "loan-kfs-in", "text": "Every charge is listed in the key facts statement I am giving you.", "violations": [], "checkpoints": []}
+{"id": "l19", "pack": "loan-kfs-in", "text": "This is a personal loan of five lakh rupees for forty eight months.", "violations": [], "checkpoints": ["loan_amount_and_tenure"]}
+{"id": "l20", "pack": "loan-kfs-in", "text": "The EMI is twelve thousand six hundred rupees a month.", "violations": [], "checkpoints": ["loan_amount_and_tenure"]}
+{"id": "l21", "pack": "loan-kfs-in", "text": "The interest rate is fourteen percent, floating, linked to the repo benchmark.", "violations": [], "checkpoints": ["interest_rate_type"]}
+{"id": "l22", "pack": "loan-kfs-in", "text": "It is a fixed rate for the whole tenure, it will not change.", "violations": [], "checkpoints": ["interest_rate_type"]}
+{"id": "l23", "pack": "loan-kfs-in", "text": "The annual percentage rate is fifteen point eight percent.", "violations": [], "checkpoints": ["apr_all_inclusive"]}
+{"id": "l24", "pack": "loan-kfs-in", "text": "The APR, which includes every charge, is sixteen percent.", "violations": [], "checkpoints": ["apr_all_inclusive"]}
+{"id": "l25", "pack": "loan-kfs-in", "text": "There is a processing fee of nine thousand rupees.", "violations": [], "checkpoints": ["fees_and_charges"]}
+{"id": "l26", "pack": "loan-kfs-in", "text": "A documentation charge of one thousand rupees also applies.", "violations": [], "checkpoints": ["fees_and_charges"]}
+{"id": "l27", "pack": "loan-kfs-in", "text": "The total amount you repay over the tenure is six lakh four thousand rupees.", "violations": [], "checkpoints": ["total_repayment"]}
+{"id": "l28", "pack": "loan-kfs-in", "text": "Foreclosure after twelve months is free, there is no prepayment charge.", "violations": [], "checkpoints": ["prepayment_terms"]}
+{"id": "l29", "pack": "loan-kfs-in", "text": "You have a three day cooling off period to exit without any penalty.", "violations": [], "checkpoints": ["cooling_off"]}
+{"id": "l30", "pack": "loan-kfs-in", "text": "The grievance officer number is printed on the sanction letter.", "violations": [], "checkpoints": ["grievance_and_recovery"]}
+{"id": "l31", "pack": "loan-kfs-in", "text": "Recovery agents follow the fair practices code, they will not call after seven.", "violations": [], "checkpoints": ["grievance_and_recovery"]}
+{"id": "l32", "pack": "loan-kfs-in", "text": "Good morning Mrs. Sharma, I handle personal loans at this branch.", "violations": [], "checkpoints": []}
+{"id": "l33", "pack": "loan-kfs-in", "text": "Please bring your PAN card and last three salary slips.", "violations": [], "checkpoints": []}
+{"id": "l34", "pack": "loan-kfs-in", "text": "The disbursal usually reaches the account within two working days.", "violations": [], "checkpoints": []}
+{"id": "l35", "pack": "loan-kfs-in", "text": "No cost EMI and guaranteed approval, just sign here today.", "violations": ["zero_cost_emi", "guaranteed_approval", "pressure"], "checkpoints": []}

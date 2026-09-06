@@ -76,6 +76,8 @@ export const PackSchema = z.object({
   id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   title: z.string().min(1),
+  /** What the room is selling, used as the default product name on the start screen. */
+  product_default: z.string().min(1),
   jurisdiction: z.enum(["IN", "UK"]),
   keyterms: z.array(z.string().min(1).max(50)).max(100),
   scenario_prompt: z.string().min(1).max(1750),

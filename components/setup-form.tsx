@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { SessionSetup } from "@/lib/session/keyterms";
-import { PACK_IDS } from "@/lib/rules/load";
+import { getPack, PACK_IDS } from "@/lib/rules/load";
 
 type Props = {
   setup: SessionSetup;
@@ -30,12 +30,13 @@ export function SetupForm({ setup, onChange, onStart, starting }: Props) {
           <select
             id="pack"
             value={setup.packId}
-            onChange={(e) => onChange({ packId: e.target.value })}
-            className="border-input bg-background h-9 w-full rounded-lg border px-3 text-sm"
+            onChange={(e) => onChange(switchPack(setup, e.target.value))}
+            className="border-ink bg-paper h-9 w-full border-2 px-2 text-sm"
+            data-testid="pack-select"
           >
             {PACK_IDS.map((id) => (
               <option key={id} value={id}>
-                {id}
+                {getPack(id).title}
               </option>
             ))}
           </select>
@@ -110,6 +111,17 @@ export function SetupForm({ setup, onChange, onStart, starting }: Props) {
       </CardContent>
     </Card>
   );
+}
+
+/**
+ * Changing the pack changes what is being sold. The product name follows unless the operator has
+ * already typed their own, which is theirs to keep.
+ */
+function switchPack(setup: SessionSetup, packId: string): Partial<SessionSetup> {
+  const wasDefault = PACK_IDS.some((id) => getPack(id).product_default === setup.productName);
+  return wasDefault
+    ? { packId, productName: getPack(packId).product_default }
+    : { packId };
 }
 
 function Field({

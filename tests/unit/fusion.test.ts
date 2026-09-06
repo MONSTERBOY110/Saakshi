@@ -159,8 +159,11 @@ describe("fuse", () => {
       ],
     };
     const r = fuse({ rules, analysis, rate: fresh, now: 1, alreadyIntervened: new Set() });
+    // "premium allocation" is the name of a charge, so this turn discloses charges and nothing
+    // about the premium the customer pays. The eval corpus caught the pattern that used to tick
+    // premium_and_term here.
     expect(r.evaluation.checkpoints.map((c) => c.id).sort()).toEqual(
-      ["charges", "premium_and_term", "surrender_value"].sort(),
+      ["charges", "surrender_value"].sort(),
     );
     const llm = r.evaluation.checkpoints.find((c) => c.id === "surrender_value");
     expect(llm?.pattern.startsWith("llm:")).toBe(true);

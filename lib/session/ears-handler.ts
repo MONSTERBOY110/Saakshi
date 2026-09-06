@@ -140,9 +140,23 @@ function calibrate(c: RoomController, turn: StoredTurn): void {
  */
 function sttLagOf(c: RoomController, turn: StoredTurn, detectedAt: number): number | undefined {
   const origin = audioClockOrigin(c);
-  if (origin === null) return undefined;
+  if (origin === null) {
+    c.log("client", "latency.no_anchor", { turn: turn.order, reason: "audio clock not started" });
+    return undefined;
+  }
   const lag = detectedAt - origin - turn.endMs;
-  return lag >= 0 && lag < 10_000 ? Math.round(lag) : undefined;
+  // Outside this window the audio clock is wrong rather than the room being slow, so the number is
+  // dropped and the badge says so. It is logged because a silent drop once cost an hour to find.
+  if (lag < 0 || lag >= 10_000) {
+    c.log("client", "latency.no_anchor", {
+      turn: turn.order,
+      reason: "lag outside the plausible window",
+      lag: Math.round(lag),
+      endMs: turn.endMs,
+    });
+    return undefined;
+  }
+  return Math.round(lag);
 }
 
 /** performance.now() that corresponds to audio-timeline zero. */
@@ -270,6 +284,10 @@ export function applyAnalysis(c: RoomController, analysis: Analysis, lastOrder: 
   if (fused.interventions.length > 0 && c.state.phase === "OBSERVE") {
     const first = fused.interventions[0]!;
     for (const i of fused.interventions) c.intervened.add(`${i.id}@${i.turnOrder}`);
-    startIntervention(c, first, performance.now());
+    // The badge means end of speech to first sound whichever layer decided, so the analyzer path
+    // anchors to the same audio timeline as the rules path. It is genuinely slower, and the number
+    // should say so rather than falling back to Saakshi's reply time alone.
+    const decidedAt = performance.now();
+    startIntervention(c, first, decidedAt, sttLagOf(c, turn, decidedAt));
   }
 }

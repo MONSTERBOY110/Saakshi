@@ -52,6 +52,7 @@ describe("protocol pack schema", () => {
       id: "test-pack",
       version: "1.0.0",
       title: "t",
+      product_default: "Thing",
       jurisdiction: "IN",
       keyterms: ["a"],
       scenario_prompt: "x",

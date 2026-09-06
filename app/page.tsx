@@ -18,7 +18,13 @@ export default function Home() {
           <span className="shout text-3xl">SAAKSHI</span>
           <span className="plate text-ink-soft">साक्षी · the witness</span>
         </div>
-        <nav className="flex items-center gap-2">
+        <nav className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/metrics"
+            className="plate decoration-carnival underline decoration-2 underline-offset-4"
+          >
+            How well it works
+          </Link>
           <span className="ribbon ribbon-quiet">Consent you can prove</span>
         </nav>
       </header>
@@ -91,12 +97,20 @@ export default function Home() {
           Built on AssemblyAI Streaming STT, the Voice Agent API and the LLM Gateway. No audio is
           ever stored: quotes, timestamps and hashes only.
         </p>
-        <Link
-          href="/session"
-          className="font-display decoration-carnival text-xs tracking-[0.08em] uppercase underline decoration-2 underline-offset-4"
-        >
-          Open the room
-        </Link>
+        <span className="flex flex-wrap items-center gap-4">
+          <Link
+            href="/metrics"
+            className="font-display decoration-carnival text-xs tracking-[0.08em] uppercase underline decoration-2 underline-offset-4"
+          >
+            How well it works
+          </Link>
+          <Link
+            href="/session"
+            className="font-display decoration-carnival text-xs tracking-[0.08em] uppercase underline decoration-2 underline-offset-4"
+          >
+            Open the room
+          </Link>
+        </span>
       </footer>
     </main>
   );

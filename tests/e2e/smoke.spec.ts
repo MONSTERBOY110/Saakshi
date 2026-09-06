@@ -12,3 +12,12 @@ test("session page exposes a Start control", async ({ page }) => {
   await page.goto("/session");
   await expect(page.getByRole("button", { name: "Start" })).toBeVisible();
 });
+
+test("metrics page shows the numbers with the command that produced each", async ({ page }) => {
+  await page.goto("/metrics");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("HOW WELL IT WORKS");
+  await expect(page.getByText("pnpm test:e2e:latency").first()).toBeVisible();
+  await expect(page.getByRole("table")).toContainText("Prohibited claims");
+  // The page must say what it does not know, not only what it does.
+  await expect(page.getByText(/What is not measured/i)).toBeVisible();
+});

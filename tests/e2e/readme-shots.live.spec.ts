@@ -33,6 +33,10 @@ test("landing hero and verify page", async ({ page, request }) => {
   await page.waitForLoadState("networkidle");
   await page.screenshot({ path: `${OUT}/verify.png`, fullPage: true });
 
+  await page.goto("/metrics");
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: `${OUT}/metrics.png`, fullPage: true });
+
   await page.goto(`/verify/${cert.id}?tamper=quote`);
   await page.waitForLoadState("networkidle");
   // Both certificate shots run full page so they sit at the same height side by side in the README.

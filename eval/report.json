@@ -1,0 +1,38 @@
+{
+  "ran_at": "2026-09-06T13:35:29.461Z",
+  "corpus": {
+    "turns": 70,
+    "packs": {
+      "insurance-ulip-in": 35,
+      "loan-kfs-in": 35
+    }
+  },
+  "layers": [
+    {
+      "layer": "rules",
+      "turns": 70,
+      "violations": {
+        "tp": 31,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "falsePositives": {},
+        "falseNegatives": {}
+      },
+      "checkpoints": {
+        "tp": 29,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "falsePositives": {},
+        "falseNegatives": {}
+      },
+      "wrong": []
+    }
+  ],
+  "note": "Rule engine only. The LLM and fused layers need an LLM Gateway key and are run with pnpm eval:live."
+}

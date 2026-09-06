@@ -1,0 +1,57 @@
+{
+  "pack_id": "loan-kfs-in",
+  "voice": "george",
+  "rendered_at": "2026-09-06T12:17:30.200Z",
+  "format": {
+    "encoding": "pcm_s16le",
+    "sample_rate": 24000,
+    "channels": 1
+  },
+  "lines": [
+    {
+      "id": "l01",
+      "bytes": 318240,
+      "seconds": 6.63
+    },
+    {
+      "id": "l02",
+      "bytes": 368160,
+      "seconds": 7.67
+    },
+    {
+      "id": "l03",
+      "bytes": 272640,
+      "seconds": 5.68
+    },
+    {
+      "id": "l04",
+      "bytes": 317760,
+      "seconds": 6.62
+    },
+    {
+      "id": "l05",
+      "bytes": 346560,
+      "seconds": 7.22
+    },
+    {
+      "id": "l06",
+      "bytes": 323040,
+      "seconds": 6.73
+    },
+    {
+      "id": "l07",
+      "bytes": 392160,
+      "seconds": 8.17
+    },
+    {
+      "id": "l08",
+      "bytes": 153120,
+      "seconds": 3.19
+    },
+    {
+      "id": "l09",
+      "bytes": 377280,
+      "seconds": 7.86
+    }
+  ]
+}
