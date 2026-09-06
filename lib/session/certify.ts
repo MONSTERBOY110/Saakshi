@@ -1,5 +1,5 @@
-import { buildCertificateDraft } from "@/lib/cert/build";
-import type { StoreCertificateResponse } from "@/lib/cert/schema";
+import { buildCertificateDraft, finaliseCertificate } from "@/lib/cert/build";
+import type { CertificateDraft, StoreCertificateResponse } from "@/lib/cert/schema";
 import type { RoomController } from "./controller";
 import { finalTurns } from "./transcript";
 
@@ -13,14 +13,21 @@ const CERTIFY_TIMEOUT_MS = 10_000;
 export async function certifySession(c: RoomController, callId: string | null): Promise<void> {
   c.set({ certificate: { status: "building" } });
   try {
-    const stored = await buildAndStore(c);
-    c.log("client", "certificate.stored", { id: stored.id, url: stored.url });
+    const { stored, draft } = await buildAndStore(c);
+    c.log("client", "certificate.stored", {
+      id: stored.id,
+      url: stored.url,
+      durable: stored.durable,
+    });
     c.set({
       certificate: {
         status: "stored",
         id: stored.id,
         hash: stored.certificate_hash,
         url: stored.url,
+        durable: stored.durable,
+        // The same object the server hashed, so a saved file verifies exactly as the page does.
+        payload: await finaliseCertificate(draft, stored.id),
       },
     });
     c.set((s) => ({ teachback: s.teachback && { ...s.teachback, status: "done" } }));
@@ -47,7 +54,9 @@ export async function certifySession(c: RoomController, callId: string | null): 
   }
 }
 
-async function buildAndStore(c: RoomController): Promise<StoreCertificateResponse> {
+async function buildAndStore(
+  c: RoomController,
+): Promise<{ stored: StoreCertificateResponse; draft: CertificateDraft }> {
   const s = c.state;
   if (!c.pack || !s.board) throw new Error("no pack or board");
   const startedAt = s.startedAt ?? new Date().toISOString();
@@ -88,7 +97,7 @@ async function buildAndStore(c: RoomController): Promise<StoreCertificateRespons
       const detail = await res.text().catch(() => "");
       throw new Error(`certificate responded ${res.status} ${detail.slice(0, 160)}`);
     }
-    return (await res.json()) as StoreCertificateResponse;
+    return { stored: (await res.json()) as StoreCertificateResponse, draft };
   } finally {
     clearTimeout(timer);
   }

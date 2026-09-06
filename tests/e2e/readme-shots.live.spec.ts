@@ -33,6 +33,13 @@ test("landing hero and verify page", async ({ page, request }) => {
   await page.waitForLoadState("networkidle");
   await page.screenshot({ path: `${OUT}/verify.png`, fullPage: true });
 
+  // The 16:9 submission cover, captured at exactly 1920x1080 so it needs no cropping.
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/cover");
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: `${OUT}/cover.png` });
+  await page.setViewportSize(WIDE);
+
   await page.goto("/metrics");
   await page.waitForLoadState("networkidle");
   await page.screenshot({ path: `${OUT}/metrics.png`, fullPage: true });

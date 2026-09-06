@@ -27,13 +27,21 @@ export function CalibrationBanner({
     : !roles.customer
       ? setup.customerName
       : null;
+  // Judge-solo starts watching with only the advisor known, so the banner must not claim both are
+  // bound while it is still listening for the person in the room.
+  const listening = !calibrating && waitingFor !== null;
   return (
     <div
       role="status"
       className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm"
     >
       <div>
-        {calibrating && waitingFor ? (
+        {listening ? (
+          <p>
+            <span className="font-medium">Listening for {waitingFor}.</span> Say your name once and
+            Saakshi will label your turns.
+          </p>
+        ) : calibrating && waitingFor ? (
           <p>
             <span className="font-medium">Calibrating roles.</span> Waiting for {waitingFor} to say
             their full name.

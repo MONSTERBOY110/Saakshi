@@ -100,4 +100,10 @@ export type Evidence = z.infer<typeof EvidenceSchema>;
 export const CertificateDraftSchema = CertificateSchema.omit({ id: true, certificate_hash: true });
 export type CertificateDraft = z.infer<typeof CertificateDraftSchema>;
 
-export type StoreCertificateResponse = { id: string; certificate_hash: string; url: string };
+export type StoreCertificateResponse = {
+  id: string;
+  certificate_hash: string;
+  url: string;
+  /** False when the record lives in memory, so the link only works on this server instance. */
+  durable: boolean;
+};

@@ -79,6 +79,10 @@ export type CertificateState = {
   id?: string;
   hash?: string;
   url?: string;
+  /** False when the store is in memory, so the verify link only works on this server instance. */
+  durable?: boolean;
+  /** The exact record the server stored, so the room can hand it over as a file either way. */
+  payload?: unknown;
   error?: string;
 };
 

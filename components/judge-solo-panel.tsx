@@ -54,7 +54,7 @@ export function JudgeSoloPanel({ judgeSolo, script, hints, phase, customerName, 
             {current.map((hint) => (
               <li key={hint.when + hint.text_en} className="text-sm">
                 <span className="font-medium">{hint.text_hi ?? hint.text_en}</span>
-                {hint.text_hi && <span className="text-ink-soft"> — {hint.text_en}</span>}
+                {hint.text_hi && <span className="text-ink-soft"> · {hint.text_en}</span>}
               </li>
             ))}
           </ul>

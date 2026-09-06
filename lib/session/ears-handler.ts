@@ -106,7 +106,10 @@ function onTurn(c: RoomController, e: Extract<EarsEvent, { type: "turn" }>): voi
 
 function calibrate(c: RoomController, turn: StoredTurn): void {
   const { roles, setup, phase } = c.state;
-  if (phase !== "CALIBRATE" || rolesBound(roles)) return;
+  if (rolesBound(roles)) return;
+  // In judge-solo the room starts watching once the advisor is known, so the customer is still
+  // waiting to be recognised after the phase has moved on. Everywhere else, calibration is a phase.
+  if (phase !== "CALIBRATE" && !(c.judgeSolo && phase === "OBSERVE")) return;
   // Judge-solo: the room played the advisor's voice itself, so it does not have to infer who spoke.
   // Anyone talking when he is not is the judge. That makes calibration deterministic, which is what
   // a three minute solo demo needs, and it survives a name the recogniser wrote in another script.

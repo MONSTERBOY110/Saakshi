@@ -32,8 +32,9 @@ export async function POST(req: Request) {
     // The chain head the browser computed does not match its own turn digest.
     return NextResponse.json({ error: "chain_mismatch", ...check }, { status: 422 });
   }
+  const store = getCertificateStore();
   try {
-    await getCertificateStore().put(certificate);
+    await store.put(certificate);
   } catch (err) {
     console.error("[certificate]", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "store_unavailable" }, { status: 502 });
@@ -43,6 +44,9 @@ export async function POST(req: Request) {
     id: certificate.id,
     certificate_hash: certificate.certificate_hash,
     url: `${base.replace(/\/$/, "")}/verify/${certificate.id}`,
+    // A memory store is per instance, so on a serverless deployment the link can 404 for the next
+    // request. The room says so rather than handing over a link that quietly fails.
+    durable: store.kind === "upstash",
   };
   return NextResponse.json(response, { headers: { "Cache-Control": "no-store" } });
 }

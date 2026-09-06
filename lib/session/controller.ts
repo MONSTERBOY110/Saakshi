@@ -113,9 +113,12 @@ export class RoomController {
       await Promise.all([this.ears.connect(), this.mouth.connect()]);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      this.log("client", "error", { message });
-      this.set({ error: message });
+      this.log("client", "error", { message, name: err instanceof Error ? err.name : undefined });
       await this.teardown();
+      // Back to the start screen with something a person can act on. Leaving the room half open in
+      // CALIBRATE with a raw error strands whoever pressed Start, and the first thing a judge does
+      // is press Start before reading anything.
+      this.set({ ...initialRoom(setup), error: startFailureMessage(err) });
     }
   }
 
@@ -173,7 +176,12 @@ export class RoomController {
   onRolesChanged(): void {
     const { roles, setup, phase } = this.state;
     if (phase !== "CALIBRATE") return;
-    if (rolesBound(roles)) {
+    // Judge-solo only needs the advisor before it can start watching: the advisor is the recording
+    // the room itself is playing, and the rules only ever judge his turns. Waiting for the judge to
+    // speak first leaves them staring at a board that ticks nothing while a voice talks at them.
+    // Whoever speaks next and is not him becomes the customer, in OBSERVE, without a second wait.
+    const enough = this.judgeSolo ? !!roles.advisor : rolesBound(roles);
+    if (enough) {
       this.speakExact(buildCalibrationLine(setup, "done"));
       this.mouth?.updateSession({
         system_prompt: buildObserverPrompt({
@@ -277,6 +285,25 @@ export class RoomController {
     // Re-run fusion for the newest turn with the analysis in hand.
     if (lastOrder !== undefined) applyAnalysis(this, result.analysis, lastOrder);
   }
+}
+
+/** What went wrong, said in a way the person in front of the laptop can do something about. */
+export function startFailureMessage(err: unknown): string {
+  const name = err instanceof Error ? err.name : "";
+  const message = err instanceof Error ? err.message : String(err);
+  if (name === "NotAllowedError" || /permission|denied/i.test(message)) {
+    return "Saakshi needs the microphone to listen. Allow it in the browser, then press Start again.";
+  }
+  if (name === "NotFoundError" || /no (audio )?(input|device)|not found/i.test(message)) {
+    return "No microphone was found. Plug one in or pick one in the browser, then press Start again.";
+  }
+  if (name === "NotReadableError" || /in use|busy/i.test(message)) {
+    return "The microphone is in use by another app. Close it, then press Start again.";
+  }
+  if (/token/i.test(message)) {
+    return `Saakshi could not reach AssemblyAI: ${message}. Check the API key and try again.`;
+  }
+  return `Saakshi could not start: ${message}`;
 }
 
 let singleton: RoomController | null = null;
