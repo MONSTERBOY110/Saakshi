@@ -4,10 +4,8 @@
   "title": "Unit linked insurance plan sale, India",
   "product_default": "ULIP",
   "jurisdiction": "IN",
-  "keyterms": [
-    "Saakshi",
-    "ULIP",
-    "unit-linked",
+  "keyterms": ["Saakshi", "ULIP", "unit-linked", "IRDAI"],
+  "rule_keyterms": [
     "lock-in",
     "free look",
     "free-look period",
@@ -19,7 +17,6 @@
     "benefit illustration",
     "NAV",
     "market-linked",
-    "IRDAI",
     "paanch saal",
     "tees din",
     "guaranteed"
@@ -381,18 +378,13 @@
     {
       "id": "lock_in",
       "label": "Lock-in",
-      "expected_points": [
-        "money cannot be withdrawn for five years"
-      ],
+      "expected_points": ["money cannot be withdrawn for five years"],
       "hint_hi": "Paanch saal tak paisa nahi nikal sakte."
     },
     {
       "id": "charges",
       "label": "Charges",
-      "expected_points": [
-        "the plan has charges",
-        "charges reduce the amount invested"
-      ],
+      "expected_points": ["the plan has charges", "charges reduce the amount invested"],
       "hint_hi": "Plan mein charges lagte hain, jaise allocation aur fund management."
     },
     {
@@ -408,26 +400,19 @@
     {
       "id": "free_look",
       "label": "Free look",
-      "expected_points": [
-        "can return the policy within thirty days"
-      ],
+      "expected_points": ["can return the policy within thirty days"],
       "hint_hi": "Tees din ke andar policy wapas kar sakte hain."
     },
     {
       "id": "premium_term",
       "label": "Premium and term",
-      "expected_points": [
-        "how much is paid each year",
-        "for how many years"
-      ],
+      "expected_points": ["how much is paid each year", "for how many years"],
       "hint_hi": "Har saal kitna premium aur kitne saal tak."
     },
     {
       "id": "surrender_value",
       "label": "Surrender value",
-      "expected_points": [
-        "surrendering early gives less than the fund value"
-      ],
+      "expected_points": ["surrendering early gives less than the fund value"],
       "hint_hi": "Beech mein band karne par poora paisa nahi milta."
     },
     {

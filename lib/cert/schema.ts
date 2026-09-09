@@ -28,6 +28,18 @@ export const DigestTurnSchema = z.object({
   end_ms: z.number(),
 });
 
+/** An advisory finding from the LLM layer. Never evidence: it ticked nothing and was not spoken. */
+export const AnalyzerNoteSchema = z.object({
+  kind: z.enum(["checkpoint", "prohibited"]),
+  id: z.string(),
+  label: z.string(),
+  turn_order: z.number().int(),
+  quote: z.string(),
+  confidence: z.number(),
+  severity: z.string().optional(),
+  rationale: z.string().optional(),
+});
+
 export const CertificateSchema = z.object({
   id: z.string().min(8),
   version: z.literal("1.0"),
@@ -82,6 +94,8 @@ export const CertificateSchema = z.object({
       reexplained: z.boolean(),
     }),
   ),
+  /** What the analyzer thought it heard, for a reviewer. Absent when it had nothing to add. */
+  analyzer_notes: z.array(AnalyzerNoteSchema).optional(),
   turns: z.array(DigestTurnSchema),
   turns_digest: z.object({
     count: z.number().int(),

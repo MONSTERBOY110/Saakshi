@@ -137,14 +137,18 @@ describe("switching protocol packs", () => {
     }
   });
 
-  it("keyterms follow the pack, so the recogniser hears its vocabulary", () => {
-    const ulip = buildKeyterms({ ...DEFAULT_SETUP }, getPack("insurance-ulip-in"));
-    const loan = buildKeyterms(
-      { ...DEFAULT_SETUP, packId: "loan-kfs-in", productName: "Personal loan" },
-      getPack("loan-kfs-in"),
-    );
-    expect(ulip.join(" ").toLowerCase()).toContain("surrender value");
-    expect(loan.join(" ").toLowerCase()).toContain("foreclosure");
-    expect(loan.join(" ").toLowerCase()).not.toContain("surrender value");
+  it("keyterms follow the pack: identity terms by default, rule vocabulary only in full mode", () => {
+    const ulipPack = getPack("insurance-ulip-in");
+    const loanPack = getPack("loan-kfs-in");
+    const loanSetup = { ...DEFAULT_SETUP, packId: "loan-kfs-in", productName: "Personal loan" };
+    const ulip = buildKeyterms({ ...DEFAULT_SETUP, keytermsMode: "identity" }, ulipPack);
+    const loan = buildKeyterms({ ...loanSetup, keytermsMode: "identity" }, loanPack);
+    expect(ulip.join(" ").toLowerCase()).toContain("irdai");
+    expect(ulip.join(" ").toLowerCase()).not.toContain("surrender value");
+    expect(loan.join(" ").toLowerCase()).toContain("key facts statement");
+    expect(loan.join(" ").toLowerCase()).not.toContain("foreclosure");
+    const loanFull = buildKeyterms({ ...loanSetup, keytermsMode: "full" }, loanPack);
+    expect(loanFull.join(" ").toLowerCase()).toContain("foreclosure");
+    expect(loanFull.join(" ").toLowerCase()).not.toContain("surrender value");
   });
 });

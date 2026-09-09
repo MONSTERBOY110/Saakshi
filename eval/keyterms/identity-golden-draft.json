@@ -1,0 +1,123 @@
+{
+  "ran_at": "2026-09-09T15:27:24.732Z",
+  "mode": "identity",
+  "wav": "golden-draft.wav",
+  "observe_ms": 90000,
+  "keyterms_sent": [
+    "Rahul",
+    "Mrs. Sharma",
+    "ULIP",
+    "Saakshi",
+    "unit-linked",
+    "IRDAI"
+  ],
+  "roles": {
+    "step": "done",
+    "attempts": 0,
+    "needsManual": false,
+    "customer": "A",
+    "advisor": "B"
+  },
+  "finalized_turns": 23,
+  "advisor_turns": 17,
+  "met": [
+    {
+      "id": "premium_and_term",
+      "status": "met",
+      "quote": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "at_ms": 11521
+    },
+    {
+      "id": "policy_term",
+      "status": "met",
+      "quote": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "at_ms": 11521
+    },
+    {
+      "id": "lock_in_5y",
+      "status": "met",
+      "quote": "There is a 5-year lock-in.",
+      "at_ms": 25761
+    },
+    {
+      "id": "charges",
+      "status": "met",
+      "quote": "There are charges, including premium allocation and fund management charges.",
+      "at_ms": 46304
+    },
+    {
+      "id": "market_risk",
+      "status": "met",
+      "quote": "The money goes into market linked funds, so the fund value depends on the market.",
+      "at_ms": 20172
+    },
+    {
+      "id": "benefit_illustration_4_8",
+      "status": "met",
+      "quote": "The benefit illustration shows values at 4% and 8%.",
+      "at_ms": 53149
+    },
+    {
+      "id": "surrender_value",
+      "status": "met",
+      "quote": "The surrender value applies after the lock-in.",
+      "at_ms": 57953
+    }
+  ],
+  "met_ids": [
+    "benefit_illustration_4_8",
+    "charges",
+    "lock_in_5y",
+    "market_risk",
+    "policy_term",
+    "premium_and_term",
+    "surrender_value"
+  ],
+  "flags": [
+    {
+      "id": "guaranteed_returns",
+      "status": "corrected",
+      "quote": "Anytime, madam, and the returns are guaranteed, 12%."
+    }
+  ],
+  "beliefs": [],
+  "analyzer": {
+    "status": "skipped",
+    "calls": 2,
+    "skipped": 7,
+    "model": "qwen3.5-4b-32k-fast",
+    "latencyMs": 646
+  },
+  "heard": [
+    "0 ? en My name is Rahul.",
+    "1 ? en Namaste.",
+    "2 customer en My name is Mrs. Sharma.",
+    "3 advisor en This is a unit-linked insurance plan.",
+    "4 advisor en You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+    "5 advisor en The money goes into market linked funds, so the fund value depends on the market.",
+    "6 advisor en There is a 5-year lock-in.",
+    "7 customer hi इसमें पैसा कब निकल सकती हूँ?",
+    "8 advisor en Anytime, madam, and the returns are guaranteed, 12%.",
+    "9 advisor en Sorry, let me correct that.",
+    "10 advisor en Returns are not guaranteed.",
+    "11 advisor en There are charges, including premium allocation and fund management charges.",
+    "12 advisor en The benefit illustration shows values at 4% and 8%.",
+    "13 advisor en The surrender value applies after the lock-in.",
+    "14 advisor en Saakshi, verify.",
+    "15 advisor en You also have a 30-day free look period to return the policy.",
+    "16 customer hi+en पांच साल, five years, उसके बाद निकल सकती हूँ।",
+    "17 advisor en Good morning, Mrs. Sharma.",
+    "18 advisor en My name is Rahul.",
+    "19 advisor en Namaste.",
+    "20 customer en My name is Mrs. Sharma.",
+    "21 advisor en This is a unit-linked insurance plan.",
+    "22 advisor en You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years."
+  ],
+  "billing": {
+    "sttSeconds": 103,
+    "agentSeconds": 103.184988,
+    "stt_usd_per_hour": 0.7200000000000001,
+    "agent_usd_per_hour": 4.5,
+    "cost_usd": 0.1496
+  }
+}

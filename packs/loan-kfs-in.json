@@ -9,6 +9,14 @@
     "personal loan",
     "Key Facts Statement",
     "KFS",
+    "sanction letter",
+    "CIBIL",
+    "credit bureau",
+    "subvention",
+    "disbursal",
+    "benchmark"
+  ],
+  "rule_keyterms": [
     "APR",
     "annual percentage rate",
     "EMI",
@@ -19,22 +27,16 @@
     "floating rate",
     "fixed rate",
     "repo rate",
-    "benchmark",
     "foreclosure",
     "prepayment",
     "part payment",
     "cooling-off period",
     "look-up period",
-    "sanction letter",
     "grievance officer",
     "nodal officer",
     "recovery agent",
-    "CIBIL",
     "credit score",
-    "credit bureau",
-    "no cost EMI",
-    "subvention",
-    "disbursal"
+    "no cost EMI"
   ],
   "scenario_prompt": "Bank branch conversation in India. A loans officer explains a personal loan to a customer who speaks Hindi and English and switches between them mid-sentence. Topics: the loan amount, the monthly instalment, the tenure, the interest rate and whether it is fixed or floating, the annual percentage rate, the processing fee, the total amount repayable, foreclosure and prepayment charges, the cooling-off period, and the grievance officer. Expect rupee amounts, percentages, and the words KFS, APR, EMI, CIBIL, repo and foreclosure. Hindi words that appear: byaj, kist, shulk, kharcha, mahina, saal.",
   "checkpoints": [
@@ -376,67 +378,49 @@
     {
       "id": "apr",
       "label": "The all-inclusive cost",
-      "expected_points": [
-        "the annual percentage rate includes every fee, not just the interest"
-      ],
+      "expected_points": ["the annual percentage rate includes every fee, not just the interest"],
       "hint_hi": "APR mein saare charges shaamil hote hain, sirf byaj nahi."
     },
     {
       "id": "emi_and_tenure",
       "label": "Instalment and tenure",
-      "expected_points": [
-        "how much is paid each month",
-        "for how many months or years"
-      ],
+      "expected_points": ["how much is paid each month", "for how many months or years"],
       "hint_hi": "Har mahine kitna, aur kitne saal tak."
     },
     {
       "id": "rate_type",
       "label": "Fixed or floating",
-      "expected_points": [
-        "a floating rate can change, so the instalment or the tenure can change"
-      ],
+      "expected_points": ["a floating rate can change, so the instalment or the tenure can change"],
       "hint_hi": "Floating rate badal sakta hai, to EMI ya tenure badal sakta hai."
     },
     {
       "id": "charges",
       "label": "Fees and charges",
-      "expected_points": [
-        "a processing fee is deducted",
-        "other charges apply"
-      ],
+      "expected_points": ["a processing fee is deducted", "other charges apply"],
       "hint_hi": "Processing fee kat ti hai aur kuch aur charges lagte hain."
     },
     {
       "id": "prepayment",
       "label": "Repaying early",
-      "expected_points": [
-        "what it costs to close the loan early"
-      ],
+      "expected_points": ["what it costs to close the loan early"],
       "hint_hi": "Loan jaldi band karne par kya lagega."
     },
     {
       "id": "cooling_off",
       "label": "Cooling-off period",
-      "expected_points": [
-        "the loan can be exited within the cooling-off period without a penalty"
-      ],
+      "expected_points": ["the loan can be exited within the cooling-off period without a penalty"],
       "hint_hi": "Cooling off period mein bina penalty ke bahar nikal sakte hain."
     },
     {
       "id": "total_repayment",
       "label": "Total repayable",
-      "expected_points": [
-        "the total paid back is more than the amount borrowed"
-      ],
+      "expected_points": ["the total paid back is more than the amount borrowed"],
       "hint_hi": "Kul jitna wapas karna hai, wo liye gaye amount se zyada hai."
     },
     {
       "id": "grievance",
       "label": "Complaining",
-      "expected_points": [
-        "who to contact if something goes wrong"
-      ],
+      "expected_points": ["who to contact if something goes wrong"],
       "hint_hi": "Kuch galat ho to kisse shikayat karni hai."
     }
   ],

@@ -1,0 +1,95 @@
+{
+  "ran_at": "2026-09-09T15:24:53.607Z",
+  "mode": "none",
+  "wav": "omitted-draft.wav",
+  "observe_ms": 100000,
+  "keyterms_sent": [],
+  "roles": {
+    "step": "done",
+    "attempts": 0,
+    "needsManual": false,
+    "advisor": "A",
+    "customer": "B"
+  },
+  "finalized_turns": 23,
+  "advisor_turns": 19,
+  "met": [
+    {
+      "id": "premium_and_term",
+      "status": "met",
+      "quote": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "at_ms": 14176
+    },
+    {
+      "id": "policy_term",
+      "status": "met",
+      "quote": "You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+      "at_ms": 14176
+    },
+    {
+      "id": "lock_in_5y",
+      "status": "met",
+      "quote": "There is a 5-year lock-in.",
+      "at_ms": 29859
+    },
+    {
+      "id": "market_risk",
+      "status": "met",
+      "quote": "The money goes into market linked funds, so the fund value depends on the market.",
+      "at_ms": 22833
+    }
+  ],
+  "met_ids": [
+    "lock_in_5y",
+    "market_risk",
+    "policy_term",
+    "premium_and_term"
+  ],
+  "flags": [
+    {
+      "id": "withdraw_anytime",
+      "status": "open",
+      "quote": "After 5 years, you can take the money out."
+    }
+  ],
+  "beliefs": [],
+  "analyzer": {
+    "status": "skipped",
+    "calls": 4,
+    "skipped": 15,
+    "model": "qwen3.5-4b-32k-fast",
+    "latencyMs": 2515
+  },
+  "heard": [
+    "0 advisor en My name is Rahul. I am your relationship manager at the branch.",
+    "1 ? en Namaste.",
+    "2 customer en My name is Mrs. Sharma.",
+    "3 advisor en This is a unit linked insurance plan.",
+    "4 advisor en You pay a premium of ₹50,000 every year for 10 years, and the policy term is 15 years.",
+    "5 advisor en The money goes into market linked funds, so the fund value depends on the market.",
+    "6 advisor en There is a 5-year lock-in.",
+    "7 customer hi इसमें पैसा कब निकल सकती हूँ?",
+    "8 advisor en After 5 years, you can take the money out.",
+    "9 advisor en Our branch is on the second floor, and there is a free book about the plan at the front desk.",
+    "10 advisor en I will send you the brochure with a picture of the fund manager on the cover.",
+    "11 advisor en The tees at the golf club near the branch are open till 8:30.",
+    "12 advisor en There is a surrounding valley view from the office, which many customers like.",
+    "13 advisor en My colleague will illustrate the branch layout on a map for you.",
+    "14 advisor en The location of our office changed last week, so please use the new gate.",
+    "15 advisor en Do you have any questions so far?",
+    "16 advisor hi नहीं, ठीक है।",
+    "17 advisor en Thank you.",
+    "18 advisor en Good morning, Mrs. Sharma.",
+    "19 advisor en My name is Rahul. I am your relationship manager at the branch.",
+    "20 advisor en Namaste.",
+    "21 customer en My name is Mrs. Sharma.",
+    "22 advisor en This is a unit linked insurance plan."
+  ],
+  "billing": {
+    "sttSeconds": 112,
+    "agentSeconds": 111.955263,
+    "stt_usd_per_hour": 0.7200000000000001,
+    "agent_usd_per_hour": 4.5,
+    "cost_usd": 0.1623
+  }
+}

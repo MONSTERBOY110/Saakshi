@@ -16,10 +16,11 @@ const setup: SessionSetup = {
   productName: "SecureGrowth ULIP",
   productTerms: ["SecureGrowth", "Balanced Fund", "  "],
   judgeSolo: false,
+  keytermsMode: "identity",
 };
 
 describe("keyterms and prompts", () => {
-  it("puts names, product and terms first, then the pack terms, deduplicated and capped", () => {
+  it("puts names, product and terms first, then the pack's identity terms, deduplicated and capped", () => {
     const terms = buildKeyterms(setup, pack);
     expect(terms.slice(0, 5)).toEqual([
       "Rahul",
@@ -28,7 +29,10 @@ describe("keyterms and prompts", () => {
       "SecureGrowth",
       "Balanced Fund",
     ]);
-    expect(terms).toContain("lock-in");
+    // Disclosure vocabulary is evidence, so it never reaches the recogniser by default.
+    expect(terms).not.toContain("lock-in");
+    expect(terms).toContain("IRDAI");
+    expect(buildKeyterms({ ...setup, keytermsMode: "full" }, pack)).toContain("lock-in");
     expect(new Set(terms).size).toBe(terms.length);
     expect(terms.length).toBeLessThanOrEqual(100);
     expect(terms.every((t) => t.length <= 50 && t.trim() === t && t.length > 0)).toBe(true);

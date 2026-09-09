@@ -140,6 +140,29 @@ export function EvidenceTable({ certificate }: { certificate: Certificate }) {
           </table>
         )}
       </section>
+
+      {certificate.analyzer_notes && certificate.analyzer_notes.length > 0 && (
+        <section>
+          <h2 className="ribbon ribbon-quiet mb-2">
+            Analyzer notes ({certificate.analyzer_notes.length}), not evidence
+          </h2>
+          <p className="text-ink-soft mb-2 text-xs">
+            What the language model thought it heard. Nothing here ticked a disclosure, flagged a
+            claim or was spoken. It is kept so a reviewer can check it against the quotes above.
+          </p>
+          <ul className="flex flex-col gap-1 text-sm">
+            {certificate.analyzer_notes.map((n) => (
+              <li key={`${n.kind}-${n.id}-${n.turn_order}`} data-testid="cert-note" data-id={n.id}>
+                <span className="plate">{n.kind === "prohibited" ? "claim?" : "disclosure?"}</span>{" "}
+                {n.label} (confidence {n.confidence.toFixed(2)}): &ldquo;{n.quote}&rdquo;
+                {n.rationale ? (
+                  <span className="text-ink-soft block text-xs">{n.rationale}</span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

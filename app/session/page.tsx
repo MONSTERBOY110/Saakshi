@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AgentBar } from "@/components/agent-bar";
 import { CalibrationBanner } from "@/components/calibration-banner";
 import { CertificateCard } from "@/components/certificate-card";
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getRoomController } from "@/lib/session/controller";
 import { getPack } from "@/lib/rules/load";
+import { isKeytermsMode } from "@/lib/session/keyterms";
 import { rolesBound } from "@/lib/session/roles";
 import { useRoomStore } from "@/lib/session/store";
 
@@ -24,6 +25,45 @@ export default function SessionPage() {
   const controller = getRoomController();
   const [term, setTerm] = useState("");
   const pack = useMemo(() => getPack(state.setup.packId), [state.setup.packId]);
+
+  // ?keyterms=identity|full|none picks the recogniser vocabulary for this session. It exists for
+  // the keyterms-integrity experiment (tests/e2e/keyterms.live.spec.ts); the deployment default is
+  // identity terms only.
+  useEffect(() => {
+    const mode = new URLSearchParams(window.location.search).get("keyterms");
+    if (isKeytermsMode(mode)) useRoomStore.getState().setSetup({ keytermsMode: mode });
+  }, []);
+
+  // A read-only view of the room for the live specs, so measurements come from the same state the
+  // screen shows. Nothing here is audio; the events kept are the billing and rule summaries.
+  useEffect(() => {
+    const w = window as unknown as { __saakshi_room?: unknown };
+    w.__saakshi_room = {
+      phase: state.phase,
+      setup: state.setup,
+      roles: state.roles,
+      status: state.status,
+      board: state.board,
+      turns: state.transcript.turns
+        .filter((t) => t.final)
+        .map((t) => ({
+          order: t.order,
+          role: t.role,
+          speakerLabel: t.speakerLabel,
+          text: t.text,
+          startMs: t.startMs,
+          endMs: t.endMs,
+          echo: t.echo,
+          language: t.language,
+        })),
+      analyzer: state.analyzer,
+      events: state.events.filter((e) =>
+        ["Termination", "session.ended", "analyze.result", "rules", "UpdateConfiguration"].includes(
+          e.type,
+        ),
+      ),
+    };
+  }, [state]);
   const inSetup = state.phase === "SETUP";
   const done = state.phase === "DONE";
   const labelsSeen = useMemo(

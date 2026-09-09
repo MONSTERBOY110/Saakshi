@@ -41,8 +41,8 @@ in English, in Hindi, or in a sentence that switches halfway. Roles bind from th
 either script.
 
 **2. It marks the tabla.** A versioned protocol pack is evaluated deterministically on every
-finalized turn, with an LLM layer for the claims that rules alone miss. Two ship today, and the
-start screen switches between them:
+finalized turn. An LLM layer reads the same turns and leaves notes for a reviewer; it can never tick
+a card, flag a claim or speak. Two packs ship today, and the start screen switches between them:
 
 | Pack | Regulator | Catches |
 |---|---|---|
@@ -81,11 +81,13 @@ Every number here was produced by a live run against the real APIs. The method f
 |---|---|---|
 | Time to interrupt, end of speech to first sound | **p50 1368 ms, max 1538 ms** | 10 interventions, `pnpm test:e2e:latency` |
 | Prohibited-claim detection precision | **1.00** | 10 labelled dialogues, `pnpm eval:analyzer` |
-| Disclosures caught on one pass of the demo script | **6 to 7 of 8** | `pnpm test:e2e:golden` |
+| Disclosures caught on one pass of the demo script | **7 to 8 of 8** | identity-only vocabulary, `pnpm test:e2e:golden`, `pnpm test:e2e:keyterms` |
+| Disclosures ticked that were never made | **0 of 12** | omitted-disclosures recording, three vocabulary modes, `pnpm test:e2e:keyterms` |
+| Cost of one demo session | **about $0.16** | billed seconds at list prices, `pnpm test:e2e:keyterms` |
 | Teach-back question generation | **5.4 s, once per session** | `pnpm eval:questions` |
 | Judge-solo, whole demo driven by one person | **interrupts at 2226 ms** | `pnpm test:e2e:judge-solo` |
 | Rule engine against 70 labelled turns | **precision 1.00, recall 1.00** | `pnpm eval`, and read the caveat below |
-| Unit tests | **398 passing** | `pnpm test` |
+| Unit tests | **418 passing** | `pnpm test` |
 
 Latency is reported honestly: the badge shows the recogniser's endpointing lag plus Saakshi's own
 reaction, and says **reply only** when the end-to-end total cannot be computed.
@@ -149,6 +151,9 @@ flowchart LR
 The API key never reaches the browser: both sockets are opened with single-use tokens minted
 server-side and valid for sixty seconds.
 
+What the certificate proves, what it does not, and the threats considered:
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 ## Using the AssemblyAI APIs
 
 Things this build had to get right, each verified against the docs and recorded with evidence in
@@ -165,7 +170,41 @@ Things this build had to get right, each verified against the docs and recorded 
 - **Progressive tool reveal**: `finish_teachback` appears only after three answers are recorded, and
   the prompt changes in the same message.
 - **LLM Gateway** with strict JSON schema where the model supports it, falling back to a
-  prompt-described shape with `json-repair` where it does not.
+  prompt-described shape with `json-repair` where it does not. Its findings are advisory notes:
+  they never tick a card, flag a claim or get spoken.
+- **Keyterms that cannot manufacture evidence.** Names, product and regulator reach the recogniser;
+  the disclosure and claim phrases the rules listen for do not. A unit test proves no identity term
+  can complete a rule on its own, and a live run on identical audio showed no lost recall.
+
+## What we learned about the AssemblyAI API
+
+Each of these cost an hour or a day and is recorded with its evidence in
+[`docs/decisions.md`](docs/decisions.md):
+
+- **Biasing the recogniser toward the answer key manufactures evidence.** Keyterms improve
+  recognition of the words you list, so listing the phrases your rules match lets a mishearing snap
+  to a disclosure nobody made. We split the vocabulary and measured: identity-only terms kept 8 of
+  8 disclosures on the demo script.
+- **`SpeakerRevision` can be wrong on synthetic voices.** The end-of-session refinement moved five
+  of eight settled turns to the other speaker, including two disclosures. It now only fills turns
+  the live pass left `PENDING`.
+- **`conversation.message` is not read by the next `reply.create`.** A `system_prompt` appendix is.
+  Every spoken line is therefore scripted through `reply.create` instructions (verbatim in 10 of 10
+  trials), and the teach-back context goes into the prompt.
+- **Two official pages disagree on `tool.result` timing.** The client-side-tools page says hold the
+  result until `reply.done` is the latest event, and to drop pending results on an interrupted
+  reply; the docs-map prompt says send at once. We follow the tools page, with the documented
+  hold-mode exception where the result itself fires the next reply.
+- **`speaker_labels` swaps the turn profile.** With diarization on, `mode` is ignored, turns
+  force-finalize at 10 s and partials slow to about 3 s unless `continuous_partials=true`;
+  `format_turns` defaults to false, so `turn_is_formatted` never flips without it.
+- **`language_codes` and `keyterms_prompt` travel as JSON-array strings**, not repeated query
+  parameters. `Turn.language_code` is a hint, not a gate: short English turns arrived tagged `et`.
+- **A small model at 0.8 confidence is not a witness.** The one gateway model this account reaches
+  flagged a truthful sentence as a prohibited claim one turn after the lock-in was disclosed. The
+  analyzer became advisory the same day.
+- **The phase flips before the sockets close.** `Terminate` and `session.end` are answered after
+  the room reports DONE, so billing has to be read from the closing events, not the phase.
 
 ## Run it yourself
 
@@ -178,7 +217,7 @@ pnpm dev                     # http://localhost:3000, allow the microphone on /s
 Checks that need no API key:
 
 ```bash
-pnpm test                    # 398 unit tests
+pnpm test                    # 418 unit tests
 pnpm eval                    # rule engine against the labelled corpus, writes eval/report.json
 pnpm packs:validate          # every protocol pack parses and compiles
 pnpm test:e2e                # smoke and certificate verification, fake mic
@@ -192,12 +231,15 @@ pnpm demo:render             # pre-render the synthetic advisor for judge-solo
 pnpm demo:render loan-kfs-in # the same for the loan pack
 pnpm fixtures:wav            # two-voice WAV of the demo script
 pnpm fixtures:wav:customer   # customer-only WAV for judge-solo
+pnpm fixtures:wav:omitted    # four disclosures missing, acoustic neighbours spoken
 pnpm test:e2e:live           # both sockets open
 pnpm test:e2e:golden         # the whole path, to a certificate that verifies
 pnpm test:e2e:judge-solo     # one person drives the entire demo
 pnpm test:e2e:latency        # interruption latency over ten samples
 pnpm eval:analyzer           # detection accuracy over ten labelled dialogues
 pnpm eval:questions          # teach-back question quality, one live call
+SAAKSHI_KEYTERMS_MODE=identity SAAKSHI_FAKE_WAV=tests/fixtures/omitted-draft.wav pnpm test:e2e:keyterms
+                             # what the board ticks under one recogniser vocabulary
 ```
 
 ## Repository
@@ -211,8 +253,10 @@ pnpm eval:questions          # teach-back question quality, one live call
 | `lib/cert/` | Canonical JSON, the hash chain, the certificate builder and store |
 | `lib/demo/` | The synthetic advisor |
 | `lib/eval/` | Corpus loading and the precision and recall arithmetic |
+| `docs/ARCHITECTURE.md` | What runs where, what the certificate proves and does not, the threat model |
 | `docs/decisions.md` | Every verified API fact, spike result and measurement, with its method |
-| `PRODUCT.md`, `DESIGN.md` | Product truth and the visual world, both binding on future work |
+| `docs/deployment.md` | How this is deployed, and the environment it needs |
+| `tests/` | Unit tests, the golden live end to end run, and the video capture harness |
 
 ## Deployment
 

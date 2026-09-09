@@ -1,19 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Analysis } from "@/lib/analyzer/schema";
 import { getPack } from "@/lib/rules/load";
-import { emptyBoard } from "@/lib/session/board";
+import { emptyBoard, type BoardState } from "@/lib/session/board";
 import { applyAnalysis } from "@/lib/session/ears-handler";
 import { DEFAULT_SETUP } from "@/lib/session/keyterms";
 import { transition, type MachineEvent, type Phase } from "@/lib/session/machine";
 import type { StoredTurn } from "@/lib/session/transcript";
 
-// The badge on screen means "end of the advisor's speech to Saakshi's first sound". Two things can
-// start an interruption: the deterministic rules, and the LLM analyzer when it finishes. Both must
-// anchor the measurement to the audio timeline, or the room reports the flattering half.
+// The analyzer is advisory (fusion.ts, docs/decisions.md 2026-09-09). When it finishes, its findings
+// land on the board as notes for a reviewer with the turn they refer to. They never start an
+// interruption, so there is no analyzer latency to anchor: the only spoken intervention path is the
+// deterministic one in runRules, whose anchoring is covered by the live latency spec.
 
 const pack = getPack("insurance-ulip-in");
 
-const CLAIM = "Anytime, madam, and the returns are guaranteed, 12%.";
+// The truthful sentence the analyzer flagged live on 2026-09-09, one turn after the lock-in was
+// disclosed. The rules do not match it.
+const TRUTHFUL = "After 5 years you can take the money out.";
 
 function turn(order: number, text: string, endMs: number): StoredTurn {
   return {
@@ -36,14 +39,14 @@ function makeController(phase: Phase = "OBSERVE") {
   const state = {
     phase,
     setup: DEFAULT_SETUP,
-    board: emptyBoard(pack),
-    transcript: { turns: [turn(8, CLAIM, 39_000)] },
+    board: emptyBoard(pack) as BoardState,
+    transcript: { turns: [turn(8, TRUTHFUL, 39_000)] },
     intervention: undefined as unknown,
     interventionsLog: [] as unknown[],
     interventionLatenciesMs: [] as number[],
-    // A heartbeat that puts audio-timeline zero 2.5 s after the room started.
     status: { heartbeat: { audioMs: 40_000, realtimeFactor: 1, wallMs: 42_500 } },
   };
+  const logged: Array<{ type: string; payload: unknown }> = [];
   const c = {
     pack,
     state,
@@ -69,22 +72,24 @@ function makeController(phase: Phase = "OBSERVE") {
       return true;
     },
     speakExact() {},
-    log() {},
+    log(_source: string, type: string, payload: unknown) {
+      logged.push({ type, payload });
+    },
     clearAckTimer() {},
     rebuild() {},
   };
-  return { c: c as never as Parameters<typeof applyAnalysis>[0], state };
+  return { c: c as never as Parameters<typeof applyAnalysis>[0], state, logged };
 }
 
 const analysisFlagging: Analysis = {
   violations: [
     {
-      id: "guaranteed_returns",
+      id: "withdraw_anytime",
       turn_order: 8,
-      quote: "the returns are guaranteed, 12%",
+      quote: TRUTHFUL,
       confidence: 0.95,
       severity: "critical",
-      rationale: "a market linked plan cannot promise a return",
+      rationale: "says the money can be taken out",
     },
   ],
   checkpoints_satisfied: [],
@@ -93,28 +98,36 @@ const analysisFlagging: Analysis = {
 };
 
 beforeEach(() => {
-  // 45 s after the room started: six seconds after the claim ended on the audio timeline.
   vi.spyOn(performance, "now").mockReturnValue(45_000);
 });
 
-describe("the analyzer path anchors its measurement to the audio timeline", () => {
-  it("supplies the recogniser lag, so the badge can show an end-to-end total", () => {
-    const { c } = makeController();
+describe("the analyzer path is advisory", () => {
+  it("never starts an intervention, however confident the model is", () => {
+    const { c, state } = makeController();
     applyAnalysis(c, analysisFlagging, 8);
-    const pending = (c as unknown as { pendingIntervention: { sttLagMs?: number } | null })
-      .pendingIntervention;
-    expect(pending, "an intervention should have started").not.toBeNull();
-    // Audio-timeline zero sits at 2.5 s; the claim ended at 39 s of audio, so 41.5 s on the room
-    // clock. The analyzer decided at 45 s, which is 3.5 s of recogniser and analyzer wait.
-    expect(pending?.sttLagMs).toBeDefined();
-    expect(pending?.sttLagMs).toBeCloseTo(3_500, -2);
+    const pending = (c as unknown as { pendingIntervention: unknown }).pendingIntervention;
+    expect(pending).toBeNull();
+    expect(state.phase).toBe("OBSERVE");
+    expect(state.intervention).toBeUndefined();
+    expect(state.board.violations).toEqual([]);
   });
 
-  it("measures from when the room could first have known, not from when it looked", () => {
-    const { c } = makeController();
+  it("leaves a note on the board with the turn it refers to, and logs it", () => {
+    const { c, state, logged } = makeController();
     applyAnalysis(c, analysisFlagging, 8);
-    const pending = (c as unknown as { pendingIntervention: { detectedAt: number } | null })
-      .pendingIntervention;
-    expect(pending?.detectedAt).toBe(45_000);
+    expect(state.board.notes.map((n) => n.key)).toEqual(["prohibited:withdraw_anytime@8"]);
+    const note = state.board.notes[0]!;
+    expect(note.label).toBe(pack.prohibited.find((p) => p.id === "withdraw_anytime")?.label);
+    expect(note.confidence).toBe(0.95);
+    expect(note.evidence).toMatchObject({ turnOrder: 8, role: "advisor", quote: TRUTHFUL });
+    expect(logged.some((l) => l.type === "analyzer.notes")).toBe(true);
+  });
+
+  it("does nothing when the analyzer found nothing worth a note", () => {
+    const { c, state } = makeController();
+    const quiet: Analysis = { ...analysisFlagging, violations: [] };
+    applyAnalysis(c, quiet, 8);
+    expect(state.board.notes).toEqual([]);
+    expect(state.board.violations).toEqual([]);
   });
 });

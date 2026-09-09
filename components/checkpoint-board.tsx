@@ -79,6 +79,25 @@ export function CheckpointBoard({ board, setup }: Props) {
           </ul>
         </div>
       )}
+
+      {board.notes.length > 0 && (
+        <div className="rule-dashed text-ink-soft pt-2 text-xs" data-testid="analyzer-notes">
+          <p className="plate">Analyzer notes, not evidence</p>
+          <p className="mt-0.5">
+            What the language model thought it heard. Nothing here ticks a card, calls a flag or is
+            spoken; it is kept for a reviewer to check against the quotes.
+          </p>
+          <ul className="mt-1 flex flex-col gap-0.5">
+            {board.notes.map((n) => (
+              <li key={n.key} data-testid="analyzer-note" data-kind={n.kind} data-id={n.id}>
+                {n.kind === "prohibited" ? "Claim?" : "Disclosure?"} {n.label} (
+                {n.confidence.toFixed(2)}
+                {n.evidence ? `, ${formatClock(n.evidence.startMs)}` : ""}): &ldquo;{n.quote}&rdquo;
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }
@@ -150,7 +169,6 @@ function ViolationRow({ v, setup }: { v: ViolationState; setup: SessionSetup }) 
         </p>
         <p className="num text-ink-soft" data-testid="latency-slot">
           {v.latencyMs !== undefined ? `answered in ${v.latencyMs} ms` : "no spoken intervention"}
-          {v.source === "llm" ? " · analyzer" : ""}
         </p>
       </div>
     </li>

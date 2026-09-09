@@ -32,7 +32,7 @@
       "id": "analyzer_precision",
       "label": "LLM layer, prohibited-claim precision",
       "value": "1.00",
-      "detail": "Recall 0.71 on the seven dialogues that reached a model; the two misses were requests the gateway rate-limited, not wrong answers.",
+      "detail": "Recall 0.71 on the seven dialogues that reached a model; the two misses were requests the gateway rate-limited, not wrong answers. Since 2026-09-09 the analyzer is advisory: its findings are notes for a reviewer and never tick a card, flag a claim or get spoken, after it flagged a truthful sentence during the keyterms experiment.",
       "method": "Ten labelled dialogues through the LLM Gateway with a strict JSON schema.",
       "command": "pnpm eval:analyzer",
       "measured_on": "2026-09-06"
@@ -47,13 +47,22 @@
       "measured_on": "2026-09-06"
     },
     {
+      "id": "keyterms_integrity",
+      "label": "Disclosures ticked that were never made",
+      "value": "0 of 12",
+      "detail": "A recording where the advisor makes four of eight disclosures and says acoustic neighbours of the other four (free book, fund manager, tees at the golf club, surrounding valley, illustrate the layout, location of our office). Across three recogniser vocabulary modes, the four omitted cards stayed empty every time; the four true ones ticked every time. Identity-only vocabulary, now the default, kept 8 of 8 on the demo script.",
+      "method": "Same WAV through the fake microphone under identity, full and none keyterms; board read from the room state; reports in eval/keyterms/.",
+      "command": "SAAKSHI_KEYTERMS_MODE=identity SAAKSHI_FAKE_WAV=tests/fixtures/omitted-draft.wav pnpm test:e2e:keyterms",
+      "measured_on": "2026-09-09"
+    },
+    {
       "id": "cost",
-      "label": "Cost of one three-minute session",
-      "value": "not measured",
-      "detail": "Streaming STT and Voice Agent time are billed per second; a figure will only appear here once it has been read off the dashboard for a real session.",
-      "method": "Pending.",
-      "command": "",
-      "measured_on": ""
+      "label": "Cost of one demo session",
+      "value": "$0.16",
+      "detail": "Four sessions of about 2 min 15 s: Streaming STT billed 112 to 113 s and the Voice Agent 103 to 113 s, at list prices ($0.72 an hour for STT with speaker labels, prompting and voice focus; $4.50 an hour for the Voice Agent). The Voice Agent is about 86 percent of it. LLM Gateway calls add under a tenth of a cent. Not yet reconciled with the dashboard.",
+      "method": "Billed seconds reported by both APIs at close (Termination and session.ended), multiplied by list prices.",
+      "command": "pnpm test:e2e:keyterms",
+      "measured_on": "2026-09-09"
     }
   ]
 }

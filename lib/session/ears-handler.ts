@@ -1,11 +1,11 @@
 import type { EarsEvent } from "@/lib/aai/ears";
 import type { Analysis, AnalyzeRequest } from "@/lib/analyzer/schema";
 import { evaluateTurn, type Evaluation } from "@/lib/rules/engine";
-import { applyCorrections, applyEvaluation } from "./board";
+import { applyCorrections, applyEvaluation, applyNotes } from "./board";
 import type { RoomController } from "./controller";
 import { isAgentEcho } from "./echo";
 import { startIntervention } from "./flows";
-import { fuse } from "./fusion";
+import { fuse, type AnalyzerNote } from "./fusion";
 import { bindKnownSpeaker, observeFinalTurn, rolesBound } from "./roles";
 import {
   applyRevision,
@@ -204,6 +204,7 @@ function runRules(c: RoomController, turn: StoredTurn, detectedAt: number): void
   });
   c.rate = fused.rate;
   applyToBoard(c, fused.evaluation, current.order);
+  applyNotesToBoard(c, fused.notes);
 
   if (rules.corrections.length > 0) {
     c.log("client", "corrections", { turn: current.order, ids: rules.corrections });
@@ -283,14 +284,20 @@ export function applyAnalysis(c: RoomController, analysis: Analysis, lastOrder: 
     alreadyIntervened: c.intervened,
   });
   c.rate = fused.rate;
+  // The analyzer is advisory (fusion.ts): its findings are notes for the reviewer. Interventions
+  // come from the rules alone and were decided when the turn arrived, so nothing is spoken here.
   applyToBoard(c, fused.evaluation, turn.order);
-  if (fused.interventions.length > 0 && c.state.phase === "OBSERVE") {
-    const first = fused.interventions[0]!;
-    for (const i of fused.interventions) c.intervened.add(`${i.id}@${i.turnOrder}`);
-    // The badge means end of speech to first sound whichever layer decided, so the analyzer path
-    // anchors to the same audio timeline as the rules path. It is genuinely slower, and the number
-    // should say so rather than falling back to Saakshi's reply time alone.
-    const decidedAt = performance.now();
-    startIntervention(c, first, decidedAt, sttLagOf(c, turn, decidedAt));
-  }
+  applyNotesToBoard(c, fused.notes);
+}
+
+/** The analyzer's findings go to the reviewer's notes. They never tick, flag or speak. */
+function applyNotesToBoard(c: RoomController, notes: AnalyzerNote[]): void {
+  if (notes.length === 0) return;
+  const turns = c.state.transcript.turns;
+  c.log("client", "analyzer.notes", {
+    notes: notes.map((n) => `${n.kind}:${n.id}@${n.turnOrder}:${n.confidence.toFixed(2)}`),
+  });
+  c.set((s) =>
+    s.board ? { board: applyNotes(s.board, notes, (o) => turns.find((t) => t.order === o)) } : {},
+  );
 }

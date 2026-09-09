@@ -112,6 +112,20 @@ export async function buildCertificateDraft(src: CertificateSource): Promise<Cer
       ...(a.evidence ? { evidence: a.evidence } : {}),
       reexplained: a.reexplained,
     })),
+    ...(src.board.notes.length > 0
+      ? {
+          analyzer_notes: src.board.notes.map((n) => ({
+            kind: n.kind,
+            id: n.id,
+            label: n.label,
+            turn_order: n.turnOrder,
+            quote: n.quote,
+            confidence: Number(n.confidence.toFixed(2)),
+            ...(n.severity ? { severity: n.severity } : {}),
+            ...(n.rationale ? { rationale: n.rationale } : {}),
+          })),
+        }
+      : {}),
     turns: digest,
     turns_digest: { count: digest.length, chain_head: head },
     language_mix: languageMix(evidenceTurns),

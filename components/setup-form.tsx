@@ -79,6 +79,17 @@ export function SetupForm({ setup, onChange, onStart, starting }: Props) {
             />
           </Field>
         </div>
+        <p
+          className="text-ink-soft text-xs leading-relaxed sm:col-span-2"
+          data-testid="keyterms-mode"
+        >
+          Recognition vocabulary: <span className="num">{setup.keytermsMode ?? "identity"}</span>.{" "}
+          {setup.keytermsMode === "full"
+            ? "The recogniser is also biased toward the disclosure and claim phrases the rules listen for. Experiment mode: a mishearing can snap to the answer key."
+            : setup.keytermsMode === "none"
+              ? "No vocabulary is sent at all. Control arm of the keyterms experiment."
+              : "Only names, the product and the regulator are sent. The phrases the rules listen for never bias the recogniser, so a tick can only come from words that were said."}
+        </p>
         <div className="sm:col-span-2">
           <label htmlFor="judge-solo" className="flex items-start gap-2 text-sm">
             <input
@@ -119,9 +130,7 @@ export function SetupForm({ setup, onChange, onStart, starting }: Props) {
  */
 function switchPack(setup: SessionSetup, packId: string): Partial<SessionSetup> {
   const wasDefault = PACK_IDS.some((id) => getPack(id).product_default === setup.productName);
-  return wasDefault
-    ? { packId, productName: getPack(packId).product_default }
-    : { packId };
+  return wasDefault ? { packId, productName: getPack(packId).product_default } : { packId };
 }
 
 function Field({

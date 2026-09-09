@@ -138,7 +138,14 @@ export default function MetricsPage() {
             still owed.
           </li>
           <li>Firefox and Safari are untested. Chromium is the supported browser today.</li>
-          <li>Cost per session has not been read off the dashboard yet.</li>
+          <li>
+            Cost per session is computed from the billed seconds both APIs report, at list prices.
+            It has not yet been reconciled with the dashboard.
+          </li>
+          <li>
+            The analyzer is advisory since 2026-09-09; its notes are shown but their usefulness to a
+            reviewer has not been measured.
+          </li>
         </ul>
       </section>
     </main>

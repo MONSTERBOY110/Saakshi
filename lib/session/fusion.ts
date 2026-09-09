@@ -1,18 +1,25 @@
 import type { Analysis } from "@/lib/analyzer/schema";
-import type { Evaluation, RuleMatch } from "@/lib/rules/engine";
+import type { Evaluation } from "@/lib/rules/engine";
 import type { Severity } from "@/lib/rules/pack";
 
-// Fusion of the deterministic layer and the LLM layer (prd.md FR-5, trd.md section 6.2):
-// - a critical rule match on an advisor turn intervenes at once;
-// - an analyzer violation with confidence 0.8 or more and severity critical or high intervenes if
-//   the rate limit allows (one intervention per 60 s unless critical);
-// - analyzer checkpoints with confidence 0.6 or more tick;
-// - every analyzer finding still reaches the board as a violation or checkpoint.
+// Fusion of the deterministic layer and the LLM layer (prd.md FR-5 and principle 4: the protocol
+// pack decides, the model extracts).
+//
+// Evidence comes from the rules alone. A critical rule match on an advisor turn intervenes at once;
+// a high or medium rule match is recorded on the board and never spoken. The analyzer is advisory:
+// its findings become notes for a human reviewer, shown on the board and carried in the certificate
+// as notes, never as a ticked disclosure, a flagged claim or a spoken correction.
+//
+// Why (docs/decisions.md, 2026-09-09): on identical audio the analyzer flagged "After 5 years you
+// can take the money out" as withdraw_anytime at confidence 0.8 or more, one sentence after the
+// advisor had disclosed the lock-in. The rules did not. Under the previous fusion that was a spoken
+// accusation against a truthful advisor and a violation in his certificate. A witness that can be
+// wrong out loud is worse than one that says less.
 
 export type RateLimitState = { lastInterventionAt: number | null };
 export const INTERVENTION_COOLDOWN_MS = 60_000;
-export const LLM_INTERVENE_CONFIDENCE = 0.8;
-export const LLM_CHECKPOINT_CONFIDENCE = 0.6;
+/** Analyzer findings below this confidence are not worth a reviewer's time. */
+export const LLM_NOTE_CONFIDENCE = 0.6;
 
 export function interventionAllowed(
   state: RateLimitState,
@@ -29,9 +36,19 @@ export type Intervention = {
   id: string;
   severity: Severity;
   turnOrder: number;
-  source: "rules" | "llm";
+  source: "rules";
   quote: string;
-  confidence?: number;
+};
+
+/** What the analyzer thinks it saw. Advisory: shown to a reviewer, never evidence. */
+export type AnalyzerNote = {
+  kind: "checkpoint" | "prohibited";
+  id: string;
+  turnOrder: number;
+  quote: string;
+  confidence: number;
+  severity?: Severity;
+  rationale?: string;
 };
 
 export type FusionInput = {
@@ -45,83 +62,63 @@ export type FusionInput = {
 
 export type FusionResult = {
   interventions: Intervention[];
-  /** Rules plus analyzer findings, ready for applyEvaluation on the board. */
+  /** The rules' findings, unchanged: the only thing that ticks a card or flags a claim. */
   evaluation: Evaluation;
+  /** The analyzer's findings, for the reviewer. */
+  notes: AnalyzerNote[];
   rate: RateLimitState;
 };
 
-const keyOf = (m: { id: string; turnOrder: number }) => `${m.id}@${m.turnOrder}`;
+export const noteKey = (n: { kind: string; id: string; turnOrder: number }) =>
+  `${n.kind}:${n.id}@${n.turnOrder}`;
+
+export function notesFrom(analysis: Analysis | null | undefined): AnalyzerNote[] {
+  if (!analysis) return [];
+  const notes: AnalyzerNote[] = [];
+  for (const c of analysis.checkpoints_satisfied) {
+    if (c.confidence < LLM_NOTE_CONFIDENCE) continue;
+    notes.push({
+      kind: "checkpoint",
+      id: c.id,
+      turnOrder: c.turn_order,
+      quote: c.quote,
+      confidence: c.confidence,
+    });
+  }
+  for (const v of analysis.violations) {
+    if (v.confidence < LLM_NOTE_CONFIDENCE) continue;
+    notes.push({
+      kind: "prohibited",
+      id: v.id,
+      turnOrder: v.turn_order,
+      quote: v.quote,
+      confidence: v.confidence,
+      severity: v.severity,
+      ...(v.rationale ? { rationale: v.rationale } : {}),
+    });
+  }
+  return notes;
+}
 
 export function fuse(input: FusionInput): FusionResult {
   const { rules, analysis, now, alreadyIntervened } = input;
-  const checkpoints: RuleMatch[] = [...rules.checkpoints];
-  const violations: RuleMatch[] = [...rules.violations];
-
-  if (analysis) {
-    for (const c of analysis.checkpoints_satisfied) {
-      if (c.confidence < LLM_CHECKPOINT_CONFIDENCE) continue;
-      if (checkpoints.some((x) => x.id === c.id)) continue;
-      checkpoints.push({
-        id: c.id,
-        kind: "checkpoint",
-        turnOrder: c.turn_order,
-        role: "advisor",
-        quote: c.quote,
-        pattern: `llm:${c.confidence.toFixed(2)}`,
-        windowed: false,
-      });
-    }
-    for (const v of analysis.violations) {
-      if (violations.some((x) => keyOf(x) === `${v.id}@${v.turn_order}`)) continue;
-      violations.push({
-        id: v.id,
-        kind: "prohibited",
-        severity: v.severity,
-        turnOrder: v.turn_order,
-        role: "advisor",
-        quote: v.quote,
-        pattern: `llm:${v.confidence.toFixed(2)}:${v.rationale}`,
-        windowed: false,
-      });
-    }
-  }
-
   let rate = input.rate;
   const interventions: Intervention[] = [];
-  const consider = (m: RuleMatch, source: Intervention["source"], confidence?: number) => {
-    const key = keyOf(m);
-    if (!m.severity) return;
-    if (alreadyIntervened.has(key) || interventions.some((i) => keyOf(i) === key)) return;
-    if (!interventionAllowed(rate, m.severity, now)) return;
+  for (const v of rules.violations) {
+    if (v.severity !== "critical") continue;
+    const key = `${v.id}@${v.turnOrder}`;
+    if (alreadyIntervened.has(key) || interventions.some((i) => `${i.id}@${i.turnOrder}` === key)) {
+      continue;
+    }
+    if (!interventionAllowed(rate, v.severity, now)) continue;
     interventions.push({
-      id: m.id,
-      severity: m.severity,
-      turnOrder: m.turnOrder,
-      source,
-      quote: m.quote,
-      confidence,
+      id: v.id,
+      severity: v.severity,
+      turnOrder: v.turnOrder,
+      source: "rules",
+      quote: v.quote,
     });
     rate = { lastInterventionAt: now };
-  };
-
-  for (const v of rules.violations) if (v.severity === "critical") consider(v, "rules");
-  if (analysis) {
-    for (const v of analysis.violations) {
-      if (v.confidence < LLM_INTERVENE_CONFIDENCE) continue;
-      if (v.severity !== "critical" && v.severity !== "high") continue;
-      const match = violations.find((x) => keyOf(x) === `${v.id}@${v.turn_order}`);
-      if (match) consider(match, "llm", v.confidence);
-    }
   }
-
-  return {
-    interventions,
-    evaluation: {
-      checkpoints,
-      violations,
-      customerBeliefs: rules.customerBeliefs,
-      corrections: rules.corrections,
-    },
-    rate,
-  };
+  return { interventions, evaluation: rules, notes: notesFrom(analysis), rate };
 }

@@ -52,6 +52,7 @@ docs/plans/
 # ...except the two the README links to, so it has no broken links on GitHub
 !docs/decisions.md
 !docs/deployment.md
+!docs/ARCHITECTURE.md
 
 # deck, slides, video and their working directory
 projects/
@@ -70,3 +71,5 @@ projects/
 # 8.5 MB of generated speech, regenerate rather than carry.
 tests/fixtures/golden-draft.wav
 tests/fixtures/judge-solo-customer.wav
+# Rendered by pnpm fixtures:wav:omitted for the keyterms-integrity experiment.
+tests/fixtures/omitted-draft.wav

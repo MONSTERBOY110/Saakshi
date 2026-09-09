@@ -25,7 +25,9 @@
     "demo:render": "node scripts/render-advisor.mjs",
     "eval": "vitest run tests/unit/eval-run.test.ts",
     "fixtures:wav:customer": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-customer-wav.ps1",
-    "test:e2e:judge-solo": "cross-env SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/judge-solo-customer.wav playwright test tests/e2e/judge-solo.live.spec.ts"
+    "test:e2e:judge-solo": "cross-env SAAKSHI_LIVE_E2E=1 SAAKSHI_FAKE_WAV=tests/fixtures/judge-solo-customer.wav playwright test tests/e2e/judge-solo.live.spec.ts",
+    "fixtures:wav:omitted": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-omitted-wav.ps1",
+    "test:e2e:keyterms": "cross-env SAAKSHI_LIVE_E2E=1 playwright test tests/e2e/keyterms.live.spec.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

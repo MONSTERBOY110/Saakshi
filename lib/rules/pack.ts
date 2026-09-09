@@ -79,7 +79,19 @@ export const PackSchema = z.object({
   /** What the room is selling, used as the default product name on the start screen. */
   product_default: z.string().min(1),
   jurisdiction: z.enum(["IN", "UK"]),
+  /**
+   * Recognition vocabulary that is never itself evidence: names, product and regulator names,
+   * brand terms. tests/unit/keyterms-integrity.test.ts proves no entry can complete a checkpoint,
+   * a prohibited claim or a correction on its own, so biasing the recogniser toward these cannot
+   * manufacture a tick (docs/decisions.md, 2026-09-09).
+   */
   keyterms: z.array(z.string().min(1).max(50)).max(100),
+  /**
+   * The disclosure and prohibited-claim vocabulary the rule engine listens for. Kept out of the
+   * recogniser by default because the transcript is the evidence being judged; only the "full"
+   * keyterms mode sends it, and that mode exists for the experiment that measured the difference.
+   */
+  rule_keyterms: z.array(z.string().min(1).max(50)).max(100).default([]),
   scenario_prompt: z.string().min(1).max(1750),
   checkpoints: z.array(CheckpointSchema).min(1).refine(uniqueIds, "duplicate checkpoint id"),
   prohibited: z.array(ProhibitedSchema).refine(uniqueIds, "duplicate prohibited id"),

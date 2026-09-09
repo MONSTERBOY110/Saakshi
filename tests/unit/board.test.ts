@@ -182,42 +182,69 @@ describe("board runtime facts", () => {
     );
   });
 
-  it("keeps analyzer-sourced findings through a rebuild", () => {
+  it("keeps analyzer notes for the reviewer, never as ticks or flags, and drops one the rules confirm", () => {
     let b = rebuildBoard(pack, script.slice(0, 5));
     const t4 = script[4]!;
-    b = applyEvaluation(
+    b = boardExtras.applyNotes(
       b,
-      {
-        checkpoints: [
-          {
-            id: "surrender_value",
-            kind: "checkpoint",
-            turnOrder: 4,
-            role: "advisor",
-            quote: t4.text,
-            pattern: "llm:0.70",
-            windowed: false,
-          },
-        ],
-        violations: [
-          {
-            id: "like_fd",
-            kind: "prohibited",
-            severity: "high",
-            turnOrder: 4,
-            role: "advisor",
-            quote: t4.text,
-            pattern: "llm:0.90:compared",
-            windowed: false,
-          },
-        ],
-        customerBeliefs: [],
-        corrections: [],
-      },
+      [
+        {
+          kind: "checkpoint",
+          id: "surrender_value",
+          turnOrder: 4,
+          quote: t4.text,
+          confidence: 0.7,
+        },
+        {
+          kind: "prohibited",
+          id: "like_fd",
+          turnOrder: 4,
+          quote: t4.text,
+          confidence: 0.9,
+          severity: "high",
+          rationale: "compared",
+        },
+      ],
       () => t4,
     );
-    const rebuilt = mergeSticky(b, rebuildBoard(pack, script.slice(0, 5)));
-    expect(rebuilt.checkpoints.find((c) => c.id === "surrender_value")?.source).toBe("llm");
-    expect(rebuilt.violations.find((v) => v.id === "like_fd")?.source).toBe("llm");
+    // Notes are notes: the card stays pending and no flag is raised.
+    expect(b.checkpoints.find((c) => c.id === "surrender_value")?.status).toBe("pending");
+    expect(b.violations.some((v) => v.id === "like_fd")).toBe(false);
+    expect(b.notes.map((n) => n.key).sort()).toEqual([
+      "checkpoint:surrender_value@4",
+      "prohibited:like_fd@4",
+    ]);
+    expect(b.notes.every((n) => n.label.length > 0 && n.evidence?.turnOrder === 4)).toBe(true);
+    // A repeated note is ignored, and the board object is unchanged.
+    expect(
+      boardExtras.applyNotes(
+        b,
+        [
+          {
+            kind: "checkpoint",
+            id: "surrender_value",
+            turnOrder: 4,
+            quote: t4.text,
+            confidence: 0.8,
+          },
+        ],
+        () => t4,
+      ),
+    ).toBe(b);
+    // Notes survive a rebuild, since the rules cannot reproduce them.
+    const rebuilt = rebuildBoard(pack, script.slice(0, 5), b);
+    expect(rebuilt.notes.map((n) => n.key).sort()).toEqual([
+      "checkpoint:surrender_value@4",
+      "prohibited:like_fd@4",
+    ]);
+    // Once the rules tick the card themselves, the note about it is redundant and goes.
+    const ticked = {
+      ...emptyBoard(pack),
+      checkpoints: emptyBoard(pack).checkpoints.map((c) =>
+        c.id === "surrender_value" ? { ...c, status: "met" as const } : c,
+      ),
+    };
+    const merged = mergeSticky(b, ticked);
+    expect(merged.notes.map((n) => n.id)).toEqual(["like_fd"]);
   });
 });
