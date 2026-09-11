@@ -12,8 +12,10 @@ understood, and issues a certificate anyone can verify without trusting the sell
 
 [**Open the live demo →**](https://saakshi-1.vercel.app) · [How well it works](https://saakshi-1.vercel.app/metrics) · MIT licensed
 
-Built on AssemblyAI Streaming STT (Universal-3.5 Pro, diarized), the Voice Agent API, and the LLM
-Gateway, for the lablab.ai x AssemblyAI Voice Agent Hackathon, September 2026.
+Built on AssemblyAI Streaming STT (Universal-3.5 Pro, diarized) and the Voice Agent API, with an
+OpenAI-compatible LLM (Groq gpt-oss, strict JSON schema; AssemblyAI LLM Gateway as fallback) for the
+advisory notes and teach-back questions. For the lablab.ai x AssemblyAI Voice Agent Hackathon,
+September 2026.
 
 </div>
 
@@ -80,11 +82,11 @@ Every number here was produced by a live run against the real APIs. The method f
 | What | Result | How |
 |---|---|---|
 | Time to interrupt, end of speech to first sound | **p50 1368 ms, max 1538 ms** | 10 interventions, `pnpm test:e2e:latency` |
-| Prohibited-claim detection precision | **1.00** | 10 labelled dialogues, `pnpm eval:analyzer` |
+| LLM layer, prohibited claims and disclosures | **precision 1.00, recall 1.00, 10 of 10 dialogues, p50 1.3 s** | Groq gpt-oss with a strict schema, `pnpm eval:analyzer` |
 | Disclosures caught on one pass of the demo script | **7 to 8 of 8** | identity-only vocabulary, `pnpm test:e2e:golden`, `pnpm test:e2e:keyterms` |
 | Disclosures ticked that were never made | **0 of 12** | omitted-disclosures recording, three vocabulary modes, `pnpm test:e2e:keyterms` |
 | Cost of one demo session | **about $0.16** | billed seconds at list prices, `pnpm test:e2e:keyterms` |
-| Teach-back question generation | **5.4 s, once per session** | `pnpm eval:questions` |
+| Teach-back question generation | **1.7 s, once per session, 5 of 5 kept** | strict schema on Groq, `pnpm eval:questions` |
 | Judge-solo, whole demo driven by one person | **interrupts at 2226 ms** | `pnpm test:e2e:judge-solo` |
 | Rule engine against 70 labelled turns | **precision 1.00, recall 1.00** | `pnpm eval`, and read the caveat below |
 | Unit tests | **418 passing** | `pnpm test` |
@@ -136,7 +138,7 @@ flowchart LR
   subgraph AAI["AssemblyAI"]
     STT[(streaming.assemblyai.com/v3/ws<br/>universal-3-5-pro · speaker_labels)]
     VA[(agents.assemblyai.com/v1/ws<br/>Voice Agent API)]
-    LLM[(llm-gateway.assemblyai.com/v1<br/>structured outputs)]
+    LLM[(Groq gpt-oss, strict JSON schema<br/>AssemblyAI LLM Gateway as fallback)]
   end
   EARS <--> STT
   MOUTH <--> VA
@@ -169,9 +171,10 @@ Things this build had to get right, each verified against the docs and recorded 
   docs require, plus the documented hold-mode exception for `finish_teachback`.
 - **Progressive tool reveal**: `finish_teachback` appears only after three answers are recorded, and
   the prompt changes in the same message.
-- **LLM Gateway** with strict JSON schema where the model supports it, falling back to a
-  prompt-described shape with `json-repair` where it does not. Its findings are advisory notes:
-  they never tick a card, flag a claim or get spoken.
+- **LLM Gateway as the fallback endpoint**, behind an OpenAI-compatible provider (Groq gpt-oss
+  with a strict JSON schema). The client speaks to both: bare key and `json-repair` for the gateway,
+  `Bearer` and `reasoning_effort` for Groq, and three JSON modes depending on what the model
+  enforces. Its findings are advisory notes: they never tick a card, flag a claim or get spoken.
 - **Keyterms that cannot manufacture evidence.** Names, product and regulator reach the recogniser;
   the disclosure and claim phrases the rules listen for do not. A unit test proves no identity term
   can complete a rule on its own, and a live run on identical audio showed no lost recall.
@@ -202,7 +205,13 @@ Each of these cost an hour or a day and is recorded with its evidence in
   parameters. `Turn.language_code` is a hint, not a gate: short English turns arrived tagged `et`.
 - **A small model at 0.8 confidence is not a witness.** The one gateway model this account reaches
   flagged a truthful sentence as a prohibited claim one turn after the lock-in was disclosed. The
-  analyzer became advisory the same day.
+  analyzer became advisory the same day, and two days later the LLM calls moved to Groq gpt-oss
+  with a strict schema (precision and recall 1.00 on the labelled dialogues), keeping the gateway
+  as the fallback endpoint.
+- **Check `GET /models` before trusting a model list.** Groq documents `llama-3.3-70b-versatile`
+  as production; on a free account it answers 404. And gpt-oss reasons before it replies, so a
+  600-token cap truncated the JSON and Groq reported a schema failure; `reasoning_effort: low`
+  and a 2048-token floor fixed it.
 - **The phase flips before the sockets close.** `Terminate` and `session.end` are answered after
   the room reports DONE, so billing has to be read from the closing events, not the phase.
 

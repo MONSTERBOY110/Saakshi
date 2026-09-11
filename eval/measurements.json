@@ -30,21 +30,21 @@
     },
     {
       "id": "analyzer_precision",
-      "label": "LLM layer, prohibited-claim precision",
-      "value": "1.00",
-      "detail": "Recall 0.71 on the seven dialogues that reached a model; the two misses were requests the gateway rate-limited, not wrong answers. Since 2026-09-09 the analyzer is advisory: its findings are notes for a reviewer and never tick a card, flag a claim or get spoken, after it flagged a truthful sentence during the keyterms experiment.",
-      "method": "Ten labelled dialogues through the LLM Gateway with a strict JSON schema.",
+      "label": "LLM layer, prohibited claims and disclosures",
+      "value": "1.00 / 1.00",
+      "detail": "Ten labelled dialogues, all ten reached a model (Groq openai/gpt-oss-120b with a strict JSON schema; one fell back to gpt-oss-20b). Violations: precision 1.00, recall 1.00. Disclosures: recall 1.00, up from 0.00 on the gateway's only model. Latency p50 1268 ms. The analyzer is advisory since 2026-09-09: its findings are notes for a reviewer and never tick a card, flag a claim or get spoken.",
+      "method": "Ten labelled dialogues through the configured LLM endpoints (Groq first, AssemblyAI LLM Gateway last) with a strict JSON schema.",
       "command": "pnpm eval:analyzer",
-      "measured_on": "2026-09-06"
+      "measured_on": "2026-09-11"
     },
     {
       "id": "question_generation",
       "label": "Teach-back question generation",
-      "value": "5.4 s",
-      "detail": "One call per session. Five of five questions passed validation and none fell back to the pack.",
+      "value": "1.7 s",
+      "detail": "One call per session on Groq openai/gpt-oss-20b with a strict JSON schema (gpt-oss-120b is tried first). Five of five questions passed validation, all five from the model, each with a Hindi hint. Was 5.4 s with prose-described JSON on the gateway's only model.",
       "method": "One live call, then the same validation the room applies before speaking a question.",
       "command": "pnpm eval:questions",
-      "measured_on": "2026-09-06"
+      "measured_on": "2026-09-11"
     },
     {
       "id": "keyterms_integrity",

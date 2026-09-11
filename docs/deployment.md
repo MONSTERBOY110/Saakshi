@@ -38,7 +38,8 @@ secret must be added as sensitive variables.
 | Variable | Value | Scope | Notes |
 |---|---|---|---|
 | `ASSEMBLYAI_API_KEY` | your key | secret, server only | Never prefix with `NEXT_PUBLIC_`. |
-| `LLM_GATEWAY_BASE_URL` | `https://llm-gateway.assemblyai.com/v1` | server | Phase 2 onward. |
+| `LLM_PROVIDER_API_KEY` | Groq key (`gsk_...`) | secret, server only | Primary LLM for analyzer notes and teach-back questions since 2026-09-11. Optional `LLM_PROVIDER_BASE_URL` (default Groq), `LLM_PROVIDER_MODELS` (default `openai/gpt-oss-120b,llama-3.3-70b-versatile`). Leave unset to use the gateway alone. |
+| `LLM_GATEWAY_BASE_URL` | `https://llm-gateway.assemblyai.com/v1` | server | Always the last endpoint tried. |
 | `LLM_ANALYZER_MODEL` | `gemini-3.5-flash-lite` | server | Phase 2. |
 | `LLM_ANALYZER_FALLBACK_MODEL` | `claude-haiku-4-5-20251001` | server | Phase 2. |
 | `LLM_QUESTIONS_MODEL` | `claude-sonnet-4-6` | server | Phase 3. |

@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 import { analyzeWithGateway } from "@/lib/analyzer/gateway";
 import type { AnalyzeRequest } from "@/lib/analyzer/schema";
 import { getPack } from "@/lib/rules/load";
-import { apiKeyFromEnv } from "../helpers/api-key";
+import { llmEndpoints } from "@/lib/analyzer/config";
+import { envWithFiles } from "../helpers/api-key";
 
 // Live evaluation of the layer-2 analyzer over the golden dialogues. Costs a few cents.
 // Run: SAAKSHI_LIVE_EVAL=1 pnpm exec vitest run tests/unit/analyzer-live.test.ts
@@ -16,9 +17,13 @@ type Dialogue = {
 type Fixture = { context: AnalyzeRequest["context"]; dialogues: Dialogue[] };
 
 const live = !!process.env.SAAKSHI_LIVE_EVAL;
-// The account LLM Gateway limit is 2 requests per 60 s per model (docs/decisions.md), so the eval
-// paces itself. Override with SAAKSHI_EVAL_PACE_MS when the account has a higher limit.
-const PACE_MS = Number(process.env.SAAKSHI_EVAL_PACE_MS ?? 35_000);
+// The AssemblyAI gateway allows 2 requests per 60 s per model on this account (docs/decisions.md),
+// so the eval paces itself when that is the only endpoint; a provider such as Groq allows far more.
+// Override with SAAKSHI_EVAL_PACE_MS.
+function paceMs(env: Record<string, string | undefined>): number {
+  if (env.SAAKSHI_EVAL_PACE_MS) return Number(env.SAAKSHI_EVAL_PACE_MS);
+  return env.LLM_PROVIDER_API_KEY ? 2_500 : 35_000;
+}
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe.skipIf(!live)("analyzer live eval (SAAKSHI_LIVE_EVAL)", () => {
@@ -27,19 +32,11 @@ describe.skipIf(!live)("analyzer live eval (SAAKSHI_LIVE_EVAL)", () => {
     const fixture = JSON.parse(
       readFileSync(join(process.cwd(), "tests", "fixtures", "analyzer", "dialogues.json"), "utf8"),
     ) as Fixture;
-    const key = apiKeyFromEnv();
-    expect(key, "ASSEMBLYAI_API_KEY").not.toBe("");
-    const deps = {
-      apiKey: key,
-      baseUrl: process.env.LLM_GATEWAY_BASE_URL ?? "https://llm-gateway.assemblyai.com/v1",
-      models: (
-        process.env.LLM_ANALYZER_MODELS ??
-        "gemini-3.5-flash-lite,claude-haiku-4-5-20251001,qwen3.5-4b-32k-fast"
-      )
-        .split(",")
-        .map((m) => m.trim()),
-      timeoutMs: 8000,
-    };
+    const env = envWithFiles();
+    const endpoints = llmEndpoints("analyzer", env);
+    expect(endpoints.length, "set LLM_PROVIDER_API_KEY or ASSEMBLYAI_API_KEY").toBeGreaterThan(0);
+    const PACE_MS = paceMs(env);
+    const deps = { endpoints, timeoutMs: 12_000 };
     let tp = 0;
     let fp = 0;
     let fn = 0;
@@ -88,7 +85,7 @@ describe.skipIf(!live)("analyzer live eval (SAAKSHI_LIVE_EVAL)", () => {
         else cpFn++;
       }
       rows.push(
-        `${d.id}: violations ${[...gotV].join(",") || "-"} (want ${d.expect.violations.join(",") || "-"}); checkpoints ${[...gotC].join(",") || "-"} (want ${d.expect.checkpoints.join(",") || "-"}); ${out.model} ${out.latencyMs} ms`,
+        `${d.id}: violations ${[...gotV].join(",") || "-"} (want ${d.expect.violations.join(",") || "-"}); checkpoints ${[...gotC].join(",") || "-"} (want ${d.expect.checkpoints.join(",") || "-"}); ${out.endpoint} ${out.mode} ${out.latencyMs} ms`,
       );
     }
     const precision = tp + fp === 0 ? 1 : tp / (tp + fp);
@@ -98,7 +95,7 @@ describe.skipIf(!live)("analyzer live eval (SAAKSHI_LIVE_EVAL)", () => {
     const p50 = sorted[Math.floor(sorted.length / 2)] ?? 0;
     const report = {
       ran_at: new Date().toISOString(),
-      models: deps.models,
+      endpoints: endpoints.map((e) => e.id),
       rows,
       dialogues: {
         total: fixture.dialogues.length,

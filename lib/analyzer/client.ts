@@ -32,7 +32,7 @@ export type AnalyzerClient = {
 export function createAnalyzerClient(opts: AnalyzerClientOptions): AnalyzerClient {
   const fetchImpl = opts.fetchImpl ?? fetch;
   const debounceMs = opts.debounceMs ?? 300;
-  const perMinute = opts.callsPerMinute ?? 2;
+  const perMinute = opts.callsPerMinute ?? 6;
   const now = opts.now ?? (() => Date.now());
   let timer: ReturnType<typeof setTimeout> | null = null;
   let pending: AnalyzeRequest | null = null;

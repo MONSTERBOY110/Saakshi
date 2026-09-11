@@ -97,6 +97,8 @@ export type AnalyzeRequest = z.infer<typeof AnalyzeRequestSchema>;
 export type AnalyzeResponse = {
   analysis: Analysis;
   model: string;
+  /** Which host answered: groq, assemblyai, or another OpenAI-compatible provider. */
+  provider?: string;
   latency_ms: number;
   request_id?: string;
 };

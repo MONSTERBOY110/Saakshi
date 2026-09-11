@@ -26,7 +26,7 @@ flowchart LR
   subgraph AAI["AssemblyAI"]
     STT[(Streaming STT<br/>universal-3-5-pro, speaker_labels)]
     VA[(Voice Agent API)]
-    LLM[(LLM Gateway)]
+    LLM[(Groq gpt-oss, strict JSON<br/>AssemblyAI LLM Gateway fallback)]
   end
   KV[(Upstash Redis<br/>cert:id, 90 day TTL)]
   EARS <-->|wss, single-use token| STT
@@ -39,7 +39,7 @@ flowchart LR
   TOK -.mints.-> VA
 ```
 
-Two AssemblyAI sessions run at once. The **Ears** (Streaming STT with `speaker_labels`) hear the whole room and produce diarized, finalized turns. The **Mouth** (Voice Agent API) is Saakshi's voice; it hears the microphone only in the two phases where it must listen (the acknowledgement window after an interruption, and the teach-back). In every other phase it receives nothing and speaks only when the room sends a scripted `reply.create`. The **LLM Gateway** writes the teach-back questions and leaves advisory notes for a reviewer; it never ticks a disclosure, flags a claim or speaks (section 4).
+Two AssemblyAI sessions run at once. The **Ears** (Streaming STT with `speaker_labels`) hear the whole room and produce diarized, finalized turns. The **Mouth** (Voice Agent API) is Saakshi's voice; it hears the microphone only in the two phases where it must listen (the acknowledgement window after an interruption, and the teach-back). In every other phase it receives nothing and speaks only when the room sends a scripted `reply.create`. The **LLM** (Groq gpt-oss with a strict JSON schema first, the AssemblyAI LLM Gateway as the last endpoint) writes the teach-back questions and leaves advisory notes for a reviewer; it never ticks a disclosure, flags a claim or speaks (section 4).
 
 The API key exists only in the Vercel environment. Both sockets open with single-use tokens minted by `/api/token/*`, valid for sixty seconds, rate-limited per IP (`lib/server/rate-limit.ts`).
 
@@ -131,5 +131,5 @@ The golden live path asserts roles bound by name, six or more disclosures on one
 - Two speakers. `max_speakers=2` is a product choice for a desk conversation; a third voice merges into the nearest label.
 - English speech output only. Hindi and Hinglish are understood; the Voice Agent API has no Hindi voice yet.
 - Chromium first. The 24 kHz `AudioContext` path is verified there; Firefox and Safari resample in the worklet and are untested.
-- One model on the LLM Gateway for this account, at two calls a minute, without `response_format`. The analyzer is capability-aware and the demo does not depend on it.
+- The AssemblyAI LLM Gateway on this account offers one 4B model at two calls a minute without `response_format`, so the text-in, JSON-out calls go to Groq first and fall back to the gateway. The demo does not depend on either: every tick, flag and spoken line comes from the rules.
 - Certificates live 90 days in Upstash. There is no export beyond the JSON download and the print stylesheet.

@@ -39,7 +39,9 @@ export function buildRouter(c: RoomController): Router {
 
 export function buildAnalyzerClient(c: RoomController): AnalyzerClient {
   return createAnalyzerClient({
-    callsPerMinute: Number(process.env.NEXT_PUBLIC_ANALYZER_RPM ?? 2),
+    // Six a minute fits Groq's free tier with room to spare; the AssemblyAI gateway alone allows two,
+    // and a 429 from it parks the client until retry_after, so the higher default is safe either way.
+    callsPerMinute: Number(process.env.NEXT_PUBLIC_ANALYZER_RPM ?? 6),
     onResult: (result, request) => c.onAnalysis(result, request),
     onError: (error) => {
       c.log("client", "analyze.error", { error });

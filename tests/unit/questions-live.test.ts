@@ -16,7 +16,8 @@ import {
   QuestionsSchema,
   validateQuestion,
 } from "@/lib/teachback/questions";
-import { apiKeyFromEnv } from "../helpers/api-key";
+import { llmEndpoints } from "@/lib/analyzer/config";
+import { envWithFiles } from "../helpers/api-key";
 
 // One live question-generation call, judged by the same rules the route applies before speaking.
 // Run: SAAKSHI_LIVE_EVAL=1 pnpm exec vitest run tests/unit/questions-live.test.ts
@@ -52,8 +53,8 @@ function sceneTurns(fixture: Fixture): StoredTurn[] {
 
 describe.skipIf(!live)("teach-back question generation, live (SAAKSHI_LIVE_EVAL)", () => {
   it("returns speakable questions that invent nothing", async () => {
-    const key = apiKeyFromEnv();
-    expect(key, "ASSEMBLYAI_API_KEY").not.toBe("");
+    const endpoints = llmEndpoints("questions", envWithFiles());
+    expect(endpoints.length, "set LLM_PROVIDER_API_KEY or ASSEMBLYAI_API_KEY").toBeGreaterThan(0);
     const pack = getPack("insurance-ulip-in");
     const fixture = JSON.parse(
       readFileSync(join(process.cwd(), "tests", "fixtures", "analyzer", "dialogues.json"), "utf8"),
@@ -67,17 +68,7 @@ describe.skipIf(!live)("teach-back question generation, live (SAAKSHI_LIVE_EVAL)
     const ctx = { pack, board, spokenText: advisorDigest };
 
     const out = await structuredGatewayCall(
-      {
-        apiKey: key,
-        baseUrl: process.env.LLM_GATEWAY_BASE_URL ?? "https://llm-gateway.assemblyai.com/v1",
-        models: (
-          process.env.LLM_ANALYZER_MODELS ??
-          "gemini-3.5-flash-lite,claude-haiku-4-5-20251001,qwen3.5-4b-32k-fast"
-        )
-          .split(",")
-          .map((m) => m.trim()),
-        timeoutMs: 20_000,
-      },
+      { endpoints, timeoutMs: 20_000 },
       {
         system: buildQuestionsSystemPrompt(pack, prioritiseTopics(pack, board)),
         user: buildQuestionsUserContent({
@@ -101,6 +92,8 @@ describe.skipIf(!live)("teach-back question generation, live (SAAKSHI_LIVE_EVAL)
       not_disclosed: board.checkpoints.filter((c) => c.status === "pending").map((c) => c.id),
       ok: out.ok,
       model: out.ok ? out.model : undefined,
+      endpoint: out.ok ? out.endpoint : undefined,
+      mode: out.ok ? out.mode : undefined,
       latency_ms: out.ok ? out.latencyMs : undefined,
       structured_output: out.ok ? out.structured : undefined,
       error: out.ok ? undefined : out.error,

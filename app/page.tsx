@@ -94,7 +94,8 @@ export default function Home() {
 
       <footer className="rule-dashed text-ink-soft mt-10 flex flex-wrap items-center justify-between gap-4 pt-5 pb-8 text-sm">
         <p>
-          Built on AssemblyAI Streaming STT, the Voice Agent API and the LLM Gateway. No audio is
+          Built on AssemblyAI Streaming STT and the Voice Agent API, with Groq for the advisory
+          notes and teach-back questions and the AssemblyAI LLM Gateway as fallback. No audio is
           ever stored: quotes, timestamps and hashes only.
         </p>
         <span className="flex flex-wrap items-center gap-4">

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { analyzerModels, ANALYZE_TIMEOUT_MS, gatewayBaseUrl } from "@/lib/analyzer/config";
+import { ANALYZE_TIMEOUT_MS, llmEndpoints } from "@/lib/analyzer/config";
 import { analyzeWithGateway } from "@/lib/analyzer/gateway";
 import { AnalyzeRequestSchema, type AnalyzeResponse } from "@/lib/analyzer/schema";
 import { getPack } from "@/lib/rules/load";
@@ -26,17 +26,19 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "unknown_pack" }, { status: 400 });
   }
-  const apiKey = process.env.ASSEMBLYAI_API_KEY;
-  if (!apiKey) return NextResponse.json({ error: "server_misconfigured" }, { status: 500 });
+  const endpoints = llmEndpoints("analyzer");
+  if (endpoints.length === 0) {
+    return NextResponse.json({ error: "server_misconfigured" }, { status: 500 });
+  }
 
   const out = await analyzeWithGateway(
-    { apiKey, baseUrl: gatewayBaseUrl(), models: analyzerModels(), timeoutMs: ANALYZE_TIMEOUT_MS },
+    { endpoints, timeoutMs: ANALYZE_TIMEOUT_MS },
     body.data,
     pack,
   );
   if (!out.ok) {
     console.error("[analyze]", out.error);
-    // The gateway rate limits per account and model; tell the client how long to wait.
+    // Every endpoint failed. If the last resort was rate limited, tell the client how long to wait.
     const limited = /HTTP 429/.test(out.error);
     return NextResponse.json(
       {
@@ -50,6 +52,7 @@ export async function POST(req: Request) {
   const response: AnalyzeResponse = {
     analysis: out.analysis,
     model: out.model,
+    provider: out.provider,
     latency_ms: out.latencyMs,
     request_id: out.requestId,
   };

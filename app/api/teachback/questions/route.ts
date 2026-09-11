@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { analyzerModels, gatewayBaseUrl } from "@/lib/analyzer/config";
+import { llmEndpoints } from "@/lib/analyzer/config";
 import { structuredGatewayCall } from "@/lib/analyzer/gateway";
 import { buildQuestionsSystemPrompt, buildQuestionsUserContent } from "@/lib/prompts/teachback";
 import { getPack } from "@/lib/rules/load";
@@ -19,9 +19,10 @@ import type { BoardState } from "@/lib/session/board";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// One call per session, so it fits inside the account's gateway budget. If the gateway is
-// unavailable or answers with anything unusable, the pack's own questions are returned instead:
-// the teach-back must never stall in front of a customer.
+// One call per session. The provider list is Groq first and the AssemblyAI gateway last
+// (lib/analyzer/config.ts); if every endpoint is unavailable or answers with anything unusable,
+// the pack's own questions are returned instead: the teach-back must never stall in front of a
+// customer.
 const QUESTIONS_TIMEOUT_MS = Number(process.env.LLM_QUESTIONS_TIMEOUT_MS ?? 12_000);
 const QUESTIONS_MAX_TOKENS = 700;
 
@@ -41,6 +42,7 @@ export type QuestionsResponse = {
   questions: TeachbackQuestion[];
   source: "llm" | "pack" | "mixed";
   model?: string;
+  provider?: string;
   latency_ms?: number;
 };
 
@@ -66,16 +68,11 @@ export async function POST(req: Request) {
     violations: body.data.board.violations,
   } as unknown as BoardState;
   const ctx = { pack, board, spokenText: body.data.advisor_digest };
-  const apiKey = process.env.ASSEMBLYAI_API_KEY;
+  const endpoints = llmEndpoints("questions");
 
-  if (apiKey) {
+  if (endpoints.length > 0) {
     const out = await structuredGatewayCall(
-      {
-        apiKey,
-        baseUrl: gatewayBaseUrl(),
-        models: analyzerModels(),
-        timeoutMs: QUESTIONS_TIMEOUT_MS,
-      },
+      { endpoints, timeoutMs: QUESTIONS_TIMEOUT_MS },
       {
         system: buildQuestionsSystemPrompt(pack, prioritiseTopics(pack, board)),
         user: buildQuestionsUserContent({
@@ -100,6 +97,7 @@ export async function POST(req: Request) {
         questions,
         source: sources.size === 1 ? [...sources][0]! : "mixed",
         model: out.model,
+        provider: out.provider,
         latency_ms: out.latencyMs,
       };
       return NextResponse.json(response, { headers: { "Cache-Control": "no-store" } });

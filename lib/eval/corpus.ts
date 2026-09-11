@@ -100,6 +100,6 @@ export function buildReport(corpus: CorpusTurn[]): EvalReport {
     ran_at: new Date().toISOString(),
     corpus: { turns: corpus.length, packs: packCounts(corpus) },
     layers: [{ layer: "rules", ...scoreRules(corpus) }],
-    note: "Rule engine only. The LLM and fused layers need an LLM Gateway key and are run with pnpm eval:live.",
+    note: "Rule engine only. The LLM layer needs an LLM key (Groq or the AssemblyAI gateway) and runs with pnpm eval:analyzer.",
   };
 }

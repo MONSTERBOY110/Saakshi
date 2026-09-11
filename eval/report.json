@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-09-09T15:41:41.240Z",
+  "ran_at": "2026-09-11T16:15:35.610Z",
   "corpus": {
     "turns": 70,
     "packs": {
@@ -34,5 +34,5 @@
       "wrong": []
     }
   ],
-  "note": "Rule engine only. The LLM and fused layers need an LLM Gateway key and are run with pnpm eval:live."
+  "note": "Rule engine only. The LLM layer needs an LLM key (Groq or the AssemblyAI gateway) and runs with pnpm eval:analyzer."
 }
